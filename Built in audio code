@@ -1,0 +1,90 @@
+            let audioContext;
+            let timerOscillator; // To keep track of the timer sound
+
+            // 7a. Initialize Audio (Called on first click)
+            // This "unlocks" the browser's audio permissions.
+            function initializeAudio() {
+                if (!audioContext) {
+                    try {
+                        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                        console.log("AudioContext initialized.");
+                    } catch (e) {
+                        console.error("Web Audio API is not supported in this browser.", e);
+                    }
+                }
+            }
+
+            // 7b. Play Timer Sound (a "tick")
+            // This creates a simple "sine" wave oscillator for a short duration.
+            function playTimerSound() {
+                if (!audioContext) return;
+                // Stop any previous tick
+                if (timerOscillator) {
+                    timerOscillator.stop();
+                }
+                timerOscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                timerOscillator.type = 'sine'; // A clean "beep" sound
+                timerOscillator.frequency.setValueAtTime(1000, audioContext.currentTime); // High pitch tick
+                gainNode.gain.setValueAtTime(0.1, audioContext.currentTime); // Quiet
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.05);
+
+                timerOscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                timerOscillator.start();
+                timerOscillator.stop(audioContext.currentTime + 0.05);
+            }
+
+            // 7c. Stop Timer Sound
+            function stopTimerSound() {
+                if (timerOscillator) {
+                    timerOscillator.stop();
+                    timerOscillator = null;
+                }
+            }
+
+            // 7d. Play Daily Double Sound
+            // This plays two notes, one after the other, with rising pitch.
+            function playDailyDoubleSound() {
+                if (!audioContext) return;
+                const osc = audioContext.createOscillator();
+                const gain = audioContext.createGain();
+                osc.type = 'sine'; // You could change this to 'square' for a retro sound
+                osc.connect(gain);
+                gain.connect(audioContext.destination);
+
+                const now = audioContext.currentTime;
+                gain.gain.setValueAtTime(0.3, now); // Volume
+                
+                // First note
+                osc.frequency.setValueAtTime(300, now);
+                osc.frequency.exponentialRampToValueAtTime(600, now + 0.1);
+                
+                // Second note
+                osc.frequency.setValueAtTime(450, now + 0.15);
+                osc.frequency.exponentialRampToValueAtTime(900, now + 0.3);
+
+                osc.start();
+                osc.stop(now + 0.4);
+            }
+
+            // 7e. Play Times Up Sound (a "buzz")
+            // This uses a "sawtooth" wave to sound like a buzzer.
+            function playTimesUpSound() {
+                if (!audioContext) return;
+                const osc = audioContext.createOscillator();
+                const gain = audioContext.createGain();
+                osc.type = 'sawtooth'; // A harsher buzz sound
+                osc.frequency.setValueAtTime(150, audioContext.currentTime); // Low pitch
+                osc.frequency.exponentialRampToValueAtTime(50, audioContext.currentTime + 0.2); // Pitch drops
+                
+                gain.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.2); // Fades out
+
+                osc.connect(gain);
+                gain.connect(audioContext.destination);
+                osc.start();
+                osc.stop(audioContext.currentTime + 0.2);
+            }

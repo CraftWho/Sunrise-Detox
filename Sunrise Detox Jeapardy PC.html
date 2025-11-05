@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recovery Jeopardy</title>
+    <title>Sunrise Detox Presents, Detox Jeapardy</title>
     <!-- Load Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
     <!-- Set Inter font family -->
     <style>
         html, body {
@@ -20,34 +21,6 @@
             display: flex;
             flex-direction: column;
             height: 100%;
-        }
-
-        /* NEW: Start Modal */
-        #start-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(6, 10, 43, 0.95); /* Dark blue overlay */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 100;
-        }
-        #start-game-btn {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #060a2b;
-            background-color: #ffcc00; /* Jeopardy yellow */
-            padding: 1rem 2rem;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        #start-game-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 20px rgba(255, 204, 0, 0.5);
         }
 
         /* Custom styles for the Jeopardy board */
@@ -214,17 +187,7 @@
             border: 2px solid #ccc;
         }
 
-        /* Hidden YouTube Players */
-        .yt-player {
-            position: absolute;
-            top: -9999px;
-            left: -9999px;
-            width: 1px;
-            height: 1px;
-            opacity: 0;
-        }
-
-        /* NEW: Timer Styles */
+        /* Timer Styles */
         #timer-container {
             display: none; /* Hidden by default */
             align-items: center;
@@ -264,16 +227,11 @@
 </head>
 <body class="p-2 md:p-4">
 
-    <!-- NEW: Start Modal -->
-    <div id="start-modal">
-        <button id="start-game-btn">Start Game</button>
-    </div>
-
     <div id="game-container" class="container mx-auto max-w-6xl">
         <!-- Header -->
-        <div class="flex justify-between items-center mb-3">
-             <h1 class="text-3xl md:text-4xl font-extrabold text-center text-white">Recovery Jeopardy</h1>
-             <button id="reset-game" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-3 rounded-lg transition-colors text-sm">
+        <div class="relative flex justify-center items-center mb-3">
+             <h1 class="text-2xl md:text-3xl font-extrabold text-center text-white">Sunrise Detox Presents, Detox Jeapardy</h1>
+             <button id="reset-game" class="absolute right-0 bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-3 rounded-lg transition-colors text-sm">
                 Reset
             </button>
         </div>
@@ -316,7 +274,6 @@
                     <span id="modal-points" class="text-xl font-bold text-yellow-600">$000</span>
                 </div>
                 
-                <!-- NEW: Notification Bar -->
                 <div id="modal-notification" class="hidden text-center text-lg font-bold text-red-600 my-2"></div>
 
                 <div id="modal-question-text" class="modal-question">
@@ -329,17 +286,15 @@
 
             <!-- Button & Timer Container -->
             <div>
-                 <!-- NEW: Timer -->
                 <div id="timer-container">
-                    <div id="timer-display">30</div>
+                    <div id="timer-display">37</div> <!-- NEW: Timer starts at 37 -->
                     <button id="timer-toggle-btn" title="Play/Pause Timer">
                         <!-- Icon will be set by JS -->
                     </button>
                 </div>
 
                 <div id="button-container" class="mt-4 flex flex-col gap-3">
-                    <!-- "Show Answer" button removed -->
-                    <div id="scoring-buttons" class="grid grid-cols-2 gap-3"> <!-- No longer hidden by default -->
+                    <div id="scoring-buttons" class="grid grid-cols-2 gap-3">
                         <button id="correct-btn" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded-lg transition-colors text-lg">
                             I Got It Right!
                         </button>
@@ -347,12 +302,16 @@
                             I Got It Wrong
                         </button>
                     </div>
+                    <!-- NEW: Next button, hidden by default -->
+                    <button id="next-btn" class="hidden w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg transition-colors text-lg">
+                        Next
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- NEW: Daily Double Modal -->
+    <!-- Daily Double Modal -->
     <div id="daily-double-modal" class="modal">
         <div class="modal-content">
             <h2 class="text-4xl md:text-5xl font-extrabold text-center text-yellow-400 mb-6" style="text-shadow: 2px 2px #000;">DAILY DOUBLE</h2>
@@ -366,15 +325,12 @@
         </div>
     </div>
 
-    <!-- NEW: YouTube Player divs -->
-    <div id="yt-player-timer" class="yt-player"></div>
-    <div id="yt-player-dd" class="yt-player"></div>
-
-    <!-- Load YouTube IFrame API -->
-    <script src="https://www.youtube.com/iframe_api"></script>
-
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            
+            // ---------------------------------
+            // --- 1. GAME DATA ---
+            // ---------------------------------
             const gameData = {
                 "Mental Health Basics": {
                     100: { q: "This is a common mood disorder characterized by persistent sadness, loss of interest, and feelings of worthlessness.", a: "What is depression?" },
@@ -413,7 +369,9 @@
                 }
             };
 
-            // Game Elements
+            // ---------------------------------
+            // --- 2. GLOBAL ELEMENTS ---
+            // ---------------------------------
             const board = document.getElementById('jeopardy-board');
             const modal = document.getElementById('question-modal');
             const modalCategory = document.getElementById('modal-category');
@@ -425,12 +383,11 @@
             const correctBtn = document.getElementById('correct-btn');
             const incorrectBtn = document.getElementById('incorrect-btn');
             const resetBtn = document.getElementById('reset-game');
+            const nextBtn = document.getElementById('next-btn'); // NEW: Next button
 
-            // NEW: Start Modal Elements
-            const startModal = document.getElementById('start-modal');
-            const startGameBtn = document.getElementById('start-game-btn');
-
-            // Team Elements
+            // ---------------------------------
+            // --- 3. TEAM ELEMENTS ---
+            // ---------------------------------
             const team1Board = document.getElementById('team-1-board');
             const team2Board = document.getElementById('team-2-board');
             const team1ScoreDisplay = document.getElementById('team-1-score');
@@ -440,20 +397,26 @@
             const team1NameInput = document.getElementById('team-1-name');
             const team2NameInput = document.getElementById('team-2-name');
 
-            // Daily Double Elements
+            // ---------------------------------
+            // --- 4. DAILY DOUBLE ELEMENTS ---
+            // ---------------------------------
             const ddModal = document.getElementById('daily-double-modal');
             const ddWagerInput = document.getElementById('dd-wager-input');
             const ddWagerLabel = document.getElementById('dd-wager-label');
             const submitWagerBtn = document.getElementById('submit-wager-btn');
 
-            // Timer Elements
+            // ---------------------------------
+            // --- 5. TIMER ELEMENTS ---
+            // ---------------------------------
             const timerContainer = document.getElementById('timer-container');
             const timerDisplay = document.getElementById('timer-display');
             const timerToggleBtn = document.getElementById('timer-toggle-btn');
             const playIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg>`;
             const pauseIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M48 64C21.5 64 0 85.5 0 112V400c0 26.5 21.5 48 48 48H80c26.5 0 48-21.5 48-48V112c0-26.5-21.5-48-48-48H48zm192 0c-26.5 0-48 21.5-48 48V400c0 26.5 21.5 48 48 48h32c26.5 0 48-21.5 48-48V112c0-26.5-21.5-48-48-48H240z"/></svg>`;
 
-            // Game State
+            // ---------------------------------
+            // --- 6. GAME STATE VARIABLES ---
+            // ---------------------------------
             let team1Score = 0;
             let team2Score = 0;
             let activeTeam = 1; // 1 or 2
@@ -461,60 +424,172 @@
             let currentWager = 0;
             let currentDailyDouble = null;
             let timerInterval = null;
-            let timerSeconds = 30;
+            let timerSeconds = 37; // NEW: Timer set to 37
             let isTimerRunning = false;
             let attemptState = 'initial'; // 'initial' or 'steal' or 'dailyDouble'
+            
+            // ---------------------------------------------------
+            // --- 7. WEB AUDIO API (SOUNDS) ---
+            // ---------------------------------------------------
+            let audioContext;
+            let timerOscillator; 
+            let tickTock = 0; 
 
-            // YouTube Player State
-            let timerPlayer;
-            let ddPlayer;
-            let apiReady = false;
-
-            // --- YouTube API Functions ---
-            window.onYouTubeIframeAPIReady = function() {
-                apiReady = true;
-                timerPlayer = new YT.Player('yt-player-timer', {
-                    height: '1', width: '1', videoId: '0Wi8Fv0AJA4', playerVars: { 'controls': 0 },
-                    events: { 'onReady': (e) => e.target.setVolume(30) }
-                });
-                ddPlayer = new YT.Player('yt-player-dd', {
-                    height: '1', width: '1', videoId: 'cv14hwi0QrI', playerVars: { 'controls': 0 },
-                    // NEW: Set volume on ready for Daily Double
-                    events: { 'onReady': (e) => e.target.setVolume(80) } 
-                });
-            }
-
-            // NEW: Function to prime audio on first user click
-            function primeAudio() {
-                if (!apiReady) {
-                    console.warn("Audio API not ready, cannot prime.");
-                    return; 
+            // 7a. Initialize Audio
+            function initializeAudio() {
+                if (!audioContext) {
+                    try {
+                        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                        console.log("AudioContext initialized.");
+                    } catch (e) {
+                        console.error("Web Audio API is not supported in this browser.", e);
+                    }
                 }
-                
-                // Prime Timer Player
-                timerPlayer.unMute();
-                timerPlayer.setVolume(30);
-                timerPlayer.playVideo();
-                
-                // Prime Daily Double Player
-                ddPlayer.unMute();
-                ddPlayer.setVolume(80);
-                ddPlayer.playVideo();
-                
-                // Stop them almost immediately. This is just to get browser permission.
-                setTimeout(() => { 
-                    timerPlayer.pauseVideo();
-                    timerPlayer.seekTo(0);
-                    ddPlayer.pauseVideo();
-                    ddPlayer.seekTo(0);
-                }, 300); // 300ms delay
-
-                // Hide modal and start
-                startModal.style.display = 'none';
             }
 
+            // 7b. Play Timer Sound ("tick-tock")
+            function playTimerSound() {
+                if (!audioContext) return;
+                if (timerOscillator) {
+                    timerOscillator.stop();
+                }
+                timerOscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                timerOscillator.type = 'sine';
+                
+                if (tickTock % 2 === 0) {
+                    timerOscillator.frequency.setValueAtTime(1200, audioContext.currentTime); // High tick
+                } else {
+                    timerOscillator.frequency.setValueAtTime(800, audioContext.currentTime); // Lower tock
+                }
+                tickTock++;
 
-            // --- Board Creation ---
+                gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.05);
+
+                timerOscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                timerOscillator.start();
+                timerOscillator.stop(audioContext.currentTime + 0.05);
+            }
+
+            // 7c. Stop Timer Sound
+            function stopTimerSound() {
+                if (timerOscillator) {
+                    timerOscillator.stop();
+                    timerOscillator = null;
+                }
+                tickTock = 0; 
+            }
+
+            // 7d. Play Daily Double Sound
+            function playDailyDoubleSound() {
+                if (!audioContext) return;
+                const osc = audioContext.createOscillator();
+                const gain = audioContext.createGain();
+                osc.type = 'sine';
+                osc.connect(gain);
+                gain.connect(audioContext.destination);
+
+                const now = audioContext.currentTime;
+                gain.gain.setValueAtTime(0.3, now); 
+                
+                osc.frequency.setValueAtTime(300, now);
+                osc.frequency.exponentialRampToValueAtTime(600, now + 0.1);
+                
+                osc.frequency.setValueAtTime(450, now + 0.15);
+                osc.frequency.exponentialRampToValueAtTime(900, now + 0.3);
+
+                osc.start();
+                osc.stop(now + 0.4);
+            }
+
+            // 7e. Play Times Up Sound (3-beat buzz)
+            function playTimesUpSound() {
+                if (!audioContext) return;
+                const now = audioContext.currentTime;
+                const osc = audioContext.createOscillator();
+                const gain = audioContext.createGain();
+                osc.type = 'sawtooth';
+                osc.connect(gain);
+                gain.connect(audioContext.destination);
+
+                // Beat 1
+                osc.frequency.setValueAtTime(120, now);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+
+                // Beat 2
+                osc.frequency.setValueAtTime(120, now + 0.15);
+                gain.gain.setValueAtTime(0.3, now + 0.15);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+
+                // Beat 3
+                osc.frequency.setValueAtTime(120, now + 0.3);
+                gain.gain.setValueAtTime(0.3, now + 0.3);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+
+                osc.start();
+                osc.stop(now + 0.4);
+            }
+
+            // 7f. Play Steal Sound (Urgent beeps)
+            function playStealSound() {
+                if (!audioContext) return;
+                const now = audioContext.currentTime;
+                const osc = audioContext.createOscillator();
+                const gain = audioContext.createGain();
+                osc.type = 'triangle'; 
+                osc.connect(gain);
+                gain.connect(audioContext.destination);
+
+                gain.gain.setValueAtTime(0.2, now);
+                osc.frequency.setValueAtTime(900, now);
+                osc.frequency.setValueAtTime(1200, now + 0.1);
+                
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+
+                osc.start();
+                osc.stop(now + 0.2);
+            }
+
+            // 7g. *** UPDATED: Play Correct Sound (Tadah Fanfare) ***
+            function playCorrectSound() {
+                if (!audioContext) return;
+                const now = audioContext.currentTime;
+                const osc = audioContext.createOscillator();
+                const gain = audioContext.createGain();
+                
+                osc.type = 'triangle'; // 'triangle' sounds more like a classic fanfare
+                osc.connect(gain);
+                gain.connect(audioContext.destination);
+                
+                gain.gain.setValueAtTime(0.2, now); // Set volume
+
+                // "Ta-da-da-DAHHHHH!"
+                // Note 1: C5
+                osc.frequency.setValueAtTime(523.25, now);
+                // Note 2: E5
+                osc.frequency.setValueAtTime(659.25, now + 0.1);
+                // Note 3: G5
+                osc.frequency.setValueAtTime(783.99, now + 0.2);
+                // Note 4: C6 (hold longer)
+                osc.frequency.setValueAtTime(1046.50, now + 0.3);
+
+                // Fade out the sound
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.7);
+                
+                osc.start(now);
+                osc.stop(now + 0.7);
+            }
+            // --- END OF AUDIO SECTION ---
+
+
+            // ---------------------------------
+            // --- 8. GAME LOGIC (BOARD) ---
+            // ---------------------------------
             function createBoard() {
                 board.innerHTML = '';
                 team1Score = 0;
@@ -534,9 +609,10 @@
                     categories.forEach(category => {
                         const cell = document.createElement('div');
                         cell.classList.add('question-cell');
-                        cell.textContent = `$${point}`;
+                        cell.textContent = `$${point}`; 
                         cell.dataset.category = category;
-                        cell.dataset.points = point;
+                        cell.dataset.pointsKey = point; 
+                        cell.dataset.pointsValue = point;
                         cell.addEventListener('click', handleQuestionClick);
                         board.appendChild(cell);
                         allCells.push(cell);
@@ -547,7 +623,9 @@
                 allCells[ddIndex].dataset.dailyDouble = 'true';
             }
 
-            // --- Team & Scoring Logic ---
+            // ------------------------------------------
+            // --- 9. GAME LOGIC (TEAMS & SCORING) ---
+            // ------------------------------------------
             function setActiveTeam(teamNum) {
                 activeTeam = teamNum;
                 if (teamNum === 1) {
@@ -559,17 +637,27 @@
                 }
             }
 
+            // *** UPDATED: Score cannot go below 0 ***
             function updateScore(points) {
+                let currentScore = (activeTeam === 1) ? team1Score : team2Score;
+                let newScore = currentScore + points;
+
+                if (newScore < 0) {
+                    newScore = 0; // Don't allow score to go negative
+                }
+
                 if (activeTeam === 1) {
-                    team1Score += points;
+                    team1Score = newScore;
                     team1ScoreDisplay.textContent = team1Score;
                 } else {
-                    team2Score += points;
+                    team2Score = newScore;
                     team2ScoreDisplay.textContent = team2Score;
                 }
             }
             
-            // --- Notification Functions ---
+            // ------------------------------------------
+            // --- 10. GAME LOGIC (NOTIFICATIONS) ---
+            // ------------------------------------------
             function showNotification(message, duration = 0) {
                 modalNotification.textContent = message;
                 modalNotification.classList.remove('hidden');
@@ -581,45 +669,52 @@
                 modalNotification.classList.add('hidden');
             }
 
-            // --- Timer Functions ---
+            // ---------------------------------
+            // --- 11. GAME LOGIC (TIMER) ---
+            // ---------------------------------
             function resetTimer() {
                 clearInterval(timerInterval);
                 isTimerRunning = false;
-                timerDisplay.textContent = 30; // Default
+                timerDisplay.textContent = 37; // NEW: Reset to 37
                 timerToggleBtn.innerHTML = playIcon;
-                if (apiReady && timerPlayer) {
-                    timerPlayer.pauseVideo();
-                    timerPlayer.seekTo(0);
-                }
+                stopTimerSound(); 
             }
 
             function startTimer(duration) {
-                if (isTimerRunning) return;
+                if (isTimerRunning) return; 
                 
                 isTimerRunning = true;
                 timerSeconds = duration;
                 timerDisplay.textContent = duration;
                 timerToggleBtn.innerHTML = pauseIcon;
                 
-                if (apiReady && timerPlayer) {
-                    timerPlayer.unMute();
-                    timerPlayer.setVolume(30);
-                    timerPlayer.seekTo(0);
-                    timerPlayer.playVideo();
-                }
+                playTimerSound(); 
 
                 timerInterval = setInterval(() => {
                     timerSeconds--;
                     timerDisplay.textContent = timerSeconds;
+                    
+                    if (timerSeconds > 0) {
+                        if (attemptState === 'steal') {
+                            playStealSound(); 
+                        } else {
+                            playTimerSound(); 
+                        }
+                    }
+
                     if (timerSeconds <= 0) {
                         clearInterval(timerInterval);
                         isTimerRunning = false;
+                        
                         if (attemptState === 'initial') {
                             handleTimesUp(); 
-                        } else { // Steal attempt ran out
-                            modalAnswer.style.display = 'block'; // Reveal answer
+                        } else { 
+                            playTimesUpSound(); 
+                            modalAnswer.style.display = 'block'; 
                             showNotification("Time's Up! The answer was...");
-                            setTimeout(closeModal, 2500);
+                            // NEW: Show next button instead of closing
+                            scoringButtons.classList.add('hidden');
+                            nextBtn.classList.remove('hidden');
                         }
                     }
                 }, 1000);
@@ -635,41 +730,60 @@
 
             // --- handleTimesUp (Initial attempt) ---
             function handleTimesUp() {
+                playTimesUpSound(); // Play times up sound
                 resetTimer();
                 const otherTeamNum = activeTeam === 1 ? 2 : 1;
                 const otherTeamName = (otherTeamNum === 1 ? team1NameInput.value : team2NameInput.value);
                 
-                showNotification(`Time's Up! ${otherTeamName}, you have 15 seconds to steal!`);
+                showNotification(`Time's Up! ${otherTeamName}, you have 5 seconds to steal!`);
                 
                 attemptState = 'steal';
                 setActiveTeam(otherTeamNum);
                 
-                modalAnswer.style.display = 'none'; // Keep answer hidden
-                scoringButtons.classList.remove('hidden'); // Ensure buttons are visible
+                modalAnswer.style.display = 'none'; 
+                scoringButtons.classList.remove('hidden'); 
                 
-                startTimer(15);
+                startTimer(5); // NEW: Steal timer is 5 seconds
             }
 
-            // --- Event Handlers ---
+            // ---------------------------------
+            // --- 12. EVENT HANDLERS (CLICKS) ---
+            // ---------------------------------
             function handleQuestionClick(e) {
+                if (!audioContext) {
+                    initializeAudio(); // First click initializes audio
+                }
+
                 const cell = e.target;
                 const category = cell.dataset.category;
-                const points = parseInt(cell.dataset.points);
-                if (!category || !points || cell.classList.contains('answered')) return;
                 
+                const pointsKey = parseInt(cell.dataset.pointsKey); 
+                const pointsValue = parseInt(cell.dataset.pointsValue);
+                
+                if (!category || !pointsKey || cell.classList.contains('answered')) return;
+                
+                const { q, a } = gameData[category][pointsKey];
+                
+                if (!q || !a) {
+                    console.error("Could not find question for:", category, pointsKey);
+                    return; 
+                }
+
                 cell.classList.add('answered');
                 cell.textContent = '';
-                currentPoints = points;
-                const { q, a } = gameData[category][points];
+                currentPoints = pointsValue;
 
                 if (cell.dataset.dailyDouble === 'true') {
-                    currentDailyDouble = { category, points, q, a };
+                    currentDailyDouble = { category, points: pointsValue, q, a };
                     handleDailyDouble();
                 } else {
-                    showQuestionModal(category, points, q, a);
+                    showQuestionModal(category, pointsValue, q, a);
                 }
             }
 
+            // ---------------------------------
+            // --- 13. MODAL & POPUP LOGIC ---
+            // ---------------------------------
             function showQuestionModal(category, points, q, a) {
                 modalCategory.textContent = category;
                 modalPoints.textContent = `$${points}`;
@@ -679,23 +793,20 @@
                 attemptState = 'initial'; 
                 hideNotification(); 
                 
-                modalAnswer.style.display = 'none'; // Answer is hidden
-                scoringButtons.classList.remove('hidden'); // Scoring buttons are visible
+                modalAnswer.style.display = 'none'; 
+                scoringButtons.classList.remove('hidden');
+                nextBtn.classList.add('hidden'); // NEW: Hide next button
                 
                 timerContainer.style.display = 'flex';
                 resetTimer();
-                startTimer(30); 
+                startTimer(37); // NEW: Main timer is 37 seconds
 
                 modal.style.display = 'flex';
             }
 
             function handleDailyDouble() {
-                if (apiReady && ddPlayer) {
-                    ddPlayer.unMute(); // Make sure it's unmuted
-                    ddPlayer.setVolume(80);
-                    ddPlayer.seekTo(0);
-                    ddPlayer.playVideo();
-                }
+                playDailyDoubleSound();
+
                 const currentTeamScore = (activeTeam === 1) ? team1Score : team2Score;
                 const maxWager = Math.max(1000, currentTeamScore); 
                 ddWagerInput.value = 5;
@@ -719,7 +830,6 @@
                 const { category, q, a } = currentDailyDouble;
                 
                 showQuestionModal(`DAILY DOUBLE: ${category}`, `Wager: $${wager}`, q, a);
-                // Set special state for Daily Double
                 attemptState = 'dailyDouble';
             });
 
@@ -730,28 +840,54 @@
                 hideNotification();
             }
 
+            // ------------------------------------------
+            // --- 14. BUTTON & INPUT LISTENERS ---
+            // ------------------------------------------
+            
             // --- Modal Button Listeners ---
             correctBtn.addEventListener('click', () => {
-                updateScore(currentPoints);
-                modalAnswer.style.display = 'block'; // Reveal answer
+                playCorrectSound(); 
+                
+                // NEW: Calculate points (steal gets half)
+                let pointsToAdd = 0;
                 if (attemptState === 'steal') {
+                    pointsToAdd = Math.round(currentPoints / 2);
                     showNotification("Steal successful!", 1500);
                 } else {
+                    pointsToAdd = currentPoints;
                     showNotification("Correct!", 1500);
                 }
+                updateScore(pointsToAdd);
+
+                modalAnswer.style.display = 'block'; 
                 resetTimer();
-                setTimeout(closeModal, 1500);
+                
+                // NEW: Show next button
+                scoringButtons.classList.add('hidden');
+                nextBtn.classList.remove('hidden');
             });
 
             incorrectBtn.addEventListener('click', () => {
+                playTimesUpSound(); // Play buzzer for wrong answer
+                
                 if (attemptState === 'initial' || attemptState === 'dailyDouble') {
-                    updateScore(-currentPoints); // Deduct points
+                    
+                    // NEW: Lose half points (or full for DD)
+                    let pointsToLose = 0;
+                    if (attemptState === 'dailyDouble') {
+                        pointsToLose = -currentPoints;
+                    } else {
+                        pointsToLose = -Math.round(currentPoints / 2);
+                    }
+                    updateScore(pointsToLose); 
                     
                     if (attemptState === 'dailyDouble') {
-                        modalAnswer.style.display = 'block'; // Reveal answer
+                        modalAnswer.style.display = 'block'; 
                         showNotification("Incorrect! The answer was...");
                         resetTimer();
-                        setTimeout(closeModal, 2500);
+                        // NEW: Show next button
+                        scoringButtons.classList.add('hidden');
+                        nextBtn.classList.remove('hidden');
                         return;
                     }
 
@@ -761,31 +897,38 @@
                     const otherTeamName = (otherTeamNum === 1 ? team1NameInput.value : team2NameInput.value);
                     
                     setActiveTeam(otherTeamNum);
-                    showNotification(`Incorrect! ${otherTeamName}, you have 15 seconds to steal!`);
+                    showNotification(`Incorrect! ${otherTeamName}, you have 5 seconds to steal!`);
                     
-                    modalAnswer.style.display = 'none'; // Keep answer hidden
+                    modalAnswer.style.display = 'none'; 
                     
                     resetTimer();
-                    startTimer(15);
+                    startTimer(5); // NEW: Steal timer is 5 seconds
                     
-                } else { // Steal attempt was wrong
-                    modalAnswer.style.display = 'block'; // Reveal answer
+                } else { 
+                    // Failed steal, no points lost
+                    modalAnswer.style.display = 'block'; 
                     showNotification("Incorrect! The answer was...");
                     resetTimer();
-                    setTimeout(closeModal, 2500);
+                    // NEW: Show next button
+                    scoringButtons.classList.add('hidden');
+                    nextBtn.classList.remove('hidden');
                 }
             });
+
+            // NEW: Next Button closes modal
+            nextBtn.addEventListener('click', closeModal);
 
             // Close modal if clicking outside the content
             window.addEventListener('click', (e) => {
                 if (e.target === modal || e.target === ddModal) {
-                    closeModal();
+                    // Don't close modal on outside click anymore, must use Next
+                    // closeModal(); 
                 }
             });
 
             // --- Team Customization Listeners ---
             team1Board.addEventListener('click', () => setActiveTeam(1));
-            team2Board.addEventListener('click', () => setActiveTeam(2));
+            team2Board.addEventListener('click', () => setActiveTeam(2)); 
             team1NameInput.addEventListener('click', (e) => e.stopPropagation());
             team2NameInput.addEventListener('click', (e) => e.stopPropagation());
             team1ColorPicker.addEventListener('click', (e) => e.stopPropagation());
@@ -799,19 +942,20 @@
             });
 
             // Reset game
-            resetBtn.addEventListener('click', createBoard);
+            resetBtn.addEventListener('click', () => {
+                resetTimer(); // Stop sound on reset
+                createBoard();
+            });
 
             // Timer Toggle
             timerToggleBtn.addEventListener('click', handleTimerToggle);
 
-            // NEW: Listener for the start button
-            startGameBtn.addEventListener('click', primeAudio);
-
-            // Initial board setup
+            // ---------------------------------
+            // --- 15. INITIALIZE GAME ---
+            // ---------------------------------
             createBoard();
             resetTimer(); // Set initial play icon
         });
     </script>
 </body>
 </html>
-
