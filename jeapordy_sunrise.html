@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recovery Jeopardy</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Set Inter font family -->
+    <style>
+        html, body {
+            font-family: 'Inter', sans-serif;
+            background-color: #060a2b; /* Dark blue background */
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden; /* No scrolling */
+        }
+        
+        #game-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        /* NEW: Start Modal */
+        #start-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(6, 10, 43, 0.95); /* Dark blue overlay */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+        #start-game-btn {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #060a2b;
+            background-color: #ffcc00; /* Jeopardy yellow */
+            padding: 1rem 2rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        #start-game-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(255, 204, 0, 0.5);
+        }
+
+        /* Custom styles for the Jeopardy board */
+        .jeopardy-board {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 4px; /* Reduced gap */
+            flex-grow: 1; /* Board fills remaining space */
+            min-height: 0; /* Allows board to shrink */
+        }
+        .category-cell {
+            background-color: #06226e; /* Jeopardy blue */
+            color: white;
+            font-weight: bold;
+            text-align: center;
+            padding: 8px 4px; /* Reduced padding */
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1.2;
+            font-size: 0.875rem; /* 14px */
+            min-height: 0;
+        }
+        .question-cell {
+            background-color: #06226e; /* Jeopardy blue */
+            color: #ffcc00; /* Jeopardy yellow */
+            font-size: 1.25rem; /* 20px */
+            font-weight: bold;
+            text-align: center;
+            padding: 8px; /* Reduced padding */
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease-in-out;
+            min-height: 0;
+        }
+        .question-cell:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(255, 204, 0, 0.5);
+        }
+        .question-cell.answered {
+            background-color: #373b5a;
+            color: #6b7280;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+        .question-cell.answered::after {
+            content: 'ANSWERED';
+            font-size: 0.875rem; /* 14px */
+            font-weight: normal;
+        }
+        /* Modal styles */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed;
+            z-index: 50;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.6);
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px; /* Reduced padding */
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            min-height: 350px; /* Reduced min-height */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+        .modal-question {
+            font-size: 1.25rem; /* 20px */
+            font-weight: 500;
+            color: #1f2937;
+            text-align: center;
+            margin: auto;
+            padding: 16px;
+        }
+        .modal-answer {
+            display: none; /* Hidden until revealed */
+            font-size: 1.1rem; /* 18px */
+            font-weight: 600;
+            color: #10b981; /* Green for answer */
+            text-align: center;
+            margin: 16px 0;
+        }
+        
+        /* SMALLER SCOREBOARD STYLES */
+        .team-scoreboard {
+            background-color: #ffffff;
+            padding: 8px; /* Reduced padding */
+            border-radius: 8px;
+            border: 3px solid transparent;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .team-scoreboard.active {
+            /* 'var(--team-color)' will be set by JS */
+            border-color: var(--team-color, #3b82f6); 
+            box-shadow: 0 0 15px var(--team-color, #3b82f6);
+        }
+        .team-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+        .team-name-input {
+            font-size: 1.1rem; /* 18px */
+            font-weight: 700;
+            color: #1f2937;
+            border: none;
+            outline: none;
+            width: 100%;
+            padding: 2px 0;
+        }
+        .team-name-input:focus {
+            border-bottom: 2px solid #3b82f6;
+        }
+        .team-color-picker {
+            width: 24px;
+            height: 24px;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            padding: 0;
+        }
+        .team-score {
+            font-size: 1.75rem; /* 28px */
+            font-weight: 800;
+            color: #06226e;
+        }
+        .team-score-label {
+            font-size: 0.875rem; /* 14px */
+            font-weight: 700;
+            color: #4b5563;
+        }
+
+        /* Daily Double Modal Styles */
+        #daily-double-modal .modal-content {
+            min-height: 250px;
+            justify-content: center;
+            background-color: #060a2b;
+            border: 4px solid #ffcc00;
+        }
+        #dd-wager-input {
+            font-size: 1.25rem;
+            font-weight: bold;
+            text-align: center;
+            width: 100%;
+            padding: 8px;
+            border-radius: 8px;
+            border: 2px solid #ccc;
+        }
+
+        /* Hidden YouTube Players */
+        .yt-player {
+            position: absolute;
+            top: -9999px;
+            left: -9999px;
+            width: 1px;
+            height: 1px;
+            opacity: 0;
+        }
+
+        /* NEW: Timer Styles */
+        #timer-container {
+            display: none; /* Hidden by default */
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 16px;
+        }
+        #timer-display {
+            font-size: 2.25rem; /* 36px */
+            font-weight: 800;
+            color: #06226e;
+            width: 50px;
+            text-align: center;
+        }
+        #timer-toggle-btn {
+            background-color: #06226e;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        #timer-toggle-btn:hover {
+            background-color: #0e3aa6;
+        }
+        #timer-toggle-btn svg {
+            width: 24px;
+            height: 24px;
+            fill: currentColor;
+        }
+    </style>
+</head>
+<body class="p-2 md:p-4">
+
+    <!-- NEW: Start Modal -->
+    <div id="start-modal">
+        <button id="start-game-btn">Start Game</button>
+    </div>
+
+    <div id="game-container" class="container mx-auto max-w-6xl">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-3">
+             <h1 class="text-3xl md:text-4xl font-extrabold text-center text-white">Recovery Jeopardy</h1>
+             <button id="reset-game" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-3 rounded-lg transition-colors text-sm">
+                Reset
+            </button>
+        </div>
+       
+        <!-- Scoreboard -->
+        <div class="grid grid-cols-2 gap-2 mb-3">
+            <!-- Team 1 Scoreboard -->
+            <div id="team-1-board" class="team-scoreboard active" style="--team-color: #3b82f6;">
+                <div class="team-header">
+                    <input type="color" id="team-1-color" class="team-color-picker" value="#3b82f6">
+                    <input type="text" id="team-1-name" class="team-name-input" value="Team 1">
+                </div>
+                <h2 class="team-score-label">Score:</h2>
+                <span id="team-1-score" class="team-score">0</span>
+            </div>
+
+            <!-- Team 2 Scoreboard -->
+            <div id="team-2-board" class="team-scoreboard" style="--team-color: #ef4444;">
+                <div class="team-header">
+                    <input type="color" id="team-2-color" class="team-color-picker" value="#ef4444">
+                    <input type="text" id="team-2-name" class="team-name-input" value="Team 2">
+                </div>
+                <h2 class="team-score-label">Score:</h2>
+                <span id="team-2-score" class="team-score">0</span>
+            </div>
+        </div>
+
+        <!-- Jeopardy Board -->
+        <div id="jeopardy-board" class="jeopardy-board">
+            <!-- Categories and questions will be injected by JavaScript -->
+        </div>
+    </div>
+
+    <!-- Question Modal -->
+    <div id="question-modal" class="modal">
+        <div class="modal-content">
+            <div>
+                <div class="flex justify-between items-center mb-2">
+                    <span id="modal-category" class="text-lg font-semibold text-blue-700">Category</span>
+                    <span id="modal-points" class="text-xl font-bold text-yellow-600">$000</span>
+                </div>
+                
+                <!-- NEW: Notification Bar -->
+                <div id="modal-notification" class="hidden text-center text-lg font-bold text-red-600 my-2"></div>
+
+                <div id="modal-question-text" class="modal-question">
+                    Question text will appear here...
+                </div>
+                <div id="modal-answer-text" class="modal-answer">
+                    Answer text will appear here...
+                </div>
+            </div>
+
+            <!-- Button & Timer Container -->
+            <div>
+                 <!-- NEW: Timer -->
+                <div id="timer-container">
+                    <div id="timer-display">30</div>
+                    <button id="timer-toggle-btn" title="Play/Pause Timer">
+                        <!-- Icon will be set by JS -->
+                    </button>
+                </div>
+
+                <div id="button-container" class="mt-4 flex flex-col gap-3">
+                    <!-- "Show Answer" button removed -->
+                    <div id="scoring-buttons" class="grid grid-cols-2 gap-3"> <!-- No longer hidden by default -->
+                        <button id="correct-btn" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded-lg transition-colors text-lg">
+                            I Got It Right!
+                        </button>
+                        <button id="incorrect-btn" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-4 rounded-lg transition-colors text-lg">
+                            I Got It Wrong
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- NEW: Daily Double Modal -->
+    <div id="daily-double-modal" class="modal">
+        <div class="modal-content">
+            <h2 class="text-4xl md:text-5xl font-extrabold text-center text-yellow-400 mb-6" style="text-shadow: 2px 2px #000;">DAILY DOUBLE</h2>
+            <div class="text-center mb-4">
+                <label for="dd-wager-input" class="text-white text-xl md:text-2xl font-medium" id="dd-wager-label">Enter Wager:</label>
+                <input type="number" id="dd-wager-input" class="mt-2" min="5">
+            </div>
+            <button id="submit-wager-btn" class="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-3 px-4 rounded-lg transition-colors text-lg">
+                Submit Wager
+            </button>
+        </div>
+    </div>
+
+    <!-- NEW: YouTube Player divs -->
+    <div id="yt-player-timer" class="yt-player"></div>
+    <div id="yt-player-dd" class="yt-player"></div>
+
+    <!-- Load YouTube IFrame API -->
+    <script src="https://www.youtube.com/iframe_api"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const gameData = {
+                "Mental Health Basics": {
+                    100: { q: "This is a common mood disorder characterized by persistent sadness, loss of interest, and feelings of worthlessness.", a: "What is depression?" },
+                    200: { q: "This condition involves excessive, persistent worry and fear about everyday situations.", a: "What is an anxiety disorder?" },
+                    300: { q: "A disorder associated with episodes of mood swings ranging from depressive lows to manic highs.", a: "What is bipolar disorder?" },
+                    400: { q: "The practice of being fully present and engaged in the current moment without judgment.", a: "What is mindfulness?" },
+                    500: { q: "A negative and unfair belief associated with a particular circumstance, quality, or person, often preventing people from seeking help.", a: "What is stigma?" }
+                },
+                "Detox & Withdrawal": {
+                    100: { q: "The medical process of safely helping the body rid itself of a substance.", a: "What is detoxification (or detox)?" },
+                    200: { q: "The physical and mental symptoms that occur after stopping or reducing intake of a substance.", a: "What is withdrawal?" },
+                    300: { q: "A state in which the body adapts to a substance, requiring more of it to achieve the same effect.", a: "What is tolerance?" },
+                    400: { q: "A set of symptoms that can continue for weeks, months, or even years after stopping substance use.", a: "What is Post-Acute Withdrawal Syndrome (PAWS)?" },
+                    500: { q: "The term for when a person needs a substance to function 'normally' and experiences withdrawal without it.", a: "What is physical dependence?" }
+                },
+                "Recovery Principles": {
+                    100: { q: "This phrase encourages focusing on the present 24 hours rather than worrying about the distant future.", a: "What is 'One Day at aTime'?" },
+                    200: { q: "A person in recovery who guides a newer member through the program.", a: "What is a sponsor?" },
+                    300: { q: "This acronym is a reminder to check if you are feeling 'Hungry, Angry, Lonely, or Tired'—common relapse triggers.", a: "What is H.A.L.T.?" },
+                    400: { q: "A return to substance use after a period of abstinence.", a: "What is a relapse?" },
+                    500: { q: "This concept, often from the Serenity Prayer, involves accepting what you cannot change and changing what you can.", a: "What is acceptance?" }
+                },
+                "The 12 Steps": {
+                    100: { q: "Step 1 involves admitting this over alcohol or another substance.", a: "What is powerlessness?" },
+                    200: { q: "Step 2 involves coming to believe in this, 'as we understood Him.'", a: "What is a Power greater than ourselves?" },
+                    300: { q: "Step 3 is about making a decision to turn our will and lives over to this.", a: "What is the care of God (or a Higher Power)?" },
+                    400: { q: "Step 4 involves making a 'searching and fearless' one of these.", a: "What is a moral inventory?" },
+                    500: { q: "In Step 5, members admit to their Higher Power, themselves, and this person 'the exact nature of our wrongs.'", a: "What is another human being?" }
+                },
+                "Coping Skills": {
+                    100: { q: "This involves writing down thoughts and feelings to understand them more clearly.", a: "What is journaling?" },
+                    200: { q: "These are limits and rules we set for ourselves within relationships.", a: "What are healthy boundaries?" },
+                    300: { q: "Talking with a trusted friend, family member, or support group is this type of coping skill.", a: "What is social support (or 'reaching out')?" },
+                    400: { q: "Physical activity is a well-known coping skill for managing this common feeling.", a: "What is stress (or anxiety/depression)?" },
+                    500: { q: "This skill involves focusing on your five senses to help ground you in the present moment during high stress or a craving.", a: "What is grounding?" }
+                }
+            };
+
+            // Game Elements
+            const board = document.getElementById('jeopardy-board');
+            const modal = document.getElementById('question-modal');
+            const modalCategory = document.getElementById('modal-category');
+            const modalPoints = document.getElementById('modal-points');
+            const modalQuestion = document.getElementById('modal-question-text');
+            const modalAnswer = document.getElementById('modal-answer-text');
+            const modalNotification = document.getElementById('modal-notification'); 
+            const scoringButtons = document.getElementById('scoring-buttons');
+            const correctBtn = document.getElementById('correct-btn');
+            const incorrectBtn = document.getElementById('incorrect-btn');
+            const resetBtn = document.getElementById('reset-game');
+
+            // NEW: Start Modal Elements
+            const startModal = document.getElementById('start-modal');
+            const startGameBtn = document.getElementById('start-game-btn');
+
+            // Team Elements
+            const team1Board = document.getElementById('team-1-board');
+            const team2Board = document.getElementById('team-2-board');
+            const team1ScoreDisplay = document.getElementById('team-1-score');
+            const team2ScoreDisplay = document.getElementById('team-2-score');
+            const team1ColorPicker = document.getElementById('team-1-color');
+            const team2ColorPicker = document.getElementById('team-2-color');
+            const team1NameInput = document.getElementById('team-1-name');
+            const team2NameInput = document.getElementById('team-2-name');
+
+            // Daily Double Elements
+            const ddModal = document.getElementById('daily-double-modal');
+            const ddWagerInput = document.getElementById('dd-wager-input');
+            const ddWagerLabel = document.getElementById('dd-wager-label');
+            const submitWagerBtn = document.getElementById('submit-wager-btn');
+
+            // Timer Elements
+            const timerContainer = document.getElementById('timer-container');
+            const timerDisplay = document.getElementById('timer-display');
+            const timerToggleBtn = document.getElementById('timer-toggle-btn');
+            const playIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg>`;
+            const pauseIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M48 64C21.5 64 0 85.5 0 112V400c0 26.5 21.5 48 48 48H80c26.5 0 48-21.5 48-48V112c0-26.5-21.5-48-48-48H48zm192 0c-26.5 0-48 21.5-48 48V400c0 26.5 21.5 48 48 48h32c26.5 0 48-21.5 48-48V112c0-26.5-21.5-48-48-48H240z"/></svg>`;
+
+            // Game State
+            let team1Score = 0;
+            let team2Score = 0;
+            let activeTeam = 1; // 1 or 2
+            let currentPoints = 0;
+            let currentWager = 0;
+            let currentDailyDouble = null;
+            let timerInterval = null;
+            let timerSeconds = 30;
+            let isTimerRunning = false;
+            let attemptState = 'initial'; // 'initial' or 'steal' or 'dailyDouble'
+
+            // YouTube Player State
+            let timerPlayer;
+            let ddPlayer;
+            let apiReady = false;
+
+            // --- YouTube API Functions ---
+            window.onYouTubeIframeAPIReady = function() {
+                apiReady = true;
+                timerPlayer = new YT.Player('yt-player-timer', {
+                    height: '1', width: '1', videoId: '0Wi8Fv0AJA4', playerVars: { 'controls': 0 },
+                    events: { 'onReady': (e) => e.target.setVolume(30) }
+                });
+                ddPlayer = new YT.Player('yt-player-dd', {
+                    height: '1', width: '1', videoId: 'cv14hwi0QrI', playerVars: { 'controls': 0 },
+                    // NEW: Set volume on ready for Daily Double
+                    events: { 'onReady': (e) => e.target.setVolume(80) } 
+                });
+            }
+
+            // NEW: Function to prime audio on first user click
+            function primeAudio() {
+                if (!apiReady) {
+                    console.warn("Audio API not ready, cannot prime.");
+                    return; 
+                }
+                
+                // Prime Timer Player
+                timerPlayer.unMute();
+                timerPlayer.setVolume(30);
+                timerPlayer.playVideo();
+                
+                // Prime Daily Double Player
+                ddPlayer.unMute();
+                ddPlayer.setVolume(80);
+                ddPlayer.playVideo();
+                
+                // Stop them almost immediately. This is just to get browser permission.
+                setTimeout(() => { 
+                    timerPlayer.pauseVideo();
+                    timerPlayer.seekTo(0);
+                    ddPlayer.pauseVideo();
+                    ddPlayer.seekTo(0);
+                }, 300); // 300ms delay
+
+                // Hide modal and start
+                startModal.style.display = 'none';
+            }
+
+
+            // --- Board Creation ---
+            function createBoard() {
+                board.innerHTML = '';
+                team1Score = 0;
+                team2Score = 0;
+                updateScore(0);
+                setActiveTeam(1);
+                const categories = Object.keys(gameData);
+                categories.forEach(category => {
+                    const cell = document.createElement('div');
+                    cell.classList.add('category-cell');
+                    cell.textContent = category;
+                    board.appendChild(cell);
+                });
+                const points = [100, 200, 300, 400, 500];
+                let allCells = [];
+                points.forEach(point => {
+                    categories.forEach(category => {
+                        const cell = document.createElement('div');
+                        cell.classList.add('question-cell');
+                        cell.textContent = `$${point}`;
+                        cell.dataset.category = category;
+                        cell.dataset.points = point;
+                        cell.addEventListener('click', handleQuestionClick);
+                        board.appendChild(cell);
+                        allCells.push(cell);
+                    });
+                });
+                allCells.forEach(cell => cell.dataset.dailyDouble = 'false');
+                const ddIndex = Math.floor(Math.random() * allCells.length);
+                allCells[ddIndex].dataset.dailyDouble = 'true';
+            }
+
+            // --- Team & Scoring Logic ---
+            function setActiveTeam(teamNum) {
+                activeTeam = teamNum;
+                if (teamNum === 1) {
+                    team1Board.classList.add('active');
+                    team2Board.classList.remove('active');
+                } else {
+                    team1Board.classList.remove('active');
+                    team2Board.classList.add('active');
+                }
+            }
+
+            function updateScore(points) {
+                if (activeTeam === 1) {
+                    team1Score += points;
+                    team1ScoreDisplay.textContent = team1Score;
+                } else {
+                    team2Score += points;
+                    team2ScoreDisplay.textContent = team2Score;
+                }
+            }
+            
+            // --- Notification Functions ---
+            function showNotification(message, duration = 0) {
+                modalNotification.textContent = message;
+                modalNotification.classList.remove('hidden');
+                if (duration > 0) {
+                    setTimeout(hideNotification, duration);
+                }
+            }
+            function hideNotification() {
+                modalNotification.classList.add('hidden');
+            }
+
+            // --- Timer Functions ---
+            function resetTimer() {
+                clearInterval(timerInterval);
+                isTimerRunning = false;
+                timerDisplay.textContent = 30; // Default
+                timerToggleBtn.innerHTML = playIcon;
+                if (apiReady && timerPlayer) {
+                    timerPlayer.pauseVideo();
+                    timerPlayer.seekTo(0);
+                }
+            }
+
+            function startTimer(duration) {
+                if (isTimerRunning) return;
+                
+                isTimerRunning = true;
+                timerSeconds = duration;
+                timerDisplay.textContent = duration;
+                timerToggleBtn.innerHTML = pauseIcon;
+                
+                if (apiReady && timerPlayer) {
+                    timerPlayer.unMute();
+                    timerPlayer.setVolume(30);
+                    timerPlayer.seekTo(0);
+                    timerPlayer.playVideo();
+                }
+
+                timerInterval = setInterval(() => {
+                    timerSeconds--;
+                    timerDisplay.textContent = timerSeconds;
+                    if (timerSeconds <= 0) {
+                        clearInterval(timerInterval);
+                        isTimerRunning = false;
+                        if (attemptState === 'initial') {
+                            handleTimesUp(); 
+                        } else { // Steal attempt ran out
+                            modalAnswer.style.display = 'block'; // Reveal answer
+                            showNotification("Time's Up! The answer was...");
+                            setTimeout(closeModal, 2500);
+                        }
+                    }
+                }, 1000);
+            }
+
+            function handleTimerToggle() {
+                if (isTimerRunning) {
+                    resetTimer();
+                } else {
+                    startTimer(timerSeconds); 
+                }
+            }
+
+            // --- handleTimesUp (Initial attempt) ---
+            function handleTimesUp() {
+                resetTimer();
+                const otherTeamNum = activeTeam === 1 ? 2 : 1;
+                const otherTeamName = (otherTeamNum === 1 ? team1NameInput.value : team2NameInput.value);
+                
+                showNotification(`Time's Up! ${otherTeamName}, you have 15 seconds to steal!`);
+                
+                attemptState = 'steal';
+                setActiveTeam(otherTeamNum);
+                
+                modalAnswer.style.display = 'none'; // Keep answer hidden
+                scoringButtons.classList.remove('hidden'); // Ensure buttons are visible
+                
+                startTimer(15);
+            }
+
+            // --- Event Handlers ---
+            function handleQuestionClick(e) {
+                const cell = e.target;
+                const category = cell.dataset.category;
+                const points = parseInt(cell.dataset.points);
+                if (!category || !points || cell.classList.contains('answered')) return;
+                
+                cell.classList.add('answered');
+                cell.textContent = '';
+                currentPoints = points;
+                const { q, a } = gameData[category][points];
+
+                if (cell.dataset.dailyDouble === 'true') {
+                    currentDailyDouble = { category, points, q, a };
+                    handleDailyDouble();
+                } else {
+                    showQuestionModal(category, points, q, a);
+                }
+            }
+
+            function showQuestionModal(category, points, q, a) {
+                modalCategory.textContent = category;
+                modalPoints.textContent = `$${points}`;
+                modalQuestion.textContent = q;
+                modalAnswer.textContent = a;
+                
+                attemptState = 'initial'; 
+                hideNotification(); 
+                
+                modalAnswer.style.display = 'none'; // Answer is hidden
+                scoringButtons.classList.remove('hidden'); // Scoring buttons are visible
+                
+                timerContainer.style.display = 'flex';
+                resetTimer();
+                startTimer(30); 
+
+                modal.style.display = 'flex';
+            }
+
+            function handleDailyDouble() {
+                if (apiReady && ddPlayer) {
+                    ddPlayer.unMute(); // Make sure it's unmuted
+                    ddPlayer.setVolume(80);
+                    ddPlayer.seekTo(0);
+                    ddPlayer.playVideo();
+                }
+                const currentTeamScore = (activeTeam === 1) ? team1Score : team2Score;
+                const maxWager = Math.max(1000, currentTeamScore); 
+                ddWagerInput.value = 5;
+                ddWagerInput.min = 5;
+                ddWagerInput.max = maxWager;
+                ddWagerLabel.textContent = `Enter Wager (Max: $${maxWager}):`
+                ddModal.style.display = 'flex';
+            }
+
+            submitWagerBtn.addEventListener('click', () => {
+                const wager = parseInt(ddWagerInput.value);
+                const maxWager = parseInt(ddWagerInput.max);
+                if (isNaN(wager) || wager < 5 || wager > maxWager) {
+                    ddWagerInput.style.border = '2px solid red';
+                    return;
+                }
+                ddWagerInput.style.border = '2px solid #ccc';
+                currentWager = wager;
+                currentPoints = wager; 
+                ddModal.style.display = 'none';
+                const { category, q, a } = currentDailyDouble;
+                
+                showQuestionModal(`DAILY DOUBLE: ${category}`, `Wager: $${wager}`, q, a);
+                // Set special state for Daily Double
+                attemptState = 'dailyDouble';
+            });
+
+            function closeModal() {
+                modal.style.display = 'none';
+                ddModal.style.display = 'none';
+                resetTimer(); 
+                hideNotification();
+            }
+
+            // --- Modal Button Listeners ---
+            correctBtn.addEventListener('click', () => {
+                updateScore(currentPoints);
+                modalAnswer.style.display = 'block'; // Reveal answer
+                if (attemptState === 'steal') {
+                    showNotification("Steal successful!", 1500);
+                } else {
+                    showNotification("Correct!", 1500);
+                }
+                resetTimer();
+                setTimeout(closeModal, 1500);
+            });
+
+            incorrectBtn.addEventListener('click', () => {
+                if (attemptState === 'initial' || attemptState === 'dailyDouble') {
+                    updateScore(-currentPoints); // Deduct points
+                    
+                    if (attemptState === 'dailyDouble') {
+                        modalAnswer.style.display = 'block'; // Reveal answer
+                        showNotification("Incorrect! The answer was...");
+                        resetTimer();
+                        setTimeout(closeModal, 2500);
+                        return;
+                    }
+
+                    // Set up the steal attempt
+                    attemptState = 'steal';
+                    const otherTeamNum = activeTeam === 1 ? 2 : 1;
+                    const otherTeamName = (otherTeamNum === 1 ? team1NameInput.value : team2NameInput.value);
+                    
+                    setActiveTeam(otherTeamNum);
+                    showNotification(`Incorrect! ${otherTeamName}, you have 15 seconds to steal!`);
+                    
+                    modalAnswer.style.display = 'none'; // Keep answer hidden
+                    
+                    resetTimer();
+                    startTimer(15);
+                    
+                } else { // Steal attempt was wrong
+                    modalAnswer.style.display = 'block'; // Reveal answer
+                    showNotification("Incorrect! The answer was...");
+                    resetTimer();
+                    setTimeout(closeModal, 2500);
+                }
+            });
+
+            // Close modal if clicking outside the content
+            window.addEventListener('click', (e) => {
+                if (e.target === modal || e.target === ddModal) {
+                    closeModal();
+                }
+            });
+
+            // --- Team Customization Listeners ---
+            team1Board.addEventListener('click', () => setActiveTeam(1));
+            team2Board.addEventListener('click', () => setActiveTeam(2));
+            team1NameInput.addEventListener('click', (e) => e.stopPropagation());
+            team2NameInput.addEventListener('click', (e) => e.stopPropagation());
+            team1ColorPicker.addEventListener('click', (e) => e.stopPropagation());
+            team2ColorPicker.addEventListener('click', (e) => e.stopPropagation());
+            
+            team1ColorPicker.addEventListener('input', (e) => {
+                team1Board.style.setProperty('--team-color', e.target.value);
+            });
+            team2ColorPicker.addEventListener('input', (e) => {
+                team2Board.style.setProperty('--team-color', e.target.value);
+            });
+
+            // Reset game
+            resetBtn.addEventListener('click', createBoard);
+
+            // Timer Toggle
+            timerToggleBtn.addEventListener('click', handleTimerToggle);
+
+            // NEW: Listener for the start button
+            startGameBtn.addEventListener('click', primeAudio);
+
+            // Initial board setup
+            createBoard();
+            resetTimer(); // Set initial play icon
+        });
+    </script>
+</body>
+</html>
+
