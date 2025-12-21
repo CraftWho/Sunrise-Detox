@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jeopardy Think Music Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Tone.js Library -->
+    <script src="https://unpkg.com/tone@14.8.49/build/Tone.js"></script>
+    <style>
+        /* Custom styles for a polished look */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f7f7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <div id="app" class="w-full max-w-lg p-8 bg-white rounded-xl shadow-2xl border-t-8 border-blue-600">
+        <h1 class="text-3xl font-bold text-gray-800 mb-2">Jeopardy Theme Generator</h1>
+        <p class="text-gray-600 mb-6">Start, stop, and configure the theme music for your game.</p>
+        
+        <div id="status" class="mb-6 p-3 rounded-lg text-sm font-medium transition-all duration-300">
+            Click "Start Theme" to begin.
+        </div>
+
+        <div class="flex space-x-4">
+            <button id="startButton" class="flex-1 bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg shadow-md transition-all duration-300 transform hover:scale-[1.02]" onclick="startJeopardyTheme()">
+                Start Theme
+            </button>
+            <button id="stopButton" class="flex-1 bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-6 rounded-lg shadow-md transition-all duration-300 transform hover:scale-[1.02]" onclick="stopJeopardyTheme()" disabled>
+                Stop Theme
+            </button>
+        </div>
+
+        <div class="mt-8">
+            <h2 class="text-xl font-semibold text-gray-700 mb-3">Integration Code</h2>
+            <p class="text-sm text-gray-600 mb-2">Use the following functions in your Jeopardy game logic:</p>
+            <div class="bg-gray-100 p-4 rounded-lg border border-gray-300 text-sm font-mono overflow-auto">
+                <pre>
+// Call this when the final question/answer period begins
+startJeopardyTheme();
+
+// Call this when the player buzzes in or time runs out
+stopJeopardyTheme();
+                </pre>
+            </div>
+            <button onclick="copyCode()" class="mt-3 w-full bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium py-2 rounded-lg transition-colors">
+                Copy Code Snippet
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        // Global variables for Tone.js elements
+        let isPlaying = false;
+        let themeSequence;
+        let polySynth;
+        let timerStart = 0;
+        let maxTime = 30; // 30 seconds for the Jeopardy theme
+        let timerInterval;
+
+        // --- Core Tone.js Music Logic ---
+
+        function setupTheme() {
+            if (polySynth) return; // Already set up
+
+            // 1. Create a PolySynth for the main chords
+            // The FMSynth gives a nice, slightly bell-like, digital tone
+            polySynth = new Tone.PolySynth(Tone.FMSynth, {
+                oscillator: { type: "sine" },
+                envelope: {
+                    attack: 0.1,
+                    decay: 0.5,
+                    sustain: 0.7,
+                    release: 1.0,
+                },
+                volume: -10 // Keep the volume reasonable
+            }).toDestination();
+            
+            // Define the chords (using C Major scale notes)
+            // Sequence: Cmaj, Fmaj/C, Gmaj, Cmaj (Simplified)
+            const chords = [
+                ["C4", "E4", "G4"], // C Major
+                ["F4", "A4", "C5"], // F Major
+                ["G4", "B4", "D5"], // G Major
+                ["C4", "E4", "G4"]  // C Major (back home)
+            ];
+
+            // 2. Create the sequence (runs every 2 seconds, indefinitely)
+            themeSequence = new Tone.Sequence(
+                (time, chord) => {
+                    // Play the chord for 1.8 seconds (2 seconds total loop length)
+                    polySynth.triggerAttackRelease(chord, "1.8s", time);
+                },
+                chords,
+                "2n" // Repeat every half note (assuming 120 BPM, this is 1 second)
+            );
+            
+            // Set the overall tempo
+            Tone.Transport.bpm.value = 60; // 60 BPM (1 beat = 1 second)
+            
+            // Set the loop points and enable looping
+            themeSequence.loop = true;
+            themeSequence.loopEnd = "4m"; // Loop every 4 measures (which is 8 seconds at 2n repetition rate)
+        }
+
+        async function startJeopardyTheme() {
+            // First, ensure the audio context is running (required for modern browsers)
+            await Tone.start();
+
+            if (isPlaying) return;
+            setupTheme(); // Ensure synths and sequence are set up
+
+            // 1. Start the music
+            Tone.Transport.start();
+            themeSequence.start(0);
+
+            isPlaying = true;
+            updateUI("Playing... Time Remaining: 30s", "bg-yellow-100 text-yellow-800");
+
+            // 2. Start the 30-second timer
+            timerStart = 0;
+            updateTimer();
+            timerInterval = setInterval(updateTimer, 1000);
+
+            // 3. Auto-stop after 30 seconds
+            setTimeout(stopJeopardyTheme, maxTime * 1000);
+            
+            document.getElementById('startButton').disabled = true;
+            document.getElementById('stopButton').disabled = false;
+        }
+
+        function stopJeopardyTheme() {
+            if (!isPlaying) return;
+            
+            // 1. Stop the music
+            themeSequence.stop();
+            Tone.Transport.stop(); 
+            
+            // 2. Stop the timer
+            clearInterval(timerInterval);
+
+            isPlaying = false;
+            updateUI("Theme Stopped.", "bg-red-100 text-red-800");
+            
+            document.getElementById('startButton').disabled = false;
+            document.getElementById('stopButton').disabled = true;
+        }
+        
+        function updateTimer() {
+            timerStart += 1;
+            let remaining = maxTime - timerStart;
+            
+            if (remaining >= 0 && isPlaying) {
+                const statusElement = document.getElementById('status');
+                statusElement.textContent = `Playing... Time Remaining: ${remaining}s`;
+                if (remaining <= 5) {
+                    statusElement.classList.remove('bg-yellow-100');
+                    statusElement.classList.add('bg-red-100');
+                    statusElement.classList.remove('text-yellow-800');
+                    statusElement.classList.add('text-red-800');
+                }
+            } else {
+                stopJeopardyTheme();
+                updateUI("Time is up! Theme finished.", "bg-red-100 text-red-800");
+            }
+        }
+        
+        function updateUI(message, classes) {
+            const statusElement = document.getElementById('status');
+            statusElement.className = `mb-6 p-3 rounded-lg text-sm font-medium transition-all duration-300 ${classes}`;
+            statusElement.textContent = message;
+        }
+
+        function copyCode() {
+            const code = `
+// Call this when the final question/answer period begins
+startJeopardyTheme();
+
+// Call this when the player buzzes in or time runs out
+stopJeopardyTheme();
+            `;
+             try {
+                // Use document.execCommand('copy') as navigator.clipboard.writeText might fail in an iframe
+                const textarea = document.createElement('textarea');
+                textarea.value = code.trim();
+                textarea.style.position = 'fixed';
+                textarea.style.opacity = 0;
+                document.body.appendChild(textarea);
+                textarea.focus();
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+
+                updateUI("Code snippet copied to clipboard!", "bg-blue-100 text-blue-800");
+                setTimeout(() => updateUI("Theme Stopped.", "bg-red-100 text-red-800"), 3000); // Revert status
+            } catch (err) {
+                console.error('Failed to copy code: ', err);
+                updateUI("Failed to copy code. See console for error.", "bg-red-100 text-red-800");
+            }
+        }
+
+        // Initialize UI status on load
+        window.onload = () => {
+             updateUI("Ready to play the theme.", "bg-gray-200 text-gray-700");
+        };
+
+    </script>
+</body>
+</html>

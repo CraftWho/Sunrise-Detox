@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Sunrise Detox Jeopardy</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        html, body {
+            font-family: 'Inter', sans-serif;
+            background-color: #060a2b; /* Dark blue background */
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden; /* No scrolling */
+            touch-action: manipulation; /* Improves touch response on iOS */
+        }
+        
+        #game-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1s ease-in;
+        }
+
+        /* --- INTRO ANIMATION STYLES --- */
+        #intro-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(to bottom, #020411, #1a0b16);
+            transition: opacity 1.5s ease-in-out;
+        }
+        
+        .animate-sky { animation: sky-change 4s ease-out forwards; }
+
+        .sun-graphic {
+            width: 150px;
+            height: 150px;
+            background: linear-gradient(to bottom, #fbbf24, #f59e0b);
+            border-radius: 50%;
+            box-shadow: 0 0 60px rgba(251, 191, 36, 0.6);
+            position: relative;
+            z-index: 10;
+            animation: sunrise 4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+
+        .ocean {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 35%;
+            background: linear-gradient(to top, #06226e, #1e3a8a);
+            z-index: 20;
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.5);
+        }
+
+        .intro-content {
+            position: relative;
+            z-index: 30;
+            text-align: center;
+            margin-top: -80px;
+            opacity: 0;
+            animation: fade-in-text 2s ease-out forwards;
+            animation-delay: 3s;
+        }
+
+        @keyframes sunrise {
+            0% { transform: translateY(200%); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes sky-change {
+            0% { background: linear-gradient(to bottom, #020411, #000000); }
+            100% { background: linear-gradient(to bottom, #1e1b4b, #4c1d95); }
+        }
+        @keyframes fade-in-text {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- BOARD STYLES --- */
+        .jeopardy-board {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 4px;
+            flex-grow: 1;
+            min-height: 0;
+            padding: 2px;
+        }
+        .category-cell {
+            background-color: #06226e;
+            color: white;
+            font-weight: bold;
+            text-align: center;
+            padding: clamp(4px, 1.2vh, 8px) 4px;
+            font-size: clamp(0.65rem, 2.4vw, 0.875rem);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1.2;
+        }
+        .question-cell {
+            background-color: #06226e;
+            color: #ffcc00;
+            font-size: clamp(1rem, 5vw, 1.8rem); /* Larger font for prices */
+            font-weight: 900;
+            text-align: center;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease-in-out;
+            border: 2px solid transparent;
+        }
+        .question-cell:active { transform: scale(0.95); }
+        .question-cell.answered {
+            background-color: #373b5a;
+            color: #6b7280;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        /* --- MODAL STYLES --- */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 50;
+            left: 0; top: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(8px);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            padding: clamp(16px, 4vw, 24px);
+            border-radius: 16px;
+            width: 95%;
+            max-width: 700px;
+            min-height: 40vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+        .modal-question {
+            font-size: clamp(1.2rem, 5vw, 2rem);
+            font-weight: 600;
+            color: #1f2937;
+            padding: 20px 0;
+            line-height: 1.3;
+        }
+        .modal-answer {
+            display: none;
+            font-size: clamp(1rem, 4vw, 1.5rem);
+            font-weight: 700;
+            color: #059669;
+            margin: 16px 0;
+            padding: 10px;
+            background: #d1fae5;
+            border-radius: 8px;
+        }
+
+        /* --- SCOREBOARD --- */
+        .team-scoreboard {
+            background-color: #ffffff;
+            padding: 8px;
+            border-radius: 10px;
+            border: 4px solid transparent;
+            transition: all 0.3s ease;
+        }
+        .team-scoreboard.active {
+            border-color: var(--team-color, #3b82f6);
+            box-shadow: 0 0 20px var(--team-color, #3b82f6);
+            transform: scale(1.02);
+        }
+        .team-score {
+            font-size: clamp(2rem, 6vw, 3rem);
+            font-weight: 900;
+            color: #06226e;
+            background: none;
+            border: none;
+            text-align: center;
+            width: 100%;
+            outline: none;
+        }
+
+        /* --- TIMER --- */
+        #timer-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        #timer-display {
+            font-size: 3rem;
+            font-weight: 900;
+            color: #06226e;
+            font-variant-numeric: tabular-nums;
+        }
+        
+        /* --- UTILS --- */
+        .btn {
+            touch-action: manipulation; /* Prevents double-tap zoom delay */
+        }
+    </style>
+</head>
+<body class="p-2 select-none"> <div id="intro-overlay" class="animate-sky">
+        <div class="sun-graphic"></div>
+        <div class="ocean"></div>
+        <div class="intro-content">
+            <h1 class="text-4xl md:text-7xl font-extrabold text-white tracking-wide drop-shadow-lg mb-2">
+                <span class="text-yellow-400">SUNRISE</span> DETOX
+            </h1>
+            <p class="text-sm md:text-xl text-blue-200 tracking-[0.3em] uppercase font-semibold mb-8">Jeopardy</p>
+            <button id="start-game-btn" class="btn relative inline-flex items-center justify-center px-8 py-4 text-xl font-bold text-blue-900 bg-yellow-400 rounded-full hover:bg-yellow-300 hover:scale-105 shadow-[0_0_20px_rgba(253,224,71,0.5)] transition-all">
+                TAP TO START
+            </button>
+        </div>
+    </div>
+
+    <div id="game-container" class="container mx-auto max-w-5xl h-full flex flex-col">
+        <div class="flex justify-between items-center mb-2 px-2">
+             <h1 class="text-lg font-bold text-white opacity-80">Sunrise Detox</h1>
+             <button id="reset-game" class="bg-red-900/50 hover:bg-red-600 text-white text-xs font-bold py-2 px-4 rounded border border-red-500 transition-colors">
+                RESET
+            </button>
+        </div>
+       
+        <div class="grid grid-cols-2 gap-4 mb-4">
+            <div id="team-1-board" class="team-scoreboard active" style="--team-color: #3b82f6;">
+                <div class="flex items-center gap-2 mb-1">
+                    <input type="color" id="team-1-color" class="w-6 h-6 rounded-full border-0 p-0" value="#3b82f6">
+                    <input type="text" id="team-1-name" class="font-bold text-gray-800 text-lg w-full bg-transparent outline-none" value="Team 1">
+                </div>
+                <input type="number" id="team-1-score" class="team-score" value="0">
+            </div>
+
+            <div id="team-2-board" class="team-scoreboard" style="--team-color: #ef4444;">
+                <div class="flex items-center gap-2 mb-1">
+                    <input type="color" id="team-2-color" class="w-6 h-6 rounded-full border-0 p-0" value="#ef4444">
+                    <input type="text" id="team-2-name" class="font-bold text-gray-800 text-lg w-full bg-transparent outline-none" value="Team 2">
+                </div>
+                <input type="number" id="team-2-score" class="team-score" value="0">
+            </div>
+        </div>
+
+        <div id="jeopardy-board" class="jeopardy-board"></div>
+    </div>
+
+    <div id="question-modal" class="modal">
+        <div class="modal-content relative">
+            <div class="flex justify-between items-center border-b pb-2 mb-4">
+                <span id="modal-category" class="text-sm font-bold text-blue-600 uppercase tracking-wider">Category</span>
+                <span id="modal-points" class="text-2xl font-black text-yellow-600">$000</span>
+            </div>
+            
+            <div id="modal-notification" class="hidden p-2 bg-red-100 text-red-800 font-bold rounded mb-2"></div>
+
+            <div id="modal-question-text" class="modal-question flex-grow flex items-center justify-center"></div>
+            <div id="modal-answer-text" class="modal-answer"></div>
+
+            <div class="mt-auto">
+                <div id="timer-container">
+                    <div id="timer-display">30</div>
+                    <button id="timer-toggle-btn" class="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center hover:bg-gray-300">
+                        <svg id="timer-icon" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-800" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                    </button>
+                </div>
+
+                <div id="button-container" class="mt-6 flex flex-col gap-3">
+                    <div id="scoring-buttons" class="grid grid-cols-2 gap-4">
+                        <button id="correct-btn" class="btn bg-green-500 text-white font-bold py-4 rounded-xl shadow-lg active:scale-95 text-xl">
+                            CORRECT
+                        </button>
+                        <button id="incorrect-btn" class="btn bg-red-500 text-white font-bold py-4 rounded-xl shadow-lg active:scale-95 text-xl">
+                            WRONG
+                        </button>
+                    </div>
+                    <button id="next-btn" class="hidden btn w-full bg-blue-600 text-white font-bold py-4 rounded-xl shadow-lg active:scale-95 text-xl">
+                        CONTINUE
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="daily-double-modal" class="modal">
+        <div class="modal-content border-4 border-yellow-400 bg-blue-950">
+            <h2 class="text-4xl font-black text-yellow-400 mb-6 tracking-widest">DAILY DOUBLE</h2>
+            <div class="mb-6">
+                <label class="block text-white text-xl mb-2">Enter Wager:</label>
+                <input type="number" id="dd-wager-input" class="text-4xl font-bold text-center w-full p-4 rounded-lg" min="5">
+            </div>
+            <button id="submit-wager-btn" class="btn w-full bg-yellow-400 hover:bg-yellow-300 text-blue-900 font-bold py-4 rounded-lg text-xl">
+                BET!
+            </button>
+        </div>
+    </div>
+
+    <div id="winner-modal" class="modal">
+        <div class="modal-content bg-gradient-to-br from-yellow-300 to-yellow-500 border-8 border-blue-900">
+            <div id="confetti-container" class="absolute inset-0 pointer-events-none overflow-hidden"></div>
+            <h2 class="text-2xl font-bold text-blue-900 opacity-75">WINNER</h2>
+            <h1 id="winner-name" class="text-5xl md:text-7xl font-black text-blue-900 my-6">TEAM NAME</h1>
+            <button id="close-winner-modal-btn" class="btn bg-blue-900 text-white font-bold py-4 px-10 rounded-full text-xl shadow-2xl">
+                NEW GAME
+            </button>
+        </div>
+    </div>
+
+    <div id="change-team-modal" class="modal">
+        <div class="modal-content !bg-indigo-600 !text-white justify-center items-center">
+            <h1 class="text-3xl font-bold opacity-80">SWITCH TURNS</h1>
+            <p class="text-4xl font-black my-8" id="next-team-name">Team 2</p>
+            <button id="confirm-change-team-btn" class="btn w-full bg-white text-indigo-700 font-bold py-4 rounded-xl text-xl">
+                READY
+            </button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- DATA ---
+            const gameData = {
+                "Mental Health": {
+                    100: { q: "Persistent sadness, loss of interest, and feelings of worthlessness.", a: "What is depression?" },
+                    200: { q: "Excessive, persistent worry and fear about everyday situations.", a: "What is anxiety?" },
+                    300: { q: "Mood swings ranging from depressive lows to manic highs.", a: "What is bipolar disorder?" },
+                    400: { q: "Being fully present and engaged in the moment without judgment.", a: "What is mindfulness?" },
+                    500: { q: "Unfair belief associated with a circumstance preventing people from seeking help.", a: "What is stigma?" }
+                },
+                "Detox Info": {
+                    100: { q: "Process of safely helping the body rid itself of a substance.", a: "What is detox?" },
+                    200: { q: "Symptoms that occur after stopping or reducing intake of a substance.", a: "What is withdrawal?" },
+                    300: { q: "Body adapts to a substance, requiring more to achieve the same effect.", a: "What is tolerance?" },
+                    400: { q: "Symptoms continuing for months after stopping substance use.", a: "What is PAWS?" },
+                    500: { q: "Needing a substance to function 'normally'.", a: "What is physical dependence?" }
+                },
+                "Recovery": {
+                    100: { q: "Focusing on the present 24 hours.", a: "What is One Day at a Time?" },
+                    200: { q: "A guide through the recovery program.", a: "What is a sponsor?" },
+                    300: { q: "Hungry, Angry, Lonely, Tired.", a: "What is H.A.L.T.?" },
+                    400: { q: "A return to substance use after abstinence.", a: "What is relapse?" },
+                    500: { q: "Accepting what you cannot change.", a: "What is acceptance?" }
+                },
+                "12 Steps": {
+                    100: { q: "Admitting this over alcohol or another substance (Step 1).", a: "What is powerlessness?" },
+                    200: { q: "Coming to believe in a Power greater than ourselves.", a: "What is Step 2?" },
+                    300: { q: "Turning our will and lives over to the care of God.", a: "What is Step 3?" },
+                    400: { q: "Making a searching and fearless moral inventory.", a: "What is Step 4?" },
+                    500: { q: "Admitting the exact nature of our wrongs.", a: "What is Step 5?" }
+                },
+                "Coping": {
+                    100: { q: "Writing down thoughts and feelings.", a: "What is journaling?" },
+                    200: { q: "Limits and rules set in relationships.", a: "What are boundaries?" },
+                    300: { q: "Talking with a trusted friend or support group.", a: "What is reaching out?" },
+                    400: { q: "Physical activity to manage stress.", a: "What is exercise?" },
+                    500: { q: "Focusing on 5 senses to stabilize during stress.", a: "What is grounding?" }
+                }
+            };
+
+            // --- AUDIO SYSTEM (Native Web Audio - No External Libraries) ---
+            let audioContext;
+            let timerOscillators = []; // Array to track active oscillators for polyphony
+
+            function initAudio() {
+                if (!audioContext) {
+                    const AC = window.AudioContext || window.webkitAudioContext;
+                    audioContext = new AC();
+                }
+                if (audioContext.state === 'suspended') audioContext.resume();
+            }
+
+            // Synthesizer Helper
+            function playTone(freq, type, duration, startTime = 0, vol = 0.1) {
+                if (!audioContext) return;
+                const osc = audioContext.createOscillator();
+                const gain = audioContext.createGain();
+                osc.type = type;
+                osc.frequency.value = freq;
+                osc.connect(gain);
+                gain.connect(audioContext.destination);
+                
+                const now = audioContext.currentTime + startTime;
+                gain.gain.setValueAtTime(0, now);
+                gain.gain.linearRampToValueAtTime(vol, now + 0.05);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+                
+                osc.start(now);
+                osc.stop(now + duration + 0.1);
+                return osc;
+            }
+
+            function playIntroSong() {
+                initAudio();
+                const notes = [523.25, 659.25, 783.99, 1046.50, 698.46, 880.00, 1046.50, 1396.91, 783.99, 987.77, 1174.66, 1567.98];
+                notes.forEach((f, i) => playTone(f, 'triangle', 2.0, i * 0.15, 0.05));
+            }
+
+            function playCorrectSound() {
+                playTone(523.25, 'sine', 0.2, 0); // C5
+                playTone(659.25, 'sine', 0.2, 0.1); // E5
+                playTone(783.99, 'sine', 0.4, 0.2); // G5
+                playTone(1046.50, 'sine', 0.8, 0.3, 0.2); // C6
+            }
+
+            function playWrongSound() {
+                playTone(150, 'sawtooth', 0.4, 0, 0.2);
+                playTone(100, 'sawtooth', 0.4, 0.1, 0.2);
+            }
+
+            function playDailyDoubleSound() {
+                playTone(300, 'square', 0.1, 0);
+                playTone(600, 'square', 0.1, 0.1);
+                playTone(900, 'square', 0.4, 0.2);
+            }
+
+            // --- THINK MUSIC (Native Implementation) ---
+            // Replaces the external Tone.js library
+            let isThinkMusicPlaying = false;
+            let thinkMusicInterval;
+
+            function startThinkMusic() {
+                if(isThinkMusicPlaying) return;
+                isThinkMusicPlaying = true;
+                
+                // Classic Think Music Pattern (approximate)
+                // We schedule chunks of 4 seconds
+                let timeOffset = 0;
+                
+                const scheduleMeasure = () => {
+                    if(!isThinkMusicPlaying) return;
+                    
+                    // Main bass pattern (pizzicato strings feel)
+                    playTone(523.25, 'sine', 0.3, 0); // C5
+                    playTone(523.25, 'sine', 0.3, 1); // C5
+                    playTone(523.25, 'sine', 0.3, 2); // C5
+                    playTone(523.25, 'sine', 0.3, 3); // C5
+                    
+                    // Melody Hook
+                    playTone(1046.50, 'triangle', 0.2, 3.5, 0.05); // High C
+                }
+
+                scheduleMeasure();
+                thinkMusicInterval = setInterval(scheduleMeasure, 4000);
+            }
+
+            function stopThinkMusic() {
+                isThinkMusicPlaying = false;
+                clearInterval(thinkMusicInterval);
+            }
+
+
+            // --- GAME STATE ---
+            let team1Score = 0, team2Score = 0;
+            let activeTeam = 1;
+            let currentPoints = 0;
+            let currentDD = null;
+            let timerInterval = null;
+            let timeLeft = 30;
+            let attemptState = 'initial'; // initial, steal, dd
+            let consecutiveCorrect1 = 0, consecutiveCorrect2 = 0;
+            let answeredCount = 0;
+            const totalQuestions = 25;
+
+            // --- ELEMENTS ---
+            const ui = {
+                intro: document.getElementById('intro-overlay'),
+                game: document.getElementById('game-container'),
+                board: document.getElementById('jeopardy-board'),
+                modal: document.getElementById('question-modal'),
+                ddModal: document.getElementById('daily-double-modal'),
+                winnerModal: document.getElementById('winner-modal'),
+                changeModal: document.getElementById('change-team-modal'),
+                team1Board: document.getElementById('team-1-board'),
+                team2Board: document.getElementById('team-2-board'),
+                team1Score: document.getElementById('team-1-score'),
+                team2Score: document.getElementById('team-2-score'),
+                modalQ: document.getElementById('modal-question-text'),
+                modalA: document.getElementById('modal-answer-text'),
+                timerDisplay: document.getElementById('timer-display'),
+                timerBtn: document.getElementById('timer-toggle-btn'),
+                timerIcon: document.getElementById('timer-icon'),
+                btns: {
+                    start: document.getElementById('start-game-btn'),
+                    reset: document.getElementById('reset-game'),
+                    correct: document.getElementById('correct-btn'),
+                    wrong: document.getElementById('incorrect-btn'),
+                    next: document.getElementById('next-btn'),
+                    wager: document.getElementById('submit-wager-btn'),
+                    changeConfirm: document.getElementById('confirm-change-team-btn'),
+                    winnerClose: document.getElementById('close-winner-modal-btn')
+                }
+            };
+
+            // --- LOGIC ---
+
+            function createBoard() {
+                ui.board.innerHTML = '';
+                team1Score = 0; team2Score = 0; answeredCount = 0;
+                updateScores();
+                setActiveTeam(1);
+                
+                let allCells = [];
+                for(let cat in gameData) {
+                    // Header
+                    let h = document.createElement('div');
+                    h.className = 'category-cell';
+                    h.textContent = cat;
+                    ui.board.appendChild(h);
+                }
+                
+                const points = [100, 200, 300, 400, 500];
+                points.forEach(p => {
+                    for(let cat in gameData) {
+                        let cell = document.createElement('div');
+                        cell.className = 'question-cell';
+                        cell.textContent = `$${p}`;
+                        cell.dataset.cat = cat;
+                        cell.dataset.pts = p;
+                        cell.onclick = (e) => handleCellClick(e.target, cat, p);
+                        ui.board.appendChild(cell);
+                        allCells.push(cell);
+                    }
+                });
+
+                // Set 1 Daily Double
+                const rand = Math.floor(Math.random() * allCells.length);
+                allCells[rand].dataset.dd = 'true';
+            }
+
+            function handleCellClick(cell, cat, pts) {
+                if(cell.classList.contains('answered')) return;
+                initAudio();
+                
+                cell.classList.add('answered');
+                cell.textContent = '';
+                currentPoints = pts;
+                answeredCount++;
+
+                const data = gameData[cat][pts];
+                if(cell.dataset.dd === 'true') {
+                    currentDD = { cat, pts, q: data.q, a: data.a };
+                    openDDModal();
+                } else {
+                    openQuestionModal(cat, pts, data.q, data.a);
+                }
+            }
+
+            function openQuestionModal(cat, pts, q, a) {
+                document.getElementById('modal-category').textContent = cat;
+                document.getElementById('modal-points').textContent = `$${pts}`;
+                ui.modalQ.textContent = q;
+                ui.modalA.textContent = a;
+                ui.modalA.style.display = 'none';
+                
+                // Reset UI
+                document.getElementById('scoring-buttons').classList.remove('hidden');
+                ui.btns.next.classList.add('hidden');
+                
+                ui.modal.style.display = 'flex';
+                
+                attemptState = 'initial';
+                resetTimer(30);
+                startTimer();
+            }
+
+            function openDDModal() {
+                playDailyDoubleSound();
+                ui.ddModal.style.display = 'flex';
+                const currentScore = activeTeam === 1 ? team1Score : team2Score;
+                const max = Math.max(1000, currentScore);
+                const input = document.getElementById('dd-wager-input');
+                input.max = max;
+                input.value = "";
+                input.placeholder = `Max: $${max}`;
+                input.focus();
+            }
+
+            // --- TIMER LOGIC ---
+            function resetTimer(seconds) {
+                stopTimer();
+                timeLeft = seconds;
+                ui.timerDisplay.textContent = timeLeft;
+                ui.timerIcon.innerHTML = '<path d="M8 5v14l11-7z"/>'; // Play icon
+            }
+
+            function startTimer() {
+                if(timerInterval) return;
+                ui.timerIcon.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>'; // Pause icon
+                startThinkMusic();
+                
+                timerInterval = setInterval(() => {
+                    timeLeft--;
+                    ui.timerDisplay.textContent = timeLeft;
+                    if(timeLeft <= 0) {
+                        handleTimeout();
+                    }
+                }, 1000);
+            }
+
+            function stopTimer() {
+                clearInterval(timerInterval);
+                timerInterval = null;
+                stopThinkMusic();
+                ui.timerIcon.innerHTML = '<path d="M8 5v14l11-7z"/>';
+            }
+
+            function handleTimeout() {
+                stopTimer();
+                playWrongSound();
+                if(attemptState === 'initial') {
+                    // Time up for first team -> switch to steal
+                    const stealTeam = activeTeam === 1 ? 2 : 1;
+                    setActiveTeam(stealTeam);
+                    attemptState = 'steal';
+                    resetTimer(5);
+                    startTimer();
+                    alert(`Time's up! Team ${stealTeam} can steal!`);
+                } else {
+                    // Time up for steal or DD -> End question
+                    revealAnswer();
+                }
+            }
+
+            // --- SCORING ---
+            ui.btns.correct.onclick = () => {
+                playCorrectSound();
+                let pts = currentPoints;
+                if(attemptState === 'steal') pts = Math.round(pts / 2);
+                
+                addScore(activeTeam, pts);
+                
+                // Streak logic
+                if(activeTeam === 1) { consecutiveCorrect1++; consecutiveCorrect2 = 0; }
+                else { consecutiveCorrect2++; consecutiveCorrect1 = 0; }
+                
+                revealAnswer();
+                checkTurnSwitch(true);
+            };
+
+            ui.btns.wrong.onclick = () => {
+                playWrongSound();
+                if(attemptState === 'dd') {
+                    addScore(activeTeam, -currentPoints);
+                    revealAnswer();
+                } else if(attemptState === 'initial') {
+                    addScore(activeTeam, -Math.round(currentPoints / 2));
+                    attemptState = 'steal';
+                    const next = activeTeam === 1 ? 2 : 1;
+                    setActiveTeam(next);
+                    resetTimer(5);
+                    startTimer();
+                    // Don't reveal yet
+                } else {
+                    // Steal failed
+                    // No point loss on steal fail in this version, just end
+                    revealAnswer();
+                    checkTurnSwitch(false);
+                }
+            };
+
+            function addScore(team, pts) {
+                if(team === 1) {
+                    team1Score += pts;
+                    if(team1Score < 0) team1Score = 0;
+                } else {
+                    team2Score += pts;
+                    if(team2Score < 0) team2Score = 0;
+                }
+                updateScores();
+            }
+
+            function updateScores() {
+                ui.team1Score.value = team1Score;
+                ui.team2Score.value = team2Score;
+            }
+
+            function revealAnswer() {
+                stopTimer();
+                ui.modalA.style.display = 'block';
+                document.getElementById('scoring-buttons').classList.add('hidden');
+                ui.btns.next.classList.remove('hidden');
+            }
+
+            function checkTurnSwitch(wasCorrect) {
+                let nextTeam = activeTeam;
+                // Switch if wrong (and steal failed) OR streak > 3
+                if(!wasCorrect) {
+                    nextTeam = activeTeam === 1 ? 2 : 1;
+                } else {
+                    if((activeTeam === 1 && consecutiveCorrect1 >= 3) || (activeTeam === 2 && consecutiveCorrect2 >= 3)) {
+                        nextTeam = activeTeam === 1 ? 2 : 1;
+                        consecutiveCorrect1 = 0; consecutiveCorrect2 = 0;
+                    }
+                }
+                
+                // Store next team for the "Next" button action
+                ui.btns.next.dataset.nextTeam = nextTeam;
+            }
+
+            ui.btns.next.onclick = () => {
+                ui.modal.style.display = 'none';
+                ui.ddModal.style.display = 'none';
+                
+                // Apply turn switch
+                const next = parseInt(ui.btns.next.dataset.nextTeam) || activeTeam;
+                if(next !== activeTeam && answeredCount < totalQuestions) {
+                     document.getElementById('next-team-name').textContent = document.getElementById(`team-${next}-name`).value;
+                     ui.changeModal.style.display = 'flex';
+                     setActiveTeam(next);
+                }
+                
+                if(answeredCount >= totalQuestions) showWinner();
+            };
+
+            ui.btns.changeConfirm.onclick = () => ui.changeModal.style.display = 'none';
+            ui.btns.wager.onclick = () => {
+                const w = parseInt(document.getElementById('dd-wager-input').value);
+                const max = parseInt(document.getElementById('dd-wager-input').max);
+                if(!w || w < 5 || w > max) return; // invalid
+                
+                currentPoints = w;
+                ui.ddModal.style.display = 'none';
+                openQuestionModal(`DAILY DOUBLE: ${currentDD.cat}`, `Wager: $${w}`, currentDD.q, currentDD.a);
+                attemptState = 'dd';
+            };
+
+            function setActiveTeam(t) {
+                activeTeam = t;
+                ui.team1Board.classList.toggle('active', t === 1);
+                ui.team2Board.classList.toggle('active', t === 2);
+            }
+
+            function showWinner() {
+                ui.winnerModal.style.display = 'flex';
+                let txt = "It's a Tie!";
+                if(team1Score > team2Score) txt = document.getElementById('team-1-name').value;
+                if(team2Score > team1Score) txt = document.getElementById('team-2-name').value;
+                document.getElementById('winner-name').textContent = txt;
+                startConfetti();
+            }
+
+            // --- SETUP LISTENERS ---
+            ui.btns.start.onclick = () => {
+                playIntroSong();
+                ui.intro.style.opacity = 0;
+                ui.game.style.opacity = 1;
+                setTimeout(() => ui.intro.style.display = 'none', 1500);
+            };
+
+            ui.btns.reset.onclick = () => {
+                if(confirm("Reset Game?")) location.reload();
+            };
+            
+            ui.btns.winnerClose.onclick = () => location.reload();
+            ui.timerBtn.onclick = () => {
+                if(timerInterval) stopTimer(); else startTimer();
+            }
+
+            // Confetti Engine (Simple)
+            function startConfetti() {
+                const colors = ['#f00', '#0f0', '#00f', '#ff0', '#0ff'];
+                for(let i=0; i<100; i++) {
+                    let c = document.createElement('div');
+                    c.style.cssText = `
+                        position:absolute; width:10px; height:10px; background:${colors[Math.floor(Math.random()*5)]};
+                        top:-10px; left:${Math.random()*100}vw; opacity:0.8;
+                        transition: transform ${2+Math.random()*3}s linear, top ${2+Math.random()*3}s linear;
+                    `;
+                    ui.winnerModal.appendChild(c);
+                    setTimeout(() => {
+                        c.style.top = '110vh';
+                        c.style.transform = `rotate(${Math.random()*360}deg)`;
+                    }, 100);
+                }
+            }
+
+            createBoard();
+        });
+    </script>
+</body>
+</html>
