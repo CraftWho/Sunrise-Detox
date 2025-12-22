@@ -13,23 +13,29 @@
         html, body {
             font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
             background-color: #000; /* Start black */
-            height: 100%;
-            width: 100%;
+            /* DVH fixes the "cut off" issue on mobile browsers by accounting for the URL bar */
+            height: 100dvh; 
+            width: 100vw;
             overflow: hidden;
             touch-action: manipulation;
             -webkit-tap-highlight-color: transparent;
             -webkit-user-select: none;
             user-select: none;
+            margin: 0;
+            padding: 0;
         }
 
+        /* Safe area handling for iPhones with notches */
         body {
-            padding-top: max(env(safe-area-inset-top), 8px);
-            padding-bottom: max(env(safe-area-inset-bottom), 8px);
+            padding-top: max(env(safe-area-inset-top), 4px);
+            padding-bottom: max(env(safe-area-inset-bottom), 4px);
             padding-left: env(safe-area-inset-left);
             padding-right: env(safe-area-inset-right);
+            display: flex;
+            flex-direction: column;
         }
 
-        /* --- SPLASH SCREEN (New) --- */
+        /* --- SPLASH SCREEN --- */
         #splash-screen {
             position: fixed;
             inset: 0;
@@ -47,16 +53,14 @@
             position: fixed;
             inset: 0;
             z-index: 200;
-            display: none; /* Hidden until splash clicked */
+            display: none;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             background: linear-gradient(to bottom, #020411, #1a0b16);
             transition: opacity 1.5s ease-in-out;
-            padding-bottom: env(safe-area-inset-bottom);
         }
         
-        /* Animation Classes applied via JS */
         .run-sunrise-sky { animation: sky-change 4s ease-out forwards; }
         .run-sunrise-sun { animation: sunrise 4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
         .run-sunrise-text { animation: fade-in-text 2s ease-out forwards; animation-delay: 3s; }
@@ -69,7 +73,7 @@
             box-shadow: 0 0 60px rgba(251, 191, 36, 0.6);
             position: relative;
             z-index: 10;
-            transform: translateY(200%); /* Start hidden */
+            transform: translateY(200%);
             opacity: 0;
         }
 
@@ -88,7 +92,7 @@
             z-index: 30;
             text-align: center;
             margin-top: -80px;
-            opacity: 0; /* Start hidden */
+            opacity: 0;
             width: 90%;
         }
 
@@ -117,30 +121,47 @@
             background: linear-gradient(to bottom, #020411, #1a0b16);
             opacity: 0;
             transition: opacity 1s ease;
+            overflow-y: auto; /* Allow scrolling if menu is tall */
         }
 
-        /* --- GAME CONTAINER --- */
+        /* --- GAME CONTAINER (Flexbox layout for perfect fit) --- */
         #game-container {
             display: none;
             flex-direction: column;
             height: 100%;
+            width: 100%;
             opacity: 0;
             transition: opacity 1s ease-in;
+            padding: 4px;
+        }
+
+        .header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0; /* Never shrink the header */
+            margin-bottom: 4px;
+            height: 40px;
         }
 
         /* --- MENU BUTTONS --- */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            width: 90%;
+            max-width: 600px;
+        }
         .menu-btn {
-            width: 85%;
-            max-width: 320px;
-            padding: 18px;
-            margin: 10px 0;
+            width: 100%;
+            padding: 15px;
             background-color: #06226e;
             color: white;
             font-weight: bold;
-            font-size: 1.1rem;
-            border-radius: 12px;
+            font-size: clamp(0.8rem, 2vw, 1rem);
+            border-radius: 8px;
             border: 2px solid #3b82f6;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.4);
             text-align: center;
             transition: transform 0.1s;
         }
@@ -150,43 +171,44 @@
         .jeopardy-board {
             display: grid;
             grid-template-columns: repeat(5, minmax(0, 1fr));
-            grid-template-rows: auto 1fr 1fr 1fr 1fr 1fr; 
-            gap: 4px;
-            flex-grow: 1;
-            min-height: 0;
-            padding: 2px;
-            margin-bottom: 2px;
+            /* KEY FIX: Use fractions so rows squash to fit screen exactly */
+            grid-template-rows: repeat(6, 1fr); 
+            gap: 3px;
+            flex-grow: 1; /* Take up all remaining space */
+            min-height: 0; /* Allow shrinking */
+            width: 100%;
         }
+        
         .category-cell {
             background-color: #06226e;
             color: white;
             font-weight: bold;
             text-align: center;
-            padding: 6px 4px;
-            font-size: clamp(0.65rem, 2.5vw, 0.9rem); 
-            border-radius: 6px;
+            padding: 2px;
+            /* Responsive font scaling */
+            font-size: clamp(0.7rem, 2.5vw, 1.1rem);
+            border-radius: 4px;
             display: flex;
             align-items: center;
             justify-content: center;
-            line-height: 1.2;
+            line-height: 1.1;
             word-break: break-word; 
             hyphens: auto;
-            min-height: 40px; 
+            overflow: hidden;
         }
+        
         .question-cell {
             background-color: #06226e;
             color: #ffcc00;
-            font-size: clamp(1.2rem, 5vw, 2rem);
+            font-size: clamp(1.2rem, 6dvh, 2.5rem); /* Scales with height */
             font-weight: 900;
             text-align: center;
-            border-radius: 6px;
+            border-radius: 4px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: opacity 0.2s;
             border: 2px solid transparent;
-            -webkit-tap-highlight-color: transparent;
         }
         .question-cell.answered {
             background-color: #1e1b4b;
@@ -200,38 +222,35 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 6px;
-            margin-bottom: 6px;
-            flex-shrink: 0;
+            margin-bottom: 4px;
+            flex-shrink: 0; /* Never shrink scores */
+            height: 44px; /* Fixed compact height */
         }
         .team-scoreboard {
             background-color: #ffffff;
-            padding: 4px 8px;
-            border-radius: 8px;
+            padding: 0 8px;
+            border-radius: 6px;
             border: 3px solid transparent;
-            transition: all 0.3s ease;
-            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            height: 50px;
         }
         .team-scoreboard.active {
             border-color: var(--team-color, #3b82f6);
-            box-shadow: 0 0 10px var(--team-color, #3b82f6);
+            box-shadow: 0 0 8px var(--team-color, #3b82f6);
             transform: scale(1.01);
         }
         .team-score {
-            font-size: 1.5rem;
+            font-size: clamp(1.2rem, 4vw, 1.5rem);
             font-weight: 900;
             color: #06226e;
             background: none;
             border: none;
             text-align: right;
-            width: auto;
-            min-width: 40px;
+            width: 70px;
             outline: none;
             margin: 0;
-            pointer-events: none;
+            pointer-events: auto; 
         }
 
         /* --- MODAL --- */
@@ -248,12 +267,12 @@
         }
         .modal-content {
             background-color: #fefefe;
-            padding: 16px;
-            border-radius: 16px;
+            padding: 12px;
+            border-radius: 12px;
             width: 100%;
             max-width: 600px;
-            height: auto;
-            max-height: 90vh;
+            /* Ensure modal fits on screen even with keyboard */
+            max-height: 95dvh; 
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -261,37 +280,36 @@
             overflow-y: auto;
         }
         .modal-question {
-            font-size: clamp(1.2rem, 5vw, 2rem);
+            font-size: clamp(1.1rem, 4vw, 1.8rem);
             font-weight: 600;
             color: #1f2937;
-            padding: 20px 0;
+            padding: 10px 0;
             line-height: 1.3;
             flex-grow: 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 100px;
+            min-height: 80px;
         }
         .modal-answer {
             display: none;
-            font-size: clamp(1rem, 4vw, 1.5rem);
+            font-size: clamp(1rem, 4vw, 1.4rem);
             font-weight: 700;
             color: #059669;
-            margin: 10px 0;
-            padding: 15px;
+            margin: 8px 0;
+            padding: 10px;
             background: #d1fae5;
             border-radius: 8px;
             border: 1px solid #10b981;
         }
 
         /* --- UTILS --- */
-        .btn { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
-        input[type="color"] { width: 24px; height: 24px; border: none; overflow: hidden; border-radius: 50%; }
-        #scoring-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .game-btn { border-radius: 12px; padding: 15px; font-weight: bold; font-size: 1.1rem; color: white; }
+        input[type="color"] { width: 20px; height: 20px; border: none; border-radius: 50%; padding: 0; overflow: hidden; }
+        #scoring-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .game-btn { border-radius: 8px; padding: 12px; font-weight: bold; font-size: 1rem; color: white; }
     </style>
 </head>
-<body class="p-2"> 
+<body> 
 
     <div id="splash-screen">
         <h1 class="text-gray-400 text-sm tracking-[0.3em] uppercase mb-6">Sunrise Detox</h1>
@@ -305,42 +323,37 @@
         <div class="ocean"></div>
         <div id="intro-text" class="intro-content">
             <h1 class="text-3xl md:text-6xl font-extrabold text-white tracking-wide drop-shadow-lg mb-2">
-                <span class="text-yellow-400">RELATIONSHIP</span> RECOVERY
+                <span class="text-yellow-400">SUNRISE</span> DETOX
             </h1>
-            <p class="text-xs md:text-xl text-blue-200 tracking-[0.2em] uppercase font-semibold mb-8">Jeopardy</p>
-            <button id="intro-btn" class="btn relative inline-flex items-center justify-center px-8 py-4 text-lg font-bold text-blue-900 bg-yellow-400 rounded-full hover:bg-yellow-300 active:scale-95 shadow-[0_0_20px_rgba(253,224,71,0.5)] transition-all">
+            <p class="text-xs md:text-xl text-blue-200 tracking-[0.2em] uppercase font-semibold mb-8">Recovery Jeopardy</p>
+            <button id="intro-btn" class="relative inline-flex items-center justify-center px-8 py-4 text-lg font-bold text-blue-900 bg-yellow-400 rounded-full hover:bg-yellow-300 active:scale-95 shadow-[0_0_20px_rgba(253,224,71,0.5)] transition-all">
                 TAP TO START
             </button>
         </div>
     </div>
 
     <div id="menu-screen">
-        <div class="sun-graphic" style="width:100px; height:100px; margin-bottom:10px; transform:translateY(0); opacity:1;"></div>
-        <h1 class="text-2xl md:text-4xl font-extrabold text-white text-center leading-tight">
-            SUNRISE DETOX<br>PRESENTS
-        </h1>
-        <p class="text-blue-300 mb-8 mt-2 uppercase tracking-widest text-sm font-semibold">Select an Edition</p>
+        <div class="sun-graphic" style="width:80px; height:80px; margin-bottom:10px; transform:translateY(0); opacity:1;"></div>
+        <h1 class="text-2xl font-extrabold text-white text-center leading-tight mb-4">SELECT GAME</h1>
         
-        <button onclick="startGame('game1', 'Relationships Edition')" class="menu-btn">
-            RELATIONSHIPS EDITION
-        </button>
-        
-        <button onclick="startGame('game2', 'Self Care Edition')" class="menu-btn">
-            SELF CARE EDITION
-        </button>
+        <div class="menu-grid">
+            <button onclick="startGame('game1', 'Relationships')" class="menu-btn">Game 1:<br>Relationships</button>
+            <button onclick="startGame('game2', 'The Body & Detox')" class="menu-btn">Game 2:<br>The Body & Detox</button>
+            <button onclick="startGame('game3', 'Famous Faces')" class="menu-btn">Game 3:<br>Famous Faces</button>
+            <button onclick="startGame('game4', 'The Program')" class="menu-btn">Game 4:<br>The Program (AA/NA)</button>
+            <button onclick="startGame('game5', 'Life Skills')" class="menu-btn">Game 5:<br>Life Skills & Goals</button>
+            <button onclick="startGame('game6', 'Emotions & Family')" class="menu-btn">Game 6:<br>Emotions & Family</button>
+        </div>
     </div>
 
     <div id="game-container">
-        <div class="flex justify-between items-center mb-1 px-1 shrink-0 h-12">
+        <div class="header-bar">
              <button id="back-to-menu" class="bg-blue-900 text-white text-[10px] font-bold py-2 px-3 rounded border border-blue-500">
                 &larr; MENU
              </button>
-             
-             <div class="text-center">
-                 <h2 class="text-[10px] font-bold text-yellow-400 uppercase tracking-widest leading-none">Sunrise Detox Presents</h2>
-                 <h1 id="game-title-display" class="text-sm font-black text-white uppercase tracking-wide leading-tight">Relationships Edition</h1>
+             <div class="text-center flex-grow">
+                 <h1 id="game-title-display" class="text-xs md:text-sm font-black text-white uppercase tracking-wide leading-tight truncate px-2">Relationships Edition</h1>
              </div>
-
              <button id="reset-game" class="bg-red-900/50 active:bg-red-600 text-white text-[10px] font-bold py-2 px-3 rounded border border-red-500">
                 RESET
             </button>
@@ -350,16 +363,16 @@
             <div id="team-1-board" class="team-scoreboard active" style="--team-color: #3b82f6;">
                 <div class="flex items-center gap-2 flex-1 min-w-0">
                     <input type="color" id="team-1-color" value="#3b82f6">
-                    <input type="text" id="team-1-name" class="font-bold text-gray-800 text-sm w-full bg-transparent outline-none truncate" value="Team 1">
+                    <input type="text" id="team-1-name" class="font-bold text-gray-800 text-xs w-full bg-transparent outline-none truncate" value="Team 1">
                 </div>
-                <input type="number" id="team-1-score" class="team-score" value="0" readonly>
+                <input type="number" id="team-1-score" class="team-score" value="0">
             </div>
             <div id="team-2-board" class="team-scoreboard" style="--team-color: #ef4444;">
                 <div class="flex items-center gap-2 flex-1 min-w-0">
                     <input type="color" id="team-2-color" value="#ef4444">
-                    <input type="text" id="team-2-name" class="font-bold text-gray-800 text-sm w-full bg-transparent outline-none truncate" value="Team 2">
+                    <input type="text" id="team-2-name" class="font-bold text-gray-800 text-xs w-full bg-transparent outline-none truncate" value="Team 2">
                 </div>
-                <input type="number" id="team-2-score" class="team-score" value="0" readonly>
+                <input type="number" id="team-2-score" class="team-score" value="0">
             </div>
         </div>
 
@@ -367,7 +380,7 @@
     </div>
 
     <div id="question-modal" class="modal">
-        <div class="modal-content relative">
+        <div class="modal-content">
             <div class="flex justify-between items-center border-b pb-2 mb-2">
                 <span id="modal-category" class="text-xs font-bold text-blue-600 uppercase tracking-wider truncate mr-2">Category</span>
                 <span id="modal-points" class="text-2xl font-black text-yellow-600">$000</span>
@@ -424,9 +437,9 @@
     </div>
 
     <script>
-        // --- MULTIPLE GAMES DATA ---
+        // --- 6 GAMES DATA ---
         const ALL_GAMES = {
-            "game1": {
+            "game1": { // RELATIONSHIPS (Original)
                 "Red Flags": {
                     100: { q: "When a partner isolates you from friends, family, or support networks.", a: "What is isolation?" },
                     200: { q: "A subtle form of manipulation where someone questions your reality.", a: "What is gaslighting?" },
@@ -463,41 +476,189 @@
                     500: { q: "Understanding another's perspective while maintaining your own.", a: "What is differentiation?" }
                 }
             },
-            "game2": {
-                "Self Care": {
-                    100: { q: "Getting enough rest to recharge the body and mind.", a: "What is sleep hygiene?" },
-                    200: { q: "Saying 'No' to protect your time and energy.", a: "What is setting boundaries?" },
-                    300: { q: "Taking time to reflect on your day and feelings.", a: "What is journaling?" },
-                    400: { q: "Moving your body to release stress hormones.", a: "What is exercise?" },
-                    500: { q: "Being kind to yourself when you make a mistake.", a: "What is self-compassion?" }
+            "game2": { // DETOX & BODY (Revised Detox Friendly)
+                "The Body": {
+                    100: { q: "It is crucial to drink plenty of this to help your organs flush out toxins.", a: "What is water (or hydration)?" },
+                    200: { q: "This organ is the body's primary filter and works overtime during detox to process alcohol and drugs.", a: "What is the liver?" },
+                    300: { q: "Many people experience this sleep disorder in early recovery, finding it hard to fall or stay asleep.", a: "What is insomnia?" },
+                    400: { q: "This acronym describes withdrawal symptoms that can last for months, like mood swings and brain fog.", a: "What is P.A.W.S. (Post-Acute Withdrawal Syndrome)?" },
+                    500: { q: "This 'feel-good' chemical in the brain is often depleted in early recovery, causing low mood.", a: "What is Dopamine?" }
                 },
-                "Feelings": {
-                    100: { q: "A feeling of fear or worry about what might happen.", a: "What is anxiety?" },
-                    200: { q: "Feeling down, hopeless, or having little energy.", a: "What is depression?" },
-                    300: { q: "A strong feeling of annoyance or hostility.", a: "What is anger?" },
-                    400: { q: "Feeling alone even when people are around.", a: "What is loneliness?" },
-                    500: { q: "A mix of happy and sad feelings at the same time.", a: "What is ambivalence?" }
+                "Common Feelings": {
+                    100: { q: "A feeling of intense desire to use a substance.", a: "What is a craving?" },
+                    200: { q: "This feeling of holding onto past anger or wrongs is often called the 'number one offender' in relapse.", a: "What is resentment?" },
+                    300: { q: "A temporary phase of euphoria and over-confidence often experienced in early sobriety.", a: "What is the Pink Cloud?" },
+                    400: { q: "The feeling that you are a fraud or don't belong in recovery, often called 'Imposter ______'.", a: "What is Syndrome?" },
+                    500: { q: "The opposite of connection; addiction is often described as a disease of this.", a: "What is isolation?" }
                 },
-                "Support": {
-                    100: { q: "A group of people meeting to help each other recover.", a: "What is a support group?" },
-                    200: { q: "A professional you talk to for mental health.", a: "What is a therapist?" },
-                    300: { q: "A friend you can trust with your secrets.", a: "What is a confidant?" },
-                    400: { q: "Calling a hotline when in crisis.", a: "What is reaching out?" },
-                    500: { q: "A mentor who guides you through recovery steps.", a: "What is a sponsor?" }
+                "Fact or Fiction": {
+                    100: { q: "True or False: You have to hit 'rock bottom' before you can get better.", a: "What is False?" },
+                    200: { q: "True or False: Addiction is defined as a chronic brain disease, not a lack of willpower.", a: "What is True?" },
+                    300: { q: "True or False: Relapse means you have failed and have to start completely over.", a: "What is False? (It is part of the learning process)" },
+                    400: { q: "True or False: You can become physically dependent on prescription medications even if you take them as prescribed.", a: "What is True?" },
+                    500: { q: "True or False: Marijuana is not addictive.", a: "What is False?" }
                 },
-                "Goals": {
-                    100: { q: "Goals that are Specific, Measurable, Achievable, Relevant, Time-bound.", a: "What are SMART goals?" },
-                    200: { q: "Taking one small step at a time.", a: "What is incremental progress?" },
-                    300: { q: "Believing you can improve with effort.", a: "What is a growth mindset?" },
-                    400: { q: "A vision board helps visualize this.", a: "What is your future?" },
-                    500: { q: "Celebrating small wins along the way.", a: "What is positive reinforcement?" }
+                "Recovery Lingo": {
+                    100: { q: "We are taught to change 'People, Places, and ______'.", a: "What are Things?" },
+                    200: { q: "Someone who is sober but still behaves in self-destructive or angry ways is often called a 'Dry ______'.", a: "What is a Drunk?" },
+                    300: { q: "This term refers to helping an addict avoid the negative consequences of their behavior.", a: "What is Enabling?" },
+                    400: { q: "The 'Big Book' is the basic text for this organization.", a: "What is Alcoholics Anonymous (AA)?" },
+                    500: { q: "This three-word phrase suggests you should take action even if you don't feel like it yet: 'Fake it ______'.", a: "What is '...Till You Make It'?" }
                 },
-                "Tools": {
-                    100: { q: "Focusing on your breath to calm down.", a: "What is deep breathing?" },
-                    200: { q: "Listing things you are thankful for.", a: "What is gratitude?" },
-                    300: { q: "Using five senses to connect to the present.", a: "What is grounding?" },
-                    400: { q: "Replacing negative thoughts with realistic ones.", a: "What is reframing?" },
-                    500: { q: "Scheduling worry time to limit stress.", a: "What is containment?" }
+                "Relapse Prevention": {
+                    100: { q: "If you are hungry, angry, lonely, or tired, you are more likely to experience this.", a: "What is a trigger (or craving)?" },
+                    200: { q: "Calling this person is a common strategy when you feel like using.", a: "Who is a Sponsor?" },
+                    300: { q: "Visualizing the negative outcome of using before you do it is called 'Playing the ______'.", a: "What is Tape Forward?" },
+                    400: { q: "Keeping alcohol or paraphernalia in your house is considered this type of risk.", a: "What is an environmental trigger?" },
+                    500: { q: "This is the process of identifying your personal warning signs before a physical relapse occurs.", a: "What is Relapse Prevention Planning?" }
+                }
+            },
+            "game3": { // FAMOUS FACES & FACTS
+                "Famous Recovery": {
+                    100: { q: "This 'Iron Man' actor credits his recovery to therapy and staying sober since 2003.", a: "Who is Robert Downey Jr.?" },
+                    200: { q: "This rapper, known for 'Not Afraid', celebrated 16 years of sobriety in 2024.", a: "Who is Eminem?" },
+                    300: { q: "This 'Rocketman' singer founded a massive AIDS foundation and has been sober for 30+ years.", a: "Who is Elton John?" },
+                    400: { q: "Star of 'Friends', he spent millions on his own recovery and wrote a memoir before his passing.", a: "Who is Matthew Perry?" },
+                    500: { q: "This 'Halloween' actress has been sober from opioid painkillers for over two decades.", a: "Who is Jamie Lee Curtis?" }
+                },
+                "Music & Addiction": {
+                    100: { q: "This British singer, known for 'Rehab', tragically passed away at age 27.", a: "Who is Amy Winehouse?" },
+                    200: { q: "This grunge icon and Nirvana frontman struggled with heroin addiction before his death in 1994.", a: "Who is Kurt Cobain?" },
+                    300: { q: "He was the 'Man in Black' who found redemption and recovery later in life.", a: "Who is Johnny Cash?" },
+                    400: { q: "This pop star had a public breakdown in 2007 but regained control of her life and career.", a: "Who is Britney Spears?" },
+                    500: { q: "Lead singer of Aerosmith, he was once part of the 'Toxic Twins' before getting clean.", a: "Who is Steven Tyler?" }
+                },
+                "Toxic Relationships": {
+                    100: { q: "This musical duo had a famously abusive marriage portrayed in 'What's Love Got to Do with It'.", a: "Who are Ike and Tina Turner?" },
+                    200: { q: "This 'Pirates' actor and 'Aquaman' actress had a publicized defamation trial about mutual toxicity.", a: "Who are Johnny Depp and Amber Heard?" },
+                    300: { q: "This R&B singer's assault on Rihanna in 2009 brought attention to domestic violence.", a: "Who is Chris Brown?" },
+                    400: { q: "Known for 'Sid & Nancy', this punk rocker's relationship ended in tragedy.", a: "Who is Sid Vicious?" },
+                    500: { q: "This Motown legend's father shot him during a domestic dispute.", a: "Who is Marvin Gaye?" }
+                },
+                "Clinical Facts": {
+                    100: { q: "In a chronic user, THC (marijuana) can remain detectable in a urine test for this long.", a: "What is up to 30 days (or more)?" },
+                    200: { q: "This organ metabolizes alcohol at a rate of approximately one standard drink per hour.", a: "What is the Liver?" },
+                    300: { q: "This life-saving medication can immediately reverse an opioid overdose.", a: "What is Narcan (or Naloxone)?" },
+                    400: { q: "This severe form of alcohol withdrawal includes shaking, confusion, and hallucinations.", a: "What are Delirium Tremens (DTs)?" },
+                    500: { q: "Often mixed with other drugs, this synthetic opioid is 50-100 times stronger than morphine.", a: "What is Fentanyl?" }
+                },
+                "Pop Culture": {
+                    100: { q: "This HBO show featuring Zendaya depicts a raw look at teenage drug addiction.", a: "What is Euphoria?" },
+                    200: { q: "This 1996 movie follows a group of heroin addicts in Edinburgh.", a: "What is Trainspotting?" },
+                    300: { q: "Sandra Bullock plays a columnist forced into rehab in this 2000 movie.", a: "What is 28 Days?" },
+                    400: { q: "This A&E reality show followed real-life interventionists helping families.", a: "What is Intervention?" },
+                    500: { q: "Bradley Cooper and Lady Gaga starred in this movie dealing with alcoholism and fame.", a: "What is A Star Is Born?" }
+                }
+            },
+            "game4": { // THE PROGRAM (12 Steps, AA/NA)
+                "The Steps": {
+                    100: { q: "Step 1: We admitted we were ______ over alcohol/drugs.", a: "What is Powerless?" },
+                    200: { q: "Step 4 requires us to make a searching and fearless ______ inventory of ourselves.", a: "What is Moral?" },
+                    300: { q: "Step 9 involves making these to people we have harmed, except when doing so would injure them.", a: "What are Amends?" },
+                    400: { q: "Step 11 suggests using prayer and ______ to improve our conscious contact with God.", a: "What is Meditation?" },
+                    500: { q: "Step 12: Having had a spiritual awakening, we try to carry this message to others and practice these ______.", a: "What are Principles?" }
+                },
+                "AA History": {
+                    100: { q: "He is the co-founder of AA, known simply as 'Bill'.", a: "Who is Bill W.?" },
+                    200: { q: "This doctor co-founded AA with Bill W. in Akron, Ohio.", a: "Who is Dr. Bob?" },
+                    300: { q: "The year AA was founded.", a: "What is 1935?" },
+                    400: { q: "The 'Big Book' was first published in this year.", a: "What is 1939?" },
+                    500: { q: "This was the first name of the addiction recovery group before it became AA.", a: "What is The Oxford Group?" }
+                },
+                "Slogans": {
+                    100: { q: "This slogan reminds us to stay in the present moment.", a: "What is 'One Day at a Time'?" },
+                    200: { q: "This slogan tells us to relax and not try to force outcomes.", a: "What is 'Easy Does It'?" },
+                    300: { q: "Used when we are overthinking or complicating things.", a: "What is 'Keep It Simple'?" },
+                    400: { q: "A reminder to surrender control: 'Let Go and ______'.", a: "What is '...Let God'?" },
+                    500: { q: "This slogan emphasizes attending meetings and listening: 'Meeting makers ______'.", a: "What is '...Make It'?" }
+                },
+                "Definitions": {
+                    100: { q: "The AA definition of insanity: Doing the same thing over and over and expecting ______.", a: "What are 'Different Results'?" },
+                    200: { q: "A person you call for guidance through the 12 steps.", a: "What is a Sponsor?" },
+                    300: { q: "The state of being free from all mind-altering substances.", a: "What is Abstinence?" },
+                    400: { q: "A daily reprieve contingent on the maintenance of our spiritual condition.", a: "What is Sobriety?" },
+                    500: { q: "A desire to stop drinking is the only requirement for this.", a: "What is Membership?" }
+                },
+                "Service": {
+                    100: { q: "Making this at a meeting is a common first service commitment.", a: "What is Coffee?" },
+                    200: { q: "This person greets newcomers at the door.", a: "What is a Greeter?" },
+                    300: { q: "This trusted servant leads the meeting format.", a: "What is the Chairperson?" },
+                    400: { q: "This person manages the group's money.", a: "What is the Treasurer?" },
+                    500: { q: "Service keeps you sober by getting you out of ______.", a: "What is Self?" }
+                }
+            },
+            "game5": { // LIFE SKILLS & GOALS
+                "Goal Setting": {
+                    100: { q: "A popular saying: 'If you fail to plan, you are planning to ______'.", a: "What is Fail?" },
+                    200: { q: "Goals should be SMART: Specific, Measurable, Achievable, Relevant, and ______.", a: "What is Time-bound?" },
+                    300: { q: "Breaking a big goal into smaller, manageable steps prevents this feeling.", a: "What is Overwhelm?" },
+                    400: { q: "A vision board is a tool used for this.", a: "What is Visualization?" },
+                    500: { q: "Rewarding yourself for small wins is called positive ______.", a: "What is Reinforcement?" }
+                },
+                "Sober Living": {
+                    100: { q: "Most sober living homes require this to prove you are staying clean.", a: "What is a Drug Test (or UA)?" },
+                    200: { q: "A set time you must be back at the house each night.", a: "What is Curfew?" },
+                    300: { q: "Attending these is usually mandatory in sober living.", a: "What are House Meetings (or 12-step meetings)?" },
+                    400: { q: "Doing these contributes to the cleanliness of the shared space.", a: "What are Chores?" },
+                    500: { q: "This is often the first financial responsibility you take on in sober living.", a: "What is Rent?" }
+                },
+                "Routine": {
+                    100: { q: "Making this every morning is a simple task to start the day with a win.", a: "What is your Bed?" },
+                    200: { q: "Eating at regular times helps regulate blood sugar and ______.", a: "What is Mood?" },
+                    300: { q: "A solid routine reduces this, which is a major relapse trigger.", a: "What is Boredom (or Idle Time)?" },
+                    400: { q: "Setting a consistent time for this ensures you get enough rest.", a: "What is Sleep (or Bedtime)?" },
+                    500: { q: "Planning your day the night before reduces anxiety about the ______.", a: "What is Future?" }
+                },
+                "Money": {
+                    100: { q: "A plan for how you will spend and save your money.", a: "What is a Budget?" },
+                    200: { q: "This type of spending is done on impulse rather than need.", a: "What is Impulsive Spending?" },
+                    300: { q: "Paying off these is a common part of making financial amends.", a: "What are Debts?" },
+                    400: { q: "It is important to save money for an ______ fund.", a: "What is Emergency?" },
+                    500: { q: "Financial honesty is crucial; hiding spending is often a sign of ______ behavior.", a: "What is Addictive?" }
+                },
+                "Employment": {
+                    100: { q: "A document listing your work history and skills.", a: "What is a Resume?" },
+                    200: { q: "You should arrive this early for a job interview.", a: "What is 10-15 minutes?" },
+                    300: { q: "When asked about a gap in employment due to rehab, it is best to be honest but ______.", a: "What is Professional (or Brief)?" },
+                    400: { q: "This soft skill involves working well with others.", a: "What is Teamwork?" },
+                    500: { q: "Reliability means showing up to work on time and ______.", a: "What is Sober?" }
+                }
+            },
+            "game6": { // EMOTIONS & FAMILY
+                "Fear": {
+                    100: { q: "An acronym for F.E.A.R.: False Evidence Appearing ______.", a: "What is Real?" },
+                    200: { q: "Fear of this often keeps people from trying new things in recovery.", a: "What is Failure?" },
+                    300: { q: "The antidote to fear is often said to be this.", a: "What is Faith?" },
+                    400: { q: "Fear of success can lead to this behavior.", a: "What is Self-Sabotage?" },
+                    500: { q: "Courage is not the absence of fear, but acting ______ it.", a: "What is Despite (or In Spite of)?" }
+                },
+                "Rejection": {
+                    100: { q: "Rejection is often God's way of saying 'Not ______'.", a: "What is Yet (or 'Not This')?" },
+                    200: { q: "Taking rejection personally is a sign of low ______.", a: "What is Self-Esteem?" },
+                    300: { q: "When someone says 'no' to you, they are setting a ______.", a: "What is Boundary?" },
+                    400: { q: "Learning to handle 'no' without using is a sign of ______ maturity.", a: "What is Emotional?" },
+                    500: { q: "We must accept that we cannot ______ how others feel about us.", a: "What is Control?" }
+                },
+                "Family": {
+                    100: { q: "Addiction is often called a ______ disease because it affects everyone in the home.", a: "What is Family?" },
+                    200: { q: "Trust is lost in buckets and regained in ______.", a: "What are Drops?" },
+                    300: { q: "Family members often attend this 12-step group for their own recovery.", a: "What is Al-Anon?" },
+                    400: { q: "Setting healthy ______ is crucial for rebuilding relationships.", a: "What are Boundaries?" },
+                    500: { q: "Sometimes the healthiest choice for a family member is to ______ with love.", a: "What is Detach?" }
+                },
+                "Parenting": {
+                    100: { q: "The best amends to children is living a ______ life.", a: "What is Sober?" },
+                    200: { q: "Children of addicts often take on adult responsibilities, known as ______.", a: "What is Parentification?" },
+                    300: { q: "Consistency creates a sense of ______ for children.", a: "What is Safety?" },
+                    400: { q: "It is okay to say 'I don't ______' to your child's question.", a: "What is Know?" },
+                    500: { q: "Modeling healthy ______ coping is better than hiding all emotions.", a: "What is Emotional?" }
+                },
+                "Amends": {
+                    100: { q: "A simple 'I'm sorry' is an apology; changed behavior is an ______.", a: "What is Amends?" },
+                    200: { q: "Living Amends means showing up and doing the right thing ______.", a: "What is Daily (or Consistently)?" },
+                    300: { q: "Financial amends involves paying back ______.", a: "What is Money?" },
+                    400: { q: "Before making amends, you should consult your ______.", a: "What is Sponsor?" },
+                    500: { q: "The purpose of amends is to clean your side of the ______.", a: "What is Street?" }
                 }
             }
         };
@@ -512,6 +673,8 @@
         let attemptState = 'initial';
         let consecutiveCorrect1 = 0, consecutiveCorrect2 = 0;
         let answeredCount = 0;
+        let timerOscillator = null;
+        let tickTock = 0; // For high/low tick sounds
         
         // --- UI ---
         const ui = {
@@ -534,28 +697,162 @@
             titleDisplay: document.getElementById('game-title-display')
         };
 
-        // --- 1. SPLASH SCREEN LOGIC (Audio Unlock) ---
+        // --- AUDIO ENGINE ---
+        let ac; 
+        function initAudio() { 
+            if(!ac) { 
+                ac = new (window.AudioContext||window.webkitAudioContext)(); 
+            }
+            if(ac.state === 'suspended') ac.resume();
+        }
+
+        // 1. Intro Swell
+        function playSunriseSwell() {
+            if(!ac) initAudio();
+            const notes = [261.63, 329.63, 392.00, 523.25, 587.33]; 
+            notes.forEach((f,i) => {
+                const o=ac.createOscillator(), g=ac.createGain();
+                o.type='sine'; o.frequency.value=f;
+                o.connect(g); g.connect(ac.destination);
+                g.gain.setValueAtTime(0, ac.currentTime+i*0.2);
+                g.gain.linearRampToValueAtTime(0.05, ac.currentTime+i*0.2+0.05);
+                g.gain.exponentialRampToValueAtTime(0.001, ac.currentTime+i*0.2+4.0);
+                o.start(ac.currentTime+i*0.2); o.stop(ac.currentTime+i*0.2+4.1);
+            });
+        }
+
+        // 2. Timer
+        function playTimerSound() {
+            if (!ac) return;
+            if (timerOscillator) timerOscillator.stop();
+            timerOscillator = ac.createOscillator();
+            const gainNode = ac.createGain();
+            timerOscillator.type = 'sine';
+            if (tickTock % 2 === 0) {
+                timerOscillator.frequency.setValueAtTime(1200, ac.currentTime); 
+            } else {
+                timerOscillator.frequency.setValueAtTime(800, ac.currentTime); 
+            }
+            tickTock++;
+            gainNode.gain.setValueAtTime(0.1, ac.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.05);
+            timerOscillator.connect(gainNode);
+            gainNode.connect(ac.destination);
+            timerOscillator.start();
+            timerOscillator.stop(ac.currentTime + 0.05);
+        }
+        function stopTimerSound() {
+            if (timerOscillator) { timerOscillator.stop(); timerOscillator = null; }
+            tickTock = 0; 
+        }
+
+        // 3. Daily Double
+        function playDailyDoubleSound() {
+            if (!ac) return;
+            const osc = ac.createOscillator(), gain = ac.createGain();
+            osc.type = 'sine'; osc.connect(gain); gain.connect(ac.destination);
+            const now = ac.currentTime;
+            gain.gain.setValueAtTime(0.3, now); 
+            osc.frequency.setValueAtTime(300, now);
+            osc.frequency.exponentialRampToValueAtTime(900, now + 0.3);
+            osc.start(); osc.stop(now + 0.4);
+        }
+
+        // 4. Time's Up
+        function playTimesUpSound() {
+            if (!ac) return;
+            const now = ac.currentTime;
+            const osc = ac.createOscillator(), gain = ac.createGain();
+            osc.type = 'sawtooth'; osc.connect(gain); gain.connect(ac.destination);
+            osc.frequency.setValueAtTime(120, now);
+            gain.gain.setValueAtTime(0.3, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+            osc.start(); osc.stop(now + 0.4);
+        }
+
+        // 5. Steal
+        function playStealSound() {
+            if (!ac) return;
+            const now = ac.currentTime;
+            const osc = ac.createOscillator(), gain = ac.createGain();
+            osc.type = 'triangle'; osc.connect(gain); gain.connect(ac.destination);
+            gain.gain.setValueAtTime(0.2, now);
+            osc.frequency.setValueAtTime(900, now);
+            osc.frequency.setValueAtTime(1200, now + 0.1);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+            osc.start(); osc.stop(now + 0.2);
+        }
+
+        // 6. Correct
+        function playCorrectSound() {
+            if (!ac) return;
+            const now = ac.currentTime;
+            const osc = ac.createOscillator(), gain = ac.createGain();
+            osc.type = 'triangle'; osc.connect(gain); gain.connect(ac.destination);
+            gain.gain.setValueAtTime(0.2, now); 
+            osc.frequency.setValueAtTime(523.25, now);
+            osc.frequency.setValueAtTime(659.25, now + 0.1);
+            osc.frequency.setValueAtTime(783.99, now + 0.2);
+            osc.frequency.setValueAtTime(1046.50, now + 0.3);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.7);
+            osc.start(now); osc.stop(now + 0.7);
+        }
+        
+        // 7. Win (Ta-Da)
+        function playWinSound() {
+            if (!ac) return;
+            const now = ac.currentTime;
+            const playBrassNote = (freq, startTime, duration, vol = 0.3) => {
+                const osc = ac.createOscillator(), gain = ac.createGain(), filter = ac.createBiquadFilter(); 
+                osc.type = 'sawtooth'; osc.frequency.value = freq;
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(500, startTime);
+                filter.frequency.linearRampToValueAtTime(3000, startTime + 0.05);
+                filter.frequency.exponentialRampToValueAtTime(1000, startTime + duration);
+                gain.gain.setValueAtTime(0, startTime);
+                gain.gain.linearRampToValueAtTime(vol, startTime + 0.02);
+                gain.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
+                osc.connect(filter); filter.connect(gain); gain.connect(ac.destination);
+                osc.start(startTime); osc.stop(startTime + duration);
+            };
+            playBrassNote(392.00, now, 0.15, 0.25);
+            const impactTime = now + 0.12, duration = 1.2;
+            playBrassNote(261.63, impactTime, duration, 0.3);
+            playBrassNote(329.63, impactTime, duration, 0.25);
+            playBrassNote(392.00, impactTime, duration, 0.25);
+            playBrassNote(523.25, impactTime, duration, 0.2);
+        }
+
+        // Simple Select
+        function playSelectSound() { 
+            if(!ac) return;
+            const o=ac.createOscillator(), g=ac.createGain();
+            o.type='triangle'; o.frequency.value=800;
+            o.connect(g); g.connect(ac.destination);
+            g.gain.setValueAtTime(0, ac.currentTime);
+            g.gain.linearRampToValueAtTime(0.1, ac.currentTime+0.05);
+            g.gain.exponentialRampToValueAtTime(0.001, ac.currentTime+0.1);
+            o.start(ac.currentTime); o.stop(ac.currentTime+0.15);
+        }
+
+        // --- GAME LOGIC ---
         ui.splashBtn.onclick = () => {
-            initAudio(); // Unlock audio context
+            initAudio(); 
             ui.splash.style.opacity = 0;
             setTimeout(() => {
                 ui.splash.style.display = 'none';
-                startIntroSequence(); // NOW start the visuals and sound
+                startIntroSequence(); 
             }, 1000);
         };
 
         function startIntroSequence() {
             ui.intro.style.display = 'flex';
-            // Trigger CSS Animations
             document.querySelector('#intro-overlay').classList.add('run-sunrise-sky');
             document.querySelector('.sun-graphic').classList.add('run-sunrise-sun');
             document.querySelector('.intro-content').classList.add('run-sunrise-text');
-            
-            // Play Sunrise Sound
             playSunriseSwell();
         }
 
-        // --- 2. INTRO TO MENU LOGIC ---
         document.getElementById('intro-btn').onclick = () => {
             playSelectSound();
             ui.intro.style.opacity = 0;
@@ -566,19 +863,16 @@
             }, 1000);
         };
 
-        // --- GAME LOGIC ---
         window.startGame = function(gameKey, title) {
             playSelectSound();
             activeGameData = ALL_GAMES[gameKey];
             ui.titleDisplay.textContent = title; 
-            
             ui.menu.style.opacity = '0';
             setTimeout(() => {
                 ui.menu.style.display = 'none';
                 ui.game.style.display = 'flex';
                 setTimeout(() => ui.game.style.opacity = '1', 100);
             }, 500);
-            
             resetGame();
         };
 
@@ -595,14 +889,12 @@
         function createBoard() {
             ui.board.innerHTML = '';
             let allCells = [];
-            
             for(let cat in activeGameData) {
                 let h = document.createElement('div');
                 h.className = 'category-cell';
                 h.textContent = cat;
                 ui.board.appendChild(h);
             }
-            
             const points = [100, 200, 300, 400, 500];
             points.forEach(p => {
                 for(let cat in activeGameData) {
@@ -614,7 +906,6 @@
                     allCells.push(cell);
                 }
             });
-
             if(allCells.length > 0) {
                 const rand = Math.floor(Math.random() * allCells.length);
                 allCells[rand].dataset.dd = 'true';
@@ -623,15 +914,12 @@
 
         function handleCellClick(cell, cat, pts) {
             if(cell.classList.contains('answered')) return;
-            playSelectSound();
-
             cell.classList.add('answered');
             cell.textContent = '';
             currentPoints = pts;
             answeredCount++;
             
             const data = activeGameData[cat][pts];
-            
             if(cell.dataset.dd === 'true') {
                 currentDD = { cat, q: data.q, a: data.a };
                 openDDModal();
@@ -646,8 +934,8 @@
             document.getElementById('modal-question-text').textContent = q;
             document.getElementById('modal-answer-text').textContent = a;
             document.getElementById('modal-answer-text').style.display = 'none';
-            document.getElementById('scoring-buttons').classList.remove('hidden');
-            document.getElementById('next-btn').classList.add('hidden');
+            document.getElementById('scoring-buttons').style.display = 'grid';
+            document.getElementById('next-btn').style.display = 'none';
             
             ui.modal.style.display = 'flex';
             attemptState = 'initial';
@@ -656,7 +944,7 @@
         }
 
         function openDDModal() {
-            playTone(400, 'square', 0.1); playTone(800, 'square', 0.2, 0.1);
+            playDailyDoubleSound(); 
             ui.ddModal.style.display = 'flex';
             const s = activeTeam === 1 ? team1Score : team2Score;
             const max = Math.max(1000, s);
@@ -677,30 +965,30 @@
 
         // --- SCORING ---
         document.getElementById('correct-btn').onclick = () => {
-            playTone(523, 'sine', 0.1); playTone(1046, 'sine', 0.3, 0.1);
+            playCorrectSound(); 
             let pts = attemptState === 'steal' ? Math.round(currentPoints/2) : currentPoints;
             addScore(activeTeam, pts);
-            
             if(activeTeam===1) { consecutiveCorrect1++; consecutiveCorrect2=0; }
             else { consecutiveCorrect2++; consecutiveCorrect1=0; }
-            
-            revealAnswer(true);
+            revealAnswer(true); 
         };
 
         document.getElementById('incorrect-btn').onclick = () => {
-            playTone(150, 'sawtooth', 0.4);
             if(attemptState === 'dd') {
+                playTimesUpSound(); 
                 addScore(activeTeam, -currentPoints);
                 revealAnswer(false);
             } else if(attemptState === 'initial') {
+                playTimesUpSound(); 
                 addScore(activeTeam, -Math.round(currentPoints/2));
-                playStealAlert();
+                setTimeout(() => playStealSound(), 500); 
                 attemptState = 'steal';
                 const next = activeTeam===1 ? 2 : 1;
                 setActiveTeam(next);
                 resetTimer(5);
                 startTimer();
             } else {
+                playTimesUpSound(); 
                 revealAnswer(false);
             }
         };
@@ -718,10 +1006,9 @@
 
         function revealAnswer(correct) {
             stopTimer();
+            document.getElementById('scoring-buttons').style.display = 'none';
+            document.getElementById('next-btn').style.display = 'block';
             document.getElementById('modal-answer-text').style.display = 'block';
-            document.getElementById('scoring-buttons').classList.add('hidden');
-            document.getElementById('next-btn').classList.remove('hidden');
-            
             let nextTeam = activeTeam;
             if(!correct) nextTeam = activeTeam===1 ? 2 : 1;
             else if((activeTeam===1 && consecutiveCorrect1>=3) || (activeTeam===2 && consecutiveCorrect2>=3)) {
@@ -738,6 +1025,9 @@
         }
         function updateScores() { ui.t1Score.value = team1Score; ui.t2Score.value = team2Score; }
         
+        document.getElementById('team-1-score').addEventListener('input', (e) => { team1Score = parseInt(e.target.value) || 0; });
+        document.getElementById('team-2-score').addEventListener('input', (e) => { team2Score = parseInt(e.target.value) || 0; });
+
         function setActiveTeam(t) {
             activeTeam = t;
             ui.t1Board.classList.toggle('active', t===1);
@@ -750,40 +1040,35 @@
         document.getElementById('confirm-change-team-btn').onclick = () => ui.changeModal.style.display='none';
         document.getElementById('close-winner-modal-btn').onclick = () => location.reload();
 
-        // --- TIMER (Tic-Toc Logic) ---
+        // --- TIMER ---
         function resetTimer(s) { stopTimer(); timeLeft=s; ui.timer.textContent=s; ui.timerIcon.innerHTML='<path d="M8 5v14l11-7z"/>'; }
         
         function startTimer() {
             if(timerInterval) return;
             ui.timerIcon.innerHTML='<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+            if(attemptState === 'steal') playStealSound();
+            else playTimerSound();
             timerInterval = setInterval(() => {
                 timeLeft--; 
                 ui.timer.textContent=timeLeft;
-                
-                // Audio Logic
                 if(timeLeft > 0) {
-                    if(attemptState === 'steal') {
-                        playStealTick(); // Fast
-                    } else {
-                        // Tic-Toc (Alternating)
-                        if(timeLeft % 2 === 0) playTone(1000, 'square', 0.05); // High
-                        else playTone(800, 'square', 0.05); // Low
-                    }
+                    if(attemptState === 'steal') playStealSound(); 
+                    else playTimerSound(); 
                 }
-
-                if(timeLeft<=0) { 
-                    stopTimer(); 
-                    handleTimeout(); 
-                }
+                if(timeLeft<=0) { stopTimer(); handleTimeout(); }
             }, 1000);
         }
         
-        function stopTimer() { clearInterval(timerInterval); timerInterval=null; ui.timerIcon.innerHTML='<path d="M8 5v14l11-7z"/>'; }
+        function stopTimer() { 
+            clearInterval(timerInterval); 
+            timerInterval=null; 
+            ui.timerIcon.innerHTML='<path d="M8 5v14l11-7z"/>';
+            stopTimerSound();
+        }
         
         function handleTimeout() {
-            playTone(150, 'sawtooth', 0.5); 
+            playTimesUpSound(); 
             if(attemptState === 'initial') {
-                playStealAlert();
                 attemptState = 'steal';
                 const next = activeTeam===1 ? 2 : 1;
                 setActiveTeam(next);
@@ -793,42 +1078,15 @@
                 revealAnswer(false);
             }
         }
-
         document.getElementById('timer-toggle-btn').onclick = () => { if(timerInterval) stopTimer(); else startTimer(); };
 
-        // --- AUDIO ENGINE ---
-        let ac;
-        function initAudio() { if(!ac) { ac = new (window.AudioContext||window.webkitAudioContext)(); ac.resume(); } }
-        
-        function playTone(f,t,d,s=0,v=0.1) {
-            if(!ac) return;
-            const o=ac.createOscillator(), g=ac.createGain();
-            o.type=t; o.frequency.value=f;
-            o.connect(g); g.connect(ac.destination);
-            g.gain.setValueAtTime(0, ac.currentTime+s);
-            g.gain.linearRampToValueAtTime(v, ac.currentTime+s+0.05);
-            g.gain.exponentialRampToValueAtTime(0.001, ac.currentTime+s+d);
-            o.start(ac.currentTime+s); o.stop(ac.currentTime+s+d+0.1);
-        }
-
-        function playSelectSound() { playTone(800, 'triangle', 0.05); }
-        function playStealTick() { playTone(1500, 'square', 0.05, 0); playTone(1500, 'square', 0.05, 0.5); }
-        function playStealAlert() { playTone(600, 'sine', 0.2, 0); playTone(800, 'sine', 0.4, 0.2); }
-        
-        // Custom Sunrise Swell
-        function playSunriseSwell() {
-            const notes = [261.63, 329.63, 392.00, 523.25, 587.33]; // C Major Add9
-            notes.forEach((f,i) => playTone(f, 'sine', 4.0, i*0.2, 0.05));
-        }
-
         function showWinner() {
+            playWinSound(); 
             ui.winnerModal.style.display = 'flex';
             let txt = "It's a Tie!";
             if(team1Score > team2Score) txt = document.getElementById('team-1-name').value;
             if(team2Score > team1Score) txt = document.getElementById('team-2-name').value;
             document.getElementById('winner-name').textContent = txt;
-            
-            // Confetti
             const cont = document.getElementById('confetti-container');
             cont.innerHTML = '';
             const colors = ['#f00', '#0f0', '#00f', '#ff0', '#0ff'];

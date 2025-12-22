@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ta-Da Sound Effect</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #222;
+            font-family: sans-serif;
+            color: white;
+            margin: 0;
+        }
+
+        button {
+            padding: 20px 40px;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            background-color: #f39c12;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            box-shadow: 0 4px 0 #d35400;
+            transition: all 0.1s;
+        }
+
+        button:active {
+            transform: translateY(4px);
+            box-shadow: 0 0 0 #d35400;
+        }
+    </style>
+</head>
+<body>
+
+    <button id="playBtn">🎵 Play "Ta-Da!"</button>
+
+    <script>
+        // Initialize AudioContext
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        const audioCtx = new AudioContext();
+
+        function playTaDa() {
+            // Browsers often suspend audio until user interaction
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
+            const now = audioCtx.currentTime;
+
+            // --- Sound Synthesis Logic ---
+
+            // Function to create a single brass note
+            const playNote = (freq, startTime, duration, vol = 0.3) => {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                const filter = audioCtx.createBiquadFilter(); // Lowpass filter for "brass" muted effect
+
+                // Use Sawtooth for a harsh, brassy tone
+                osc.type = 'sawtooth';
+                osc.frequency.value = freq;
+
+                // Filter envelope (opens up brightly then closes slightly)
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(500, startTime);
+                filter.frequency.linearRampToValueAtTime(3000, startTime + 0.05); // "Blare"
+                filter.frequency.exponentialRampToValueAtTime(1000, startTime + duration);
+
+                // Volume Envelope (ADSR-like)
+                gain.gain.setValueAtTime(0, startTime);
+                gain.gain.linearRampToValueAtTime(vol, startTime + 0.02); // Fast attack
+                gain.gain.exponentialRampToValueAtTime(0.01, startTime + duration); // Release
+
+                // Connect nodes: Osc -> Filter -> Gain -> Output
+                osc.connect(filter);
+                filter.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                osc.start(startTime);
+                osc.stop(startTime + duration);
+            };
+
+            // 1. The "Ta" (Pickup Note) - G3
+            // Quick, short note leading in
+            playNote(392.00, now, 0.15, 0.25);
+
+            // 2. The "Da" (The Resolution Chord) - C Major
+            // Hits slightly after the pickup. We stack multiple notes for a full sound.
+            const impactTime = now + 0.12; 
+            const duration = 1.2;
+
+            // Root (C4)
+            playNote(261.63, impactTime, duration, 0.3);
+            // Third (E4)
+            playNote(329.63, impactTime, duration, 0.25);
+            // Fifth (G4)
+            playNote(392.00, impactTime, duration, 0.25);
+            // Octave (C5) - Gives it the "shine"
+            playNote(523.25, impactTime, duration, 0.2);
+            
+            // Optional: Add a slight detuned oscillator for thickness
+            playNote(262.00, impactTime, duration, 0.1); 
+        }
+
+        // Attach event listener
+        document.getElementById('playBtn').addEventListener('click', playTaDa);
+    </script>
+
+</body>
+</html>
