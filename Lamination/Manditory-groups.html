@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mandatory Groups Notice</title>
+    <style>
+        /* Document Setup */
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+            font-family: 'Times New Roman', Times, serif;
+        }
+
+        .page {
+            background: white;
+            width: 8.5in;
+            height: 11in;
+            margin: 20px auto;
+            padding: 1in;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* Centers vertically */
+            align-items: center;     /* Centers horizontally */
+            text-align: center;
+            /* Page break for printing front/back */
+            page-break-after: always;
+        }
+
+        .header-bold {
+            font-size: 36pt;
+            font-weight: bold;
+            text-decoration: underline;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
+
+        .sub-header {
+            font-size: 26pt;
+            margin-bottom: 50px;
+        }
+
+        .times {
+            font-size: 30pt;
+            font-weight: bold;
+            margin-bottom: 50px;
+            line-height: 1.6;
+        }
+
+        .exceptions {
+            font-size: 24pt;
+            max-width: 90%;
+            line-height: 1.4;
+        }
+
+        @media print {
+            body { background: none; margin: 0; padding: 0; }
+            .page { box-shadow: none; margin: 0; width: 8.5in; height: 11in; }
+            @page { size: portrait; margin: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="page">
+        <div class="header-bold">Groups Are</div>
+        <div class="header-bold">Mandatory</div>
+        
+        <div class="sub-header">Rooms are locked DAILY</div>
+
+        <div class="times">
+            10:00a-12:00pm<br>
+            1:00p-4:00pm
+        </div>
+
+        <div class="exceptions">
+            Patients on detox LOC or<br>
+            with a nurses excuse are only<br>
+            exceptions
+        </div>
+    </div>
+
+    <div class="page">
+        <div class="header-bold">Groups Are</div>
+        <div class="header-bold">Mandatory</div>
+        
+        <div class="sub-header">Rooms are locked DAILY</div>
+
+        <div class="times">
+            10:00a-12:00pm<br>
+            1:00p-4:00pm
+        </div>
+
+        <div class="exceptions">
+            Patients on detox LOC or<br>
+            with a nurses excuse are only<br>
+            exceptions
+        </div>
+    </div>
+
+</body>
+</html>

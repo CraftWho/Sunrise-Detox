@@ -13,6 +13,1112 @@ FILE PATH: index.html
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Sunrise Detox Jeopardy</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        /* --- GLOBAL STYLES --- */
+        html, body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
+            background-color: #000; /* Start black */
+            /* DVH fixes the "cut off" issue on mobile browsers by accounting for the URL bar */
+            height: 100dvh; 
+            width: 100vw;
+            overflow: hidden;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-user-select: none;
+            user-select: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Safe area handling for iPhones with notches */
+        body {
+            padding-top: max(env(safe-area-inset-top), 4px);
+            padding-bottom: max(env(safe-area-inset-bottom), 4px);
+            padding-left: env(safe-area-inset-left);
+            padding-right: env(safe-area-inset-right);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- SPLASH SCREEN --- */
+        #splash-screen {
+            position: fixed;
+            inset: 0;
+            z-index: 300;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #000;
+            transition: opacity 1s ease;
+        }
+
+        /* --- INTRO OVERLAY --- */
+        #intro-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(to bottom, #020411, #1a0b16);
+            transition: opacity 1.5s ease-in-out;
+        }
+        
+        .run-sunrise-sky { animation: sky-change 4s ease-out forwards; }
+        .run-sunrise-sun { animation: sunrise 4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
+        .run-sunrise-text { animation: fade-in-text 2s ease-out forwards; animation-delay: 3s; }
+
+        .sun-graphic {
+            width: 150px;
+            height: 150px;
+            background: linear-gradient(to bottom, #fbbf24, #f59e0b);
+            border-radius: 50%;
+            box-shadow: 0 0 60px rgba(251, 191, 36, 0.6);
+            position: relative;
+            z-index: 10;
+            transform: translateY(200%);
+            opacity: 0;
+        }
+
+        .ocean {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 35%;
+            background: linear-gradient(to top, #06226e, #1e3a8a);
+            z-index: 20;
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.5);
+        }
+
+        .intro-content {
+            position: relative;
+            z-index: 30;
+            text-align: center;
+            margin-top: -80px;
+            opacity: 0;
+            width: 90%;
+        }
+
+        @keyframes sunrise {
+            0% { transform: translateY(200%); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes sky-change {
+            0% { background: linear-gradient(to bottom, #020411, #000000); }
+            100% { background: linear-gradient(to bottom, #1e1b4b, #4c1d95); }
+        }
+        @keyframes fade-in-text {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- MENU SCREEN --- */
+        #menu-screen {
+            position: fixed;
+            inset: 0;
+            z-index: 50;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(to bottom, #020411, #1a0b16);
+            opacity: 0;
+            transition: opacity 1s ease;
+            overflow-y: auto; /* Allow scrolling if menu is tall */
+        }
+
+        /* --- GAME CONTAINER (Flexbox layout for perfect fit) --- */
+        #game-container {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+            width: 100%;
+            opacity: 0;
+            transition: opacity 1s ease-in;
+            padding: 4px;
+        }
+
+        .header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0; /* Never shrink the header */
+            margin-bottom: 4px;
+            height: 40px;
+        }
+
+        /* --- MENU BUTTONS --- */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            width: 90%;
+            max-width: 600px;
+        }
+        .menu-btn {
+            width: 100%;
+            padding: 15px;
+            background-color: #06226e;
+            color: white;
+            font-weight: bold;
+            font-size: clamp(0.8rem, 2vw, 1rem);
+            border-radius: 8px;
+            border: 2px solid #3b82f6;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.4);
+            text-align: center;
+            transition: transform 0.1s;
+        }
+        .menu-btn:active { transform: scale(0.96); background-color: #1e3a8a; }
+
+        /* --- BOARD STYLES --- */
+        .jeopardy-board {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            /* KEY FIX: Use fractions so rows squash to fit screen exactly */
+            grid-template-rows: repeat(6, 1fr); 
+            gap: 3px;
+            flex-grow: 1; /* Take up all remaining space */
+            min-height: 0; /* Allow shrinking */
+            width: 100%;
+        }
+        
+        .category-cell {
+            background-color: #06226e;
+            color: white;
+            font-weight: bold;
+            text-align: center;
+            padding: 2px;
+            /* Responsive font scaling */
+            font-size: clamp(0.7rem, 2.5vw, 1.1rem);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1.1;
+            word-break: break-word; 
+            hyphens: auto;
+            overflow: hidden;
+        }
+        
+        .question-cell {
+            background-color: #06226e;
+            color: #ffcc00;
+            font-size: clamp(1.2rem, 6dvh, 2.5rem); /* Scales with height */
+            font-weight: 900;
+            text-align: center;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid transparent;
+        }
+        .question-cell.answered {
+            background-color: #1e1b4b;
+            color: #1e1b4b;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        /* --- COMPACT SCOREBOARD --- */
+        .scoreboard-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            margin-bottom: 4px;
+            flex-shrink: 0; /* Never shrink scores */
+            height: 44px; /* Fixed compact height */
+        }
+        .team-scoreboard {
+            background-color: #ffffff;
+            padding: 0 8px;
+            border-radius: 6px;
+            border: 3px solid transparent;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .team-scoreboard.active {
+            border-color: var(--team-color, #3b82f6);
+            box-shadow: 0 0 8px var(--team-color, #3b82f6);
+            transform: scale(1.01);
+        }
+        .team-score {
+            font-size: clamp(1.2rem, 4vw, 1.5rem);
+            font-weight: 900;
+            color: #06226e;
+            background: none;
+            border: none;
+            text-align: right;
+            width: 70px;
+            outline: none;
+            margin: 0;
+            pointer-events: auto; 
+        }
+
+        /* --- MODAL --- */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0; top: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.95);
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            padding: 12px;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 600px;
+            /* Ensure modal fits on screen even with keyboard */
+            max-height: 95dvh; 
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            text-align: center;
+            overflow-y: auto;
+        }
+        .modal-question {
+            font-size: clamp(1.1rem, 4vw, 1.8rem);
+            font-weight: 600;
+            color: #1f2937;
+            padding: 10px 0;
+            line-height: 1.3;
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 80px;
+        }
+        .modal-answer {
+            display: none;
+            font-size: clamp(1rem, 4vw, 1.4rem);
+            font-weight: 700;
+            color: #059669;
+            margin: 8px 0;
+            padding: 10px;
+            background: #d1fae5;
+            border-radius: 8px;
+            border: 1px solid #10b981;
+        }
+
+        /* --- UTILS --- */
+        input[type="color"] { width: 20px; height: 20px; border: none; border-radius: 50%; padding: 0; overflow: hidden; }
+        #scoring-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .game-btn { border-radius: 8px; padding: 12px; font-weight: bold; font-size: 1rem; color: white; }
+    </style>
+</head>
+<body> 
+
+    <div id="splash-screen">
+        <h1 class="text-gray-400 text-sm tracking-[0.3em] uppercase mb-6">Sunrise Detox</h1>
+        <button id="activate-app-btn" class="text-2xl font-bold text-white border-2 border-white px-8 py-4 rounded-full active:bg-white active:text-black transition-colors">
+            ENTER EXPERIENCE
+        </button>
+    </div>
+
+    <div id="intro-overlay">
+        <div id="intro-sun" class="sun-graphic"></div>
+        <div class="ocean"></div>
+        <div id="intro-text" class="intro-content">
+            <h1 class="text-3xl md:text-6xl font-extrabold text-white tracking-wide drop-shadow-lg mb-2">
+                <span class="text-yellow-400">SUNRISE</span> DETOX
+            </h1>
+            <p class="text-xs md:text-xl text-blue-200 tracking-[0.2em] uppercase font-semibold mb-8">Recovery Jeopardy</p>
+            <button id="intro-btn" class="relative inline-flex items-center justify-center px-8 py-4 text-lg font-bold text-blue-900 bg-yellow-400 rounded-full hover:bg-yellow-300 active:scale-95 shadow-[0_0_20px_rgba(253,224,71,0.5)] transition-all">
+                TAP TO START
+            </button>
+        </div>
+    </div>
+
+    <div id="menu-screen">
+        <div class="sun-graphic" style="width:80px; height:80px; margin-bottom:10px; transform:translateY(0); opacity:1;"></div>
+        <h1 class="text-2xl font-extrabold text-white text-center leading-tight mb-4">SELECT GAME</h1>
+        
+        <div class="menu-grid">
+            <button onclick="startGame('game1', 'Relationships')" class="menu-btn">Game 1:<br>Relationships</button>
+            <button onclick="startGame('game2', 'The Body & Detox')" class="menu-btn">Game 2:<br>The Body & Detox</button>
+            <button onclick="startGame('game3', 'Famous Faces')" class="menu-btn">Game 3:<br>Famous Faces</button>
+            <button onclick="startGame('game4', 'The Program')" class="menu-btn">Game 4:<br>The Program (AA/NA)</button>
+            <button onclick="startGame('game5', 'Life Skills')" class="menu-btn">Game 5:<br>Life Skills & Goals</button>
+            <button onclick="startGame('game6', 'Emotions & Family')" class="menu-btn">Game 6:<br>Emotions & Family</button>
+        </div>
+    </div>
+
+    <div id="game-container">
+        <div class="header-bar">
+             <button id="back-to-menu" class="bg-blue-900 text-white text-[10px] font-bold py-2 px-3 rounded border border-blue-500">
+                &larr; MENU
+             </button>
+             <div class="text-center flex-grow">
+                 <h1 id="game-title-display" class="text-xs md:text-sm font-black text-white uppercase tracking-wide leading-tight truncate px-2">Relationships Edition</h1>
+             </div>
+             <button id="reset-game" class="bg-red-900/50 active:bg-red-600 text-white text-[10px] font-bold py-2 px-3 rounded border border-red-500">
+                RESET
+            </button>
+        </div>
+       
+        <div class="scoreboard-container">
+            <div id="team-1-board" class="team-scoreboard active" style="--team-color: #3b82f6;">
+                <div class="flex items-center gap-2 flex-1 min-w-0">
+                    <input type="color" id="team-1-color" value="#3b82f6">
+                    <input type="text" id="team-1-name" class="font-bold text-gray-800 text-xs w-full bg-transparent outline-none truncate" value="Team 1">
+                </div>
+                <input type="number" id="team-1-score" class="team-score" value="0">
+            </div>
+            <div id="team-2-board" class="team-scoreboard" style="--team-color: #ef4444;">
+                <div class="flex items-center gap-2 flex-1 min-w-0">
+                    <input type="color" id="team-2-color" value="#ef4444">
+                    <input type="text" id="team-2-name" class="font-bold text-gray-800 text-xs w-full bg-transparent outline-none truncate" value="Team 2">
+                </div>
+                <input type="number" id="team-2-score" class="team-score" value="0">
+            </div>
+        </div>
+
+        <div id="jeopardy-board" class="jeopardy-board"></div>
+    </div>
+
+    <div id="question-modal" class="modal">
+        <div class="modal-content">
+            <div class="flex justify-between items-center border-b pb-2 mb-2">
+                <span id="modal-category" class="text-xs font-bold text-blue-600 uppercase tracking-wider truncate mr-2">Category</span>
+                <span id="modal-points" class="text-2xl font-black text-yellow-600">$000</span>
+            </div>
+            
+            <div id="modal-question-text" class="modal-question"></div>
+            <div id="modal-answer-text" class="modal-answer"></div>
+
+            <div class="mt-auto pt-2">
+                <div class="flex items-center justify-center gap-4 mb-4">
+                    <div id="timer-display" class="text-4xl font-black text-blue-900">30</div>
+                    <button id="timer-toggle-btn" class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center active:bg-gray-300">
+                        <svg id="timer-icon" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-800" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                    </button>
+                </div>
+
+                <div id="button-container">
+                    <div id="scoring-buttons">
+                        <button id="correct-btn" class="game-btn bg-green-500 active:bg-green-600">CORRECT</button>
+                        <button id="incorrect-btn" class="game-btn bg-red-500 active:bg-red-600">WRONG</button>
+                    </div>
+                    <button id="next-btn" class="hidden w-full game-btn bg-blue-600 active:bg-blue-700">CONTINUE</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="daily-double-modal" class="modal">
+        <div class="modal-content border-4 border-yellow-400 bg-blue-950 text-white">
+            <h2 class="text-3xl font-black text-yellow-400 mb-6 tracking-widest">DAILY DOUBLE</h2>
+            <div class="mb-6 w-full">
+                <label class="block text-white text-lg mb-2">Enter Wager:</label>
+                <input type="number" id="dd-wager-input" class="text-4xl font-bold text-center w-full p-4 rounded-lg text-black" min="5">
+            </div>
+            <button id="submit-wager-btn" class="game-btn w-full bg-yellow-400 text-blue-900 hover:bg-yellow-300">BET!</button>
+        </div>
+    </div>
+
+    <div id="winner-modal" class="modal">
+        <div class="modal-content bg-gradient-to-br from-yellow-300 to-yellow-500 border-8 border-blue-900 justify-center">
+            <div id="confetti-container" class="absolute inset-0 pointer-events-none overflow-hidden rounded-lg"></div>
+            <h2 class="text-xl font-bold text-blue-900 opacity-75">WINNER</h2>
+            <h1 id="winner-name" class="text-5xl md:text-7xl font-black text-blue-900 my-6">TEAM NAME</h1>
+            <button id="close-winner-modal-btn" class="game-btn bg-blue-900 text-white px-8 rounded-full shadow-2xl">NEW GAME</button>
+        </div>
+    </div>
+
+    <div id="change-team-modal" class="modal">
+        <div class="modal-content !bg-indigo-600 !text-white justify-center items-center">
+            <h1 class="text-2xl font-bold opacity-80">SWITCH TURNS</h1>
+            <p class="text-5xl font-black my-8" id="next-team-name">Team 2</p>
+            <button id="confirm-change-team-btn" class="game-btn w-full bg-white text-indigo-700">READY</button>
+        </div>
+    </div>
+
+    <script>
+        // --- 6 GAMES DATA ---
+        const ALL_GAMES = {
+            "game1": { // RELATIONSHIPS (Original)
+                "Red Flags": {
+                    100: { q: "When a partner isolates you from friends, family, or support networks.", a: "What is isolation?" },
+                    200: { q: "A subtle form of manipulation where someone questions your reality.", a: "What is gaslighting?" },
+                    300: { q: "Excessive affection and praise early on to gain rapid control.", a: "What is love bombing?" },
+                    400: { q: "The cyclical pattern of tension building, incident, and calm.", a: "What is the Cycle of Abuse?" },
+                    500: { q: "Using guilt or silence as a tool for punishment.", a: "What is emotional coercion?" }
+                },
+                "Codependency": {
+                    100: { q: "Prioritizing another's needs so intensely that you neglect your own.", a: "What is self-abandonment?" },
+                    200: { q: "Protecting a partner from the natural consequences of their actions.", a: "What is enabling?" },
+                    300: { q: "Deriving self-worth solely from the ability to 'fix' or 'save' others.", a: "What is the Savior Complex?" },
+                    400: { q: "An intense, anxiety-driven need to manage others' behaviors.", a: "What is controlling behavior?" },
+                    500: { q: "Inability to identify one's own distinct emotions separate from a partner.", a: "What is enmeshment?" }
+                },
+                "Boundaries": {
+                    100: { q: "A boundary that is unclear, inconsistent, or easily violated.", a: "What is a porous boundary?" },
+                    200: { q: "The internal limit regarding what personal details you share.", a: "What is an emotional boundary?" },
+                    300: { q: "A rigid boundary style that acts as a wall to keep everyone out.", a: "What is avoidance?" },
+                    400: { q: "Communicating a boundary using 'I' statements.", a: "What is assertive communication?" },
+                    500: { q: "The recovery concept of detaching with love.", a: "What is detachment?" }
+                },
+                "Triggers": {
+                    100: { q: "Acronym for Hungry, Angry, Lonely, Tired.", a: "What is H.A.L.T.?" },
+                    200: { q: "Small event causing disproportionate reaction due to past trauma.", a: "What is an emotional flashback?" },
+                    300: { q: "Associating specific places or things with past toxic dynamics.", a: "What is euphoric recall?" },
+                    400: { q: "Transferring feelings about one person onto another.", a: "What is transference?" },
+                    500: { q: "Brain creating false danger due to chronic past stress.", a: "What is hypervigilance?" }
+                },
+                "Recovery": {
+                    100: { q: "The ability to regulate emotions without relying on a partner.", a: "What is self-soothing?" },
+                    200: { q: "Taking responsibility for one's own part in a conflict.", a: "What is accountability?" },
+                    300: { q: "Observing thoughts without judgment.", a: "What is mindfulness?" },
+                    400: { q: "Developing interests outside of the primary relationship.", a: "What is autonomy?" },
+                    500: { q: "Understanding another's perspective while maintaining your own.", a: "What is differentiation?" }
+                }
+            },
+            "game2": { // DETOX & BODY (Revised Detox Friendly)
+                "The Body": {
+                    100: { q: "It is crucial to drink plenty of this to help your organs flush out toxins.", a: "What is water (or hydration)?" },
+                    200: { q: "This organ is the body's primary filter and works overtime during detox to process alcohol and drugs.", a: "What is the liver?" },
+                    300: { q: "Many people experience this sleep disorder in early recovery, finding it hard to fall or stay asleep.", a: "What is insomnia?" },
+                    400: { q: "This acronym describes withdrawal symptoms that can last for months, like mood swings and brain fog.", a: "What is P.A.W.S. (Post-Acute Withdrawal Syndrome)?" },
+                    500: { q: "This 'feel-good' chemical in the brain is often depleted in early recovery, causing low mood.", a: "What is Dopamine?" }
+                },
+                "Common Feelings": {
+                    100: { q: "A feeling of intense desire to use a substance.", a: "What is a craving?" },
+                    200: { q: "This feeling of holding onto past anger or wrongs is often called the 'number one offender' in relapse.", a: "What is resentment?" },
+                    300: { q: "A temporary phase of euphoria and over-confidence often experienced in early sobriety.", a: "What is the Pink Cloud?" },
+                    400: { q: "The feeling that you are a fraud or don't belong in recovery, often called 'Imposter ______'.", a: "What is Syndrome?" },
+                    500: { q: "The opposite of connection; addiction is often described as a disease of this.", a: "What is isolation?" }
+                },
+                "Fact or Fiction": {
+                    100: { q: "True or False: You have to hit 'rock bottom' before you can get better.", a: "What is False?" },
+                    200: { q: "True or False: Addiction is defined as a chronic brain disease, not a lack of willpower.", a: "What is True?" },
+                    300: { q: "True or False: Relapse means you have failed and have to start completely over.", a: "What is False? (It is part of the learning process)" },
+                    400: { q: "True or False: You can become physically dependent on prescription medications even if you take them as prescribed.", a: "What is True?" },
+                    500: { q: "True or False: Marijuana is not addictive.", a: "What is False?" }
+                },
+                "Recovery Lingo": {
+                    100: { q: "We are taught to change 'People, Places, and ______'.", a: "What are Things?" },
+                    200: { q: "Someone who is sober but still behaves in self-destructive or angry ways is often called a 'Dry ______'.", a: "What is a Drunk?" },
+                    300: { q: "This term refers to helping an addict avoid the negative consequences of their behavior.", a: "What is Enabling?" },
+                    400: { q: "The 'Big Book' is the basic text for this organization.", a: "What is Alcoholics Anonymous (AA)?" },
+                    500: { q: "This three-word phrase suggests you should take action even if you don't feel like it yet: 'Fake it ______'.", a: "What is '...Till You Make It'?" }
+                },
+                "Relapse Prevention": {
+                    100: { q: "If you are hungry, angry, lonely, or tired, you are more likely to experience this.", a: "What is a trigger (or craving)?" },
+                    200: { q: "Calling this person is a common strategy when you feel like using.", a: "Who is a Sponsor?" },
+                    300: { q: "Visualizing the negative outcome of using before you do it is called 'Playing the ______'.", a: "What is Tape Forward?" },
+                    400: { q: "Keeping alcohol or paraphernalia in your house is considered this type of risk.", a: "What is an environmental trigger?" },
+                    500: { q: "This is the process of identifying your personal warning signs before a physical relapse occurs.", a: "What is Relapse Prevention Planning?" }
+                }
+            },
+            "game3": { // FAMOUS FACES & FACTS
+                "Famous Recovery": {
+                    100: { q: "This 'Iron Man' actor credits his recovery to therapy and staying sober since 2003.", a: "Who is Robert Downey Jr.?" },
+                    200: { q: "This rapper, known for 'Not Afraid', celebrated 16 years of sobriety in 2024.", a: "Who is Eminem?" },
+                    300: { q: "This 'Rocketman' singer founded a massive AIDS foundation and has been sober for 30+ years.", a: "Who is Elton John?" },
+                    400: { q: "Star of 'Friends', he spent millions on his own recovery and wrote a memoir before his passing.", a: "Who is Matthew Perry?" },
+                    500: { q: "This 'Halloween' actress has been sober from opioid painkillers for over two decades.", a: "Who is Jamie Lee Curtis?" }
+                },
+                "Music & Addiction": {
+                    100: { q: "This British singer, known for 'Rehab', tragically passed away at age 27.", a: "Who is Amy Winehouse?" },
+                    200: { q: "This grunge icon and Nirvana frontman struggled with heroin addiction before his death in 1994.", a: "Who is Kurt Cobain?" },
+                    300: { q: "He was the 'Man in Black' who found redemption and recovery later in life.", a: "Who is Johnny Cash?" },
+                    400: { q: "This pop star had a public breakdown in 2007 but regained control of her life and career.", a: "Who is Britney Spears?" },
+                    500: { q: "Lead singer of Aerosmith, he was once part of the 'Toxic Twins' before getting clean.", a: "Who is Steven Tyler?" }
+                },
+                "Toxic Relationships": {
+                    100: { q: "This musical duo had a famously abusive marriage portrayed in 'What's Love Got to Do with It'.", a: "Who are Ike and Tina Turner?" },
+                    200: { q: "This 'Pirates' actor and 'Aquaman' actress had a publicized defamation trial about mutual toxicity.", a: "Who are Johnny Depp and Amber Heard?" },
+                    300: { q: "This R&B singer's assault on Rihanna in 2009 brought attention to domestic violence.", a: "Who is Chris Brown?" },
+                    400: { q: "Known for 'Sid & Nancy', this punk rocker's relationship ended in tragedy.", a: "Who is Sid Vicious?" },
+                    500: { q: "This Motown legend's father shot him during a domestic dispute.", a: "Who is Marvin Gaye?" }
+                },
+                "Clinical Facts": {
+                    100: { q: "In a chronic user, THC (marijuana) can remain detectable in a urine test for this long.", a: "What is up to 30 days (or more)?" },
+                    200: { q: "This organ metabolizes alcohol at a rate of approximately one standard drink per hour.", a: "What is the Liver?" },
+                    300: { q: "This life-saving medication can immediately reverse an opioid overdose.", a: "What is Narcan (or Naloxone)?" },
+                    400: { q: "This severe form of alcohol withdrawal includes shaking, confusion, and hallucinations.", a: "What are Delirium Tremens (DTs)?" },
+                    500: { q: "Often mixed with other drugs, this synthetic opioid is 50-100 times stronger than morphine.", a: "What is Fentanyl?" }
+                },
+                "Pop Culture": {
+                    100: { q: "This HBO show featuring Zendaya depicts a raw look at teenage drug addiction.", a: "What is Euphoria?" },
+                    200: { q: "This 1996 movie follows a group of heroin addicts in Edinburgh.", a: "What is Trainspotting?" },
+                    300: { q: "Sandra Bullock plays a columnist forced into rehab in this 2000 movie.", a: "What is 28 Days?" },
+                    400: { q: "This A&E reality show followed real-life interventionists helping families.", a: "What is Intervention?" },
+                    500: { q: "Bradley Cooper and Lady Gaga starred in this movie dealing with alcoholism and fame.", a: "What is A Star Is Born?" }
+                }
+            },
+            "game4": { // THE PROGRAM (12 Steps, AA/NA)
+                "The Steps": {
+                    100: { q: "Step 1: We admitted we were ______ over alcohol/drugs.", a: "What is Powerless?" },
+                    200: { q: "Step 4 requires us to make a searching and fearless ______ inventory of ourselves.", a: "What is Moral?" },
+                    300: { q: "Step 9 involves making these to people we have harmed, except when doing so would injure them.", a: "What are Amends?" },
+                    400: { q: "Step 11 suggests using prayer and ______ to improve our conscious contact with God.", a: "What is Meditation?" },
+                    500: { q: "Step 12: Having had a spiritual awakening, we try to carry this message to others and practice these ______.", a: "What are Principles?" }
+                },
+                "AA History": {
+                    100: { q: "He is the co-founder of AA, known simply as 'Bill'.", a: "Who is Bill W.?" },
+                    200: { q: "This doctor co-founded AA with Bill W. in Akron, Ohio.", a: "Who is Dr. Bob?" },
+                    300: { q: "The year AA was founded.", a: "What is 1935?" },
+                    400: { q: "The 'Big Book' was first published in this year.", a: "What is 1939?" },
+                    500: { q: "This was the first name of the addiction recovery group before it became AA.", a: "What is The Oxford Group?" }
+                },
+                "Slogans": {
+                    100: { q: "This slogan reminds us to stay in the present moment.", a: "What is 'One Day at a Time'?" },
+                    200: { q: "This slogan tells us to relax and not try to force outcomes.", a: "What is 'Easy Does It'?" },
+                    300: { q: "Used when we are overthinking or complicating things.", a: "What is 'Keep It Simple'?" },
+                    400: { q: "A reminder to surrender control: 'Let Go and ______'.", a: "What is '...Let God'?" },
+                    500: { q: "This slogan emphasizes attending meetings and listening: 'Meeting makers ______'.", a: "What is '...Make It'?" }
+                },
+                "Definitions": {
+                    100: { q: "The AA definition of insanity: Doing the same thing over and over and expecting ______.", a: "What are 'Different Results'?" },
+                    200: { q: "A person you call for guidance through the 12 steps.", a: "What is a Sponsor?" },
+                    300: { q: "The state of being free from all mind-altering substances.", a: "What is Abstinence?" },
+                    400: { q: "A daily reprieve contingent on the maintenance of our spiritual condition.", a: "What is Sobriety?" },
+                    500: { q: "A desire to stop drinking is the only requirement for this.", a: "What is Membership?" }
+                },
+                "Service": {
+                    100: { q: "Making this at a meeting is a common first service commitment.", a: "What is Coffee?" },
+                    200: { q: "This person greets newcomers at the door.", a: "What is a Greeter?" },
+                    300: { q: "This trusted servant leads the meeting format.", a: "What is the Chairperson?" },
+                    400: { q: "This person manages the group's money.", a: "What is the Treasurer?" },
+                    500: { q: "Service keeps you sober by getting you out of ______.", a: "What is Self?" }
+                }
+            },
+            "game5": { // LIFE SKILLS & GOALS
+                "Goal Setting": {
+                    100: { q: "A popular saying: 'If you fail to plan, you are planning to ______'.", a: "What is Fail?" },
+                    200: { q: "Goals should be SMART: Specific, Measurable, Achievable, Relevant, and ______.", a: "What is Time-bound?" },
+                    300: { q: "Breaking a big goal into smaller, manageable steps prevents this feeling.", a: "What is Overwhelm?" },
+                    400: { q: "A vision board is a tool used for this.", a: "What is Visualization?" },
+                    500: { q: "Rewarding yourself for small wins is called positive ______.", a: "What is Reinforcement?" }
+                },
+                "Sober Living": {
+                    100: { q: "Most sober living homes require this to prove you are staying clean.", a: "What is a Drug Test (or UA)?" },
+                    200: { q: "A set time you must be back at the house each night.", a: "What is Curfew?" },
+                    300: { q: "Attending these is usually mandatory in sober living.", a: "What are House Meetings (or 12-step meetings)?" },
+                    400: { q: "Doing these contributes to the cleanliness of the shared space.", a: "What are Chores?" },
+                    500: { q: "This is often the first financial responsibility you take on in sober living.", a: "What is Rent?" }
+                },
+                "Routine": {
+                    100: { q: "Making this every morning is a simple task to start the day with a win.", a: "What is your Bed?" },
+                    200: { q: "Eating at regular times helps regulate blood sugar and ______.", a: "What is Mood?" },
+                    300: { q: "A solid routine reduces this, which is a major relapse trigger.", a: "What is Boredom (or Idle Time)?" },
+                    400: { q: "Setting a consistent time for this ensures you get enough rest.", a: "What is Sleep (or Bedtime)?" },
+                    500: { q: "Planning your day the night before reduces anxiety about the ______.", a: "What is Future?" }
+                },
+                "Money": {
+                    100: { q: "A plan for how you will spend and save your money.", a: "What is a Budget?" },
+                    200: { q: "This type of spending is done on impulse rather than need.", a: "What is Impulsive Spending?" },
+                    300: { q: "Paying off these is a common part of making financial amends.", a: "What are Debts?" },
+                    400: { q: "It is important to save money for an ______ fund.", a: "What is Emergency?" },
+                    500: { q: "Financial honesty is crucial; hiding spending is often a sign of ______ behavior.", a: "What is Addictive?" }
+                },
+                "Employment": {
+                    100: { q: "A document listing your work history and skills.", a: "What is a Resume?" },
+                    200: { q: "You should arrive this early for a job interview.", a: "What is 10-15 minutes?" },
+                    300: { q: "When asked about a gap in employment due to rehab, it is best to be honest but ______.", a: "What is Professional (or Brief)?" },
+                    400: { q: "This soft skill involves working well with others.", a: "What is Teamwork?" },
+                    500: { q: "Reliability means showing up to work on time and ______.", a: "What is Sober?" }
+                }
+            },
+            "game6": { // EMOTIONS & FAMILY
+                "Fear": {
+                    100: { q: "An acronym for F.E.A.R.: False Evidence Appearing ______.", a: "What is Real?" },
+                    200: { q: "Fear of this often keeps people from trying new things in recovery.", a: "What is Failure?" },
+                    300: { q: "The antidote to fear is often said to be this.", a: "What is Faith?" },
+                    400: { q: "Fear of success can lead to this behavior.", a: "What is Self-Sabotage?" },
+                    500: { q: "Courage is not the absence of fear, but acting ______ it.", a: "What is Despite (or In Spite of)?" }
+                },
+                "Rejection": {
+                    100: { q: "Rejection is often God's way of saying 'Not ______'.", a: "What is Yet (or 'Not This')?" },
+                    200: { q: "Taking rejection personally is a sign of low ______.", a: "What is Self-Esteem?" },
+                    300: { q: "When someone says 'no' to you, they are setting a ______.", a: "What is Boundary?" },
+                    400: { q: "Learning to handle 'no' without using is a sign of ______ maturity.", a: "What is Emotional?" },
+                    500: { q: "We must accept that we cannot ______ how others feel about us.", a: "What is Control?" }
+                },
+                "Family": {
+                    100: { q: "Addiction is often called a ______ disease because it affects everyone in the home.", a: "What is Family?" },
+                    200: { q: "Trust is lost in buckets and regained in ______.", a: "What are Drops?" },
+                    300: { q: "Family members often attend this 12-step group for their own recovery.", a: "What is Al-Anon?" },
+                    400: { q: "Setting healthy ______ is crucial for rebuilding relationships.", a: "What are Boundaries?" },
+                    500: { q: "Sometimes the healthiest choice for a family member is to ______ with love.", a: "What is Detach?" }
+                },
+                "Parenting": {
+                    100: { q: "The best amends to children is living a ______ life.", a: "What is Sober?" },
+                    200: { q: "Children of addicts often take on adult responsibilities, known as ______.", a: "What is Parentification?" },
+                    300: { q: "Consistency creates a sense of ______ for children.", a: "What is Safety?" },
+                    400: { q: "It is okay to say 'I don't ______' to your child's question.", a: "What is Know?" },
+                    500: { q: "Modeling healthy ______ coping is better than hiding all emotions.", a: "What is Emotional?" }
+                },
+                "Amends": {
+                    100: { q: "A simple 'I'm sorry' is an apology; changed behavior is an ______.", a: "What is Amends?" },
+                    200: { q: "Living Amends means showing up and doing the right thing ______.", a: "What is Daily (or Consistently)?" },
+                    300: { q: "Financial amends involves paying back ______.", a: "What is Money?" },
+                    400: { q: "Before making amends, you should consult your ______.", a: "What is Sponsor?" },
+                    500: { q: "The purpose of amends is to clean your side of the ______.", a: "What is Street?" }
+                }
+            }
+        };
+
+        let activeGameData = null;
+        let team1Score = 0, team2Score = 0;
+        let activeTeam = 1;
+        let currentPoints = 0;
+        let currentDD = null;
+        let timerInterval = null;
+        let timeLeft = 30;
+        let attemptState = 'initial';
+        let consecutiveCorrect1 = 0, consecutiveCorrect2 = 0;
+        let answeredCount = 0;
+        let timerOscillator = null;
+        let tickTock = 0; // For high/low tick sounds
+        
+        // --- UI ---
+        const ui = {
+            splash: document.getElementById('splash-screen'),
+            splashBtn: document.getElementById('activate-app-btn'),
+            intro: document.getElementById('intro-overlay'),
+            menu: document.getElementById('menu-screen'),
+            game: document.getElementById('game-container'),
+            board: document.getElementById('jeopardy-board'),
+            modal: document.getElementById('question-modal'),
+            ddModal: document.getElementById('daily-double-modal'),
+            winnerModal: document.getElementById('winner-modal'),
+            changeModal: document.getElementById('change-team-modal'),
+            t1Board: document.getElementById('team-1-board'),
+            t2Board: document.getElementById('team-2-board'),
+            t1Score: document.getElementById('team-1-score'),
+            t2Score: document.getElementById('team-2-score'),
+            timer: document.getElementById('timer-display'),
+            timerIcon: document.getElementById('timer-icon'),
+            titleDisplay: document.getElementById('game-title-display')
+        };
+
+        // --- AUDIO ENGINE ---
+        let ac; 
+        function initAudio() { 
+            if(!ac) { 
+                ac = new (window.AudioContext||window.webkitAudioContext)(); 
+            }
+            if(ac.state === 'suspended') ac.resume();
+        }
+
+        // 1. Intro Swell
+        function playSunriseSwell() {
+            if(!ac) initAudio();
+            const notes = [261.63, 329.63, 392.00, 523.25, 587.33]; 
+            notes.forEach((f,i) => {
+                const o=ac.createOscillator(), g=ac.createGain();
+                o.type='sine'; o.frequency.value=f;
+                o.connect(g); g.connect(ac.destination);
+                g.gain.setValueAtTime(0, ac.currentTime+i*0.2);
+                g.gain.linearRampToValueAtTime(0.05, ac.currentTime+i*0.2+0.05);
+                g.gain.exponentialRampToValueAtTime(0.001, ac.currentTime+i*0.2+4.0);
+                o.start(ac.currentTime+i*0.2); o.stop(ac.currentTime+i*0.2+4.1);
+            });
+        }
+
+        // 2. Timer
+        function playTimerSound() {
+            if (!ac) return;
+            if (timerOscillator) timerOscillator.stop();
+            timerOscillator = ac.createOscillator();
+            const gainNode = ac.createGain();
+            timerOscillator.type = 'sine';
+            if (tickTock % 2 === 0) {
+                timerOscillator.frequency.setValueAtTime(1200, ac.currentTime); 
+            } else {
+                timerOscillator.frequency.setValueAtTime(800, ac.currentTime); 
+            }
+            tickTock++;
+            gainNode.gain.setValueAtTime(0.1, ac.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.05);
+            timerOscillator.connect(gainNode);
+            gainNode.connect(ac.destination);
+            timerOscillator.start();
+            timerOscillator.stop(ac.currentTime + 0.05);
+        }
+        function stopTimerSound() {
+            if (timerOscillator) { timerOscillator.stop(); timerOscillator = null; }
+            tickTock = 0; 
+        }
+
+        // 3. Daily Double
+        function playDailyDoubleSound() {
+            if (!ac) return;
+            const osc = ac.createOscillator(), gain = ac.createGain();
+            osc.type = 'sine'; osc.connect(gain); gain.connect(ac.destination);
+            const now = ac.currentTime;
+            gain.gain.setValueAtTime(0.3, now); 
+            osc.frequency.setValueAtTime(300, now);
+            osc.frequency.exponentialRampToValueAtTime(900, now + 0.3);
+            osc.start(); osc.stop(now + 0.4);
+        }
+
+        // 4. Time's Up
+        function playTimesUpSound() {
+            if (!ac) return;
+            const now = ac.currentTime;
+            const osc = ac.createOscillator(), gain = ac.createGain();
+            osc.type = 'sawtooth'; osc.connect(gain); gain.connect(ac.destination);
+            osc.frequency.setValueAtTime(120, now);
+            gain.gain.setValueAtTime(0.3, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+            osc.start(); osc.stop(now + 0.4);
+        }
+
+        // 5. Steal
+        function playStealSound() {
+            if (!ac) return;
+            const now = ac.currentTime;
+            const osc = ac.createOscillator(), gain = ac.createGain();
+            osc.type = 'triangle'; osc.connect(gain); gain.connect(ac.destination);
+            gain.gain.setValueAtTime(0.2, now);
+            osc.frequency.setValueAtTime(900, now);
+            osc.frequency.setValueAtTime(1200, now + 0.1);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+            osc.start(); osc.stop(now + 0.2);
+        }
+
+        // 6. Correct
+        function playCorrectSound() {
+            if (!ac) return;
+            const now = ac.currentTime;
+            const osc = ac.createOscillator(), gain = ac.createGain();
+            osc.type = 'triangle'; osc.connect(gain); gain.connect(ac.destination);
+            gain.gain.setValueAtTime(0.2, now); 
+            osc.frequency.setValueAtTime(523.25, now);
+            osc.frequency.setValueAtTime(659.25, now + 0.1);
+            osc.frequency.setValueAtTime(783.99, now + 0.2);
+            osc.frequency.setValueAtTime(1046.50, now + 0.3);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.7);
+            osc.start(now); osc.stop(now + 0.7);
+        }
+        
+        // 7. Win (Ta-Da)
+        function playWinSound() {
+            if (!ac) return;
+            const now = ac.currentTime;
+            const playBrassNote = (freq, startTime, duration, vol = 0.3) => {
+                const osc = ac.createOscillator(), gain = ac.createGain(), filter = ac.createBiquadFilter(); 
+                osc.type = 'sawtooth'; osc.frequency.value = freq;
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(500, startTime);
+                filter.frequency.linearRampToValueAtTime(3000, startTime + 0.05);
+                filter.frequency.exponentialRampToValueAtTime(1000, startTime + duration);
+                gain.gain.setValueAtTime(0, startTime);
+                gain.gain.linearRampToValueAtTime(vol, startTime + 0.02);
+                gain.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
+                osc.connect(filter); filter.connect(gain); gain.connect(ac.destination);
+                osc.start(startTime); osc.stop(startTime + duration);
+            };
+            playBrassNote(392.00, now, 0.15, 0.25);
+            const impactTime = now + 0.12, duration = 1.2;
+            playBrassNote(261.63, impactTime, duration, 0.3);
+            playBrassNote(329.63, impactTime, duration, 0.25);
+            playBrassNote(392.00, impactTime, duration, 0.25);
+            playBrassNote(523.25, impactTime, duration, 0.2);
+        }
+
+        // Simple Select
+        function playSelectSound() { 
+            if(!ac) return;
+            const o=ac.createOscillator(), g=ac.createGain();
+            o.type='triangle'; o.frequency.value=800;
+            o.connect(g); g.connect(ac.destination);
+            g.gain.setValueAtTime(0, ac.currentTime);
+            g.gain.linearRampToValueAtTime(0.1, ac.currentTime+0.05);
+            g.gain.exponentialRampToValueAtTime(0.001, ac.currentTime+0.1);
+            o.start(ac.currentTime); o.stop(ac.currentTime+0.15);
+        }
+
+        // --- GAME LOGIC ---
+        ui.splashBtn.onclick = () => {
+            initAudio(); 
+            ui.splash.style.opacity = 0;
+            setTimeout(() => {
+                ui.splash.style.display = 'none';
+                startIntroSequence(); 
+            }, 1000);
+        };
+
+        function startIntroSequence() {
+            ui.intro.style.display = 'flex';
+            document.querySelector('#intro-overlay').classList.add('run-sunrise-sky');
+            document.querySelector('.sun-graphic').classList.add('run-sunrise-sun');
+            document.querySelector('.intro-content').classList.add('run-sunrise-text');
+            playSunriseSwell();
+        }
+
+        document.getElementById('intro-btn').onclick = () => {
+            playSelectSound();
+            ui.intro.style.opacity = 0;
+            ui.menu.style.display = 'flex';
+            setTimeout(() => {
+                ui.intro.style.display = 'none';
+                ui.menu.style.opacity = 1;
+            }, 1000);
+        };
+
+        window.startGame = function(gameKey, title) {
+            playSelectSound();
+            activeGameData = ALL_GAMES[gameKey];
+            ui.titleDisplay.textContent = title; 
+            ui.menu.style.opacity = '0';
+            setTimeout(() => {
+                ui.menu.style.display = 'none';
+                ui.game.style.display = 'flex';
+                setTimeout(() => ui.game.style.opacity = '1', 100);
+            }, 500);
+            resetGame();
+        };
+
+        document.getElementById('back-to-menu').onclick = () => {
+            if(confirm("Exit to Menu?")) location.reload();
+        };
+
+        function resetGame() {
+            team1Score = 0; team2Score = 0; answeredCount = 0;
+            updateScores();
+            createBoard();
+        }
+
+        function createBoard() {
+            ui.board.innerHTML = '';
+            let allCells = [];
+            for(let cat in activeGameData) {
+                let h = document.createElement('div');
+                h.className = 'category-cell';
+                h.textContent = cat;
+                ui.board.appendChild(h);
+            }
+            const points = [100, 200, 300, 400, 500];
+            points.forEach(p => {
+                for(let cat in activeGameData) {
+                    let cell = document.createElement('div');
+                    cell.className = 'question-cell';
+                    cell.textContent = `$${p}`;
+                    cell.onclick = () => handleCellClick(cell, cat, p);
+                    ui.board.appendChild(cell);
+                    allCells.push(cell);
+                }
+            });
+            if(allCells.length > 0) {
+                const rand = Math.floor(Math.random() * allCells.length);
+                allCells[rand].dataset.dd = 'true';
+            }
+        }
+
+        function handleCellClick(cell, cat, pts) {
+            if(cell.classList.contains('answered')) return;
+            cell.classList.add('answered');
+            cell.textContent = '';
+            currentPoints = pts;
+            answeredCount++;
+            
+            const data = activeGameData[cat][pts];
+            if(cell.dataset.dd === 'true') {
+                currentDD = { cat, q: data.q, a: data.a };
+                openDDModal();
+            } else {
+                openQuestionModal(cat, pts, data.q, data.a);
+            }
+        }
+
+        function openQuestionModal(cat, pts, q, a) {
+            document.getElementById('modal-category').textContent = cat;
+            document.getElementById('modal-points').textContent = `$${pts}`;
+            document.getElementById('modal-question-text').textContent = q;
+            document.getElementById('modal-answer-text').textContent = a;
+            document.getElementById('modal-answer-text').style.display = 'none';
+            document.getElementById('scoring-buttons').style.display = 'grid';
+            document.getElementById('next-btn').style.display = 'none';
+            
+            ui.modal.style.display = 'flex';
+            attemptState = 'initial';
+            resetTimer(30);
+            startTimer();
+        }
+
+        function openDDModal() {
+            playDailyDoubleSound(); 
+            ui.ddModal.style.display = 'flex';
+            const s = activeTeam === 1 ? team1Score : team2Score;
+            const max = Math.max(1000, s);
+            const inp = document.getElementById('dd-wager-input');
+            inp.max = max; inp.value = ''; inp.placeholder = `Max: $${max}`;
+            setTimeout(() => inp.focus(), 100);
+        }
+
+        document.getElementById('submit-wager-btn').onclick = () => {
+            const w = parseInt(document.getElementById('dd-wager-input').value);
+            const max = parseInt(document.getElementById('dd-wager-input').max);
+            if(!w || w < 5 || w > max) return;
+            currentPoints = w;
+            ui.ddModal.style.display = 'none';
+            openQuestionModal(`DAILY DOUBLE`, `Wager: $${w}`, currentDD.q, currentDD.a);
+            attemptState = 'dd';
+        };
+
+        // --- SCORING ---
+        document.getElementById('correct-btn').onclick = () => {
+            playCorrectSound(); 
+            let pts = attemptState === 'steal' ? Math.round(currentPoints/2) : currentPoints;
+            addScore(activeTeam, pts);
+            if(activeTeam===1) { consecutiveCorrect1++; consecutiveCorrect2=0; }
+            else { consecutiveCorrect2++; consecutiveCorrect1=0; }
+            revealAnswer(true); 
+        };
+
+        document.getElementById('incorrect-btn').onclick = () => {
+            if(attemptState === 'dd') {
+                playTimesUpSound(); 
+                addScore(activeTeam, -currentPoints);
+                revealAnswer(false);
+            } else if(attemptState === 'initial') {
+                playTimesUpSound(); 
+                addScore(activeTeam, -Math.round(currentPoints/2));
+                setTimeout(() => playStealSound(), 500); 
+                attemptState = 'steal';
+                const next = activeTeam===1 ? 2 : 1;
+                setActiveTeam(next);
+                resetTimer(5);
+                startTimer();
+            } else {
+                playTimesUpSound(); 
+                revealAnswer(false);
+            }
+        };
+
+        document.getElementById('next-btn').onclick = () => {
+            ui.modal.style.display = 'none';
+            const next = parseInt(document.getElementById('next-btn').dataset.nextTeam) || activeTeam;
+            if(next !== activeTeam && answeredCount < 25) {
+                document.getElementById('next-team-name').textContent = document.getElementById(`team-${next}-name`).value;
+                ui.changeModal.style.display = 'flex';
+                setActiveTeam(next);
+            }
+            if(answeredCount >= 25) showWinner();
+        };
+
+        function revealAnswer(correct) {
+            stopTimer();
+            document.getElementById('scoring-buttons').style.display = 'none';
+            document.getElementById('next-btn').style.display = 'block';
+            document.getElementById('modal-answer-text').style.display = 'block';
+            let nextTeam = activeTeam;
+            if(!correct) nextTeam = activeTeam===1 ? 2 : 1;
+            else if((activeTeam===1 && consecutiveCorrect1>=3) || (activeTeam===2 && consecutiveCorrect2>=3)) {
+                nextTeam = activeTeam===1 ? 2 : 1;
+                consecutiveCorrect1=0; consecutiveCorrect2=0;
+            }
+            document.getElementById('next-btn').dataset.nextTeam = nextTeam;
+        }
+
+        function addScore(team, pts) {
+            if(team===1) team1Score = Math.max(0, team1Score+pts);
+            else team2Score = Math.max(0, team2Score+pts);
+            updateScores();
+        }
+        function updateScores() { ui.t1Score.value = team1Score; ui.t2Score.value = team2Score; }
+        
+        document.getElementById('team-1-score').addEventListener('input', (e) => { team1Score = parseInt(e.target.value) || 0; });
+        document.getElementById('team-2-score').addEventListener('input', (e) => { team2Score = parseInt(e.target.value) || 0; });
+
+        function setActiveTeam(t) {
+            activeTeam = t;
+            ui.t1Board.classList.toggle('active', t===1);
+            ui.t2Board.classList.toggle('active', t===2);
+        }
+        ui.t1Board.onclick = () => setActiveTeam(1);
+        ui.t2Board.onclick = () => setActiveTeam(2);
+        
+        document.getElementById('reset-game').onclick = () => { if(confirm("Restart Board?")) resetGame(); };
+        document.getElementById('confirm-change-team-btn').onclick = () => ui.changeModal.style.display='none';
+        document.getElementById('close-winner-modal-btn').onclick = () => location.reload();
+
+        // --- TIMER ---
+        function resetTimer(s) { stopTimer(); timeLeft=s; ui.timer.textContent=s; ui.timerIcon.innerHTML='<path d="M8 5v14l11-7z"/>'; }
+        
+        function startTimer() {
+            if(timerInterval) return;
+            ui.timerIcon.innerHTML='<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+            if(attemptState === 'steal') playStealSound();
+            else playTimerSound();
+            timerInterval = setInterval(() => {
+                timeLeft--; 
+                ui.timer.textContent=timeLeft;
+                if(timeLeft > 0) {
+                    if(attemptState === 'steal') playStealSound(); 
+                    else playTimerSound(); 
+                }
+                if(timeLeft<=0) { stopTimer(); handleTimeout(); }
+            }, 1000);
+        }
+        
+        function stopTimer() { 
+            clearInterval(timerInterval); 
+            timerInterval=null; 
+            ui.timerIcon.innerHTML='<path d="M8 5v14l11-7z"/>';
+            stopTimerSound();
+        }
+        
+        function handleTimeout() {
+            playTimesUpSound(); 
+            if(attemptState === 'initial') {
+                attemptState = 'steal';
+                const next = activeTeam===1 ? 2 : 1;
+                setActiveTeam(next);
+                resetTimer(5);
+                startTimer();
+            } else {
+                revealAnswer(false);
+            }
+        }
+        document.getElementById('timer-toggle-btn').onclick = () => { if(timerInterval) stopTimer(); else startTimer(); };
+
+        function showWinner() {
+            playWinSound(); 
+            ui.winnerModal.style.display = 'flex';
+            let txt = "It's a Tie!";
+            if(team1Score > team2Score) txt = document.getElementById('team-1-name').value;
+            if(team2Score > team1Score) txt = document.getElementById('team-2-name').value;
+            document.getElementById('winner-name').textContent = txt;
+            const cont = document.getElementById('confetti-container');
+            cont.innerHTML = '';
+            const colors = ['#f00', '#0f0', '#00f', '#ff0', '#0ff'];
+            for(let i=0; i<80; i++) {
+                let c = document.createElement('div');
+                c.style.cssText = `position:absolute; width:8px; height:8px; background:${colors[Math.floor(Math.random()*5)]}; top:-10px; left:${Math.random()*100}%; opacity:0.8; transition: top ${2+Math.random()*2}s ease-in, transform 3s linear;`;
+                cont.appendChild(c);
+                setTimeout(() => { c.style.top = '110%'; c.style.transform = `rotate(${Math.random()*720}deg)`; }, 50);
+            }
+        }
+    </script>
+</body>
+</html>
+
+==================================================
+FILE PATH: indexx.html
+==================================================
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sunrise Detox Presents, Detox Jeapardy</title>
     <!-- Load Tailwind CSS -->
@@ -1443,6 +2549,466 @@ FILE PATH: index.html
 </html>
 
 ==================================================
+FILE PATH: manual.html
+==================================================
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sunrise Detox Jeopardy - Compact Manual</title>
+    <style>
+        @page {
+            margin: 0.5in;
+            size: portrait;
+        }
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-size: 11px;
+            line-height: 1.3;
+            color: #222;
+            margin: 0;
+            padding: 0;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        
+        /* --- HOST GUIDE PAGE --- */
+        .guide-container {
+            border: 2px solid #06226e;
+            padding: 20px;
+            height: 95vh; /* Fill the first page */
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+        }
+        h1 {
+            text-align: center;
+            color: #06226e;
+            text-transform: uppercase;
+            font-size: 24px;
+            margin: 0 0 15px 0;
+            border-bottom: 3px solid #f59e0b;
+        }
+        h2 {
+            font-size: 16px;
+            background-color: #f3f4f6;
+            padding: 5px 10px;
+            margin: 10px 0 5px 0;
+            border-left: 5px solid #06226e;
+        }
+        .step { margin-bottom: 10px; }
+        .step strong { color: #06226e; font-size: 12px; }
+        ul { margin: 5px 0 10px 20px; padding: 0; }
+        li { margin-bottom: 3px; }
+
+        .page-break { page-break-after: always; }
+
+        /* --- ANSWER KEY PAGES --- */
+        .game-header {
+            background-color: #06226e;
+            color: #fff;
+            padding: 6px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 14px;
+            margin-top: 0;
+            border: 1px solid #000;
+        }
+        
+        /* Layout for 2 games per page */
+        .games-page {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            height: 98vh; /* Occupy full page height */
+            gap: 15px;
+        }
+
+        .game-table-container {
+            flex: 1; /* Each game takes half the page */
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+            font-size: 9px;
+        }
+        
+        th {
+            background-color: #e5e7eb;
+            color: #000;
+            border: 1px solid #444;
+            padding: 4px;
+            font-size: 10px;
+            text-transform: uppercase;
+        }
+        
+        td {
+            border: 1px solid #444;
+            padding: 3px 5px;
+            vertical-align: top;
+            height: 45px; /* Fixed height to force uniform grid */
+            overflow: hidden;
+        }
+
+        /* Styling for Q & A inside cells */
+        .cell-content { display: flex; flex-direction: column; height: 100%; }
+        .pts { font-weight: bold; color: #06226e; font-size: 10px; margin-bottom: 2px; border-bottom: 1px dotted #ccc; }
+        .q { color: #333; margin-bottom: auto; }
+        .a { color: #059669; font-weight: bold; margin-top: 2px; font-size: 9.5px; }
+
+    </style>
+</head>
+<body>
+
+    <div class="guide-container">
+        <h1>Sunrise Detox Jeopardy: Host Guide</h1>
+        
+        <h2>1. Quick Setup</h2>
+        <div class="step">
+            <strong>Start the Game:</strong> Load the page, click "ENTER EXPERIENCE" (required for audio), and select a Game Edition from the menu.
+        </div>
+        <div class="step">
+            <strong>Customize Teams:</strong> Tap "Team 1" or "Team 2" on the scoreboard to rename them. Tap the color dot to change team colors.
+        </div>
+
+        <h2>2. How to Play</h2>
+        <div class="step">
+            <strong>Step 1: Pick.</strong> Tap the active team's scoreboard (it glows). They choose a Category & Amount (e.g., "Triggers $200").
+        </div>
+        <div class="step">
+            <strong>Step 2: Read.</strong> Read the question aloud. A 37-second timer starts automatically.
+        </div>
+        <div class="step">
+            <strong>Step 3: Answer.</strong> Teams must answer in the form of a question (e.g., "What is denial?").
+        </div>
+        <div class="step">
+            <strong>Step 4: Score.</strong>
+            <ul>
+                <li>Tap <strong>"I Got It Right!"</strong> → Team gets full points.</li>
+                <li>Tap <strong>"I Got It Wrong"</strong> → Team loses half points. <strong>STEAL MODE STARTS.</strong></li>
+            </ul>
+        </div>
+
+        <h2>3. The Steal Rule</h2>
+        <div class="step">
+            If Team A misses the question (or time runs out):
+            <ul>
+                <li>Control automatically switches to Team B.</li>
+                <li>A 5-second "Steal Timer" begins immediately.</li>
+                <li>If Team B answers correctly, they steal <strong>half the points</strong>. If they miss, no penalty.</li>
+            </ul>
+        </div>
+
+        <h2>4. Special Features</h2>
+        <div class="step">
+            <strong>Daily Double:</strong> One random question per game. Only the picking team can answer. They can wager up to their total score (minimum $5).
+        </div>
+        <div class="step">
+            <strong>Manual Score Adjust:</strong> Host can tap directly on the score number to type in a fix if an error occurs.
+        </div>
+        <div class="step">
+            <strong>Winner:</strong> The game ends when all questions are answered. Confetti will announce the winner!
+        </div>
+    </div>
+
+    <div class="page-break"></div>
+
+    <div class="games-page">
+        
+        <div class="game-table-container">
+            <div class="game-header">GAME 1: RELATIONSHIPS EDITION</div>
+            <table>
+                <thead>
+                    <tr><th>Red Flags</th><th>Codependency</th><th>Boundaries</th><th>Triggers</th><th>Recovery</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><div class="cell-content"><span class="pts">$100</span><span class="q">Partner isolates you...</span><span class="a">A: Isolation</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$100</span><span class="q">Prioritizing others...</span><span class="a">A: Self-abandonment</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$100</span><span class="q">Unclear/violated limits...</span><span class="a">A: Porous boundary</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$100</span><span class="q">Hungry, Angry, Lonely...</span><span class="a">A: H.A.L.T.</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$100</span><span class="q">Regulate emotion alone...</span><span class="a">A: Self-soothing</span></div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="cell-content"><span class="pts">$200</span><span class="q">Questions reality...</span><span class="a">A: Gaslighting</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$200</span><span class="q">Protecting from conseq...</span><span class="a">A: Enabling</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$200</span><span class="q">Sharing limits...</span><span class="a">A: Emotional boundary</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$200</span><span class="q">Reaction to past...</span><span class="a">A: Emotional flashback</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$200</span><span class="q">Owning your part...</span><span class="a">A: Accountability</span></div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="cell-content"><span class="pts">$300</span><span class="q">Excessive affection...</span><span class="a">A: Love bombing</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$300</span><span class="q">Worth from saving...</span><span class="a">A: Savior Complex</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$300</span><span class="q">Wall keeping out...</span><span class="a">A: Avoidance</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$300</span><span class="q">Romanticizing use...</span><span class="a">A: Euphoric recall</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$300</span><span class="q">Observing thoughts...</span><span class="a">A: Mindfulness</span></div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="cell-content"><span class="pts">$400</span><span class="q">Tension/Incident/Calm...</span><span class="a">A: Cycle of Abuse</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$400</span><span class="q">Managing others...</span><span class="a">A: Controlling behavior</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$400</span><span class="q">'I' statements...</span><span class="a">A: Assertive comms</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$400</span><span class="q">Transferring feelings...</span><span class="a">A: Transference</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$400</span><span class="q">Interests outside rel...</span><span class="a">A: Autonomy</span></div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="cell-content"><span class="pts">$500</span><span class="q">Guilt/silence...</span><span class="a">A: Emotional coercion</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$500</span><span class="q">No distinct emotion...</span><span class="a">A: Enmeshment</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$500</span><span class="q">Detach with love...</span><span class="a">A: Detachment</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$500</span><span class="q">False danger...</span><span class="a">A: Hypervigilance</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$500</span><span class="q">Understanding persp...</span><span class="a">A: Differentiation</span></div></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="game-table-container">
+            <div class="game-header">GAME 2: THE BODY & DETOX EDITION</div>
+            <table>
+                <thead>
+                    <tr><th>The Body</th><th>Common Feelings</th><th>Fact or Fiction</th><th>Recovery Lingo</th><th>Relapse Prevention</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><div class="cell-content"><span class="pts">$100</span><span class="q">Flush toxins...</span><span class="a">A: Water/Hydration</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$100</span><span class="q">Intense desire...</span><span class="a">A: Craving</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$100</span><span class="q">Must hit rock bottom?</span><span class="a">A: False</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$100</span><span class="q">People, Places...</span><span class="a">A: Things</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$100</span><span class="q">HALT leads to...</span><span class="a">A: Trigger/Craving</span></div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="cell-content"><span class="pts">$200</span><span class="q">Primary filter...</span><span class="a">A: Liver</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$200</span><span class="q">Holding anger...</span><span class="a">A: Resentment</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$200</span><span class="q">Brain disease?</span><span class="a">A: True</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$200</span><span class="q">Sober but angry...</span><span class="a">A: Dry Drunk</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$200</span><span class="q">Call when using...</span><span class="a">A: Sponsor</span></div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="cell-content"><span class="pts">$300</span><span class="q">Sleep disorder...</span><span class="a">A: Insomnia</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$300</span><span class="q">Early euphoria...</span><span class="a">A: Pink Cloud</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$300</span><span class="q">Relapse = Failure?</span><span class="a">A: False</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$300</span><span class="q">Stop consequences...</span><span class="a">A: Enabling</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$300</span><span class="q">Visualize outcome...</span><span class="a">A: Tape Forward</span></div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="cell-content"><span class="pts">$400</span><span class="q">Withdrawal months...</span><span class="a">A: P.A.W.S.</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$400</span><span class="q">Feeling like fraud...</span><span class="a">A: Imposter Syndrome</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$400</span><span class="q">Meds dependence?</span><span class="a">A: True</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$400</span><span class="q">Big Book org...</span><span class="a">A: AA</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$400</span><span class="q">Alcohol in house...</span><span class="a">A: Envir. Trigger</span></div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="cell-content"><span class="pts">$500</span><span class="q">Feel-good chem...</span><span class="a">A: Dopamine</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$500</span><span class="q">Opposite connection...</span><span class="a">A: Isolation</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$500</span><span class="q">Pot not addictive?</span><span class="a">A: False</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$500</span><span class="q">Fake it...</span><span class="a">A: Till you make it</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$500</span><span class="q">Identifying signs...</span><span class="a">A: Relapse Plan</span></div></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="page-break"></div>
+
+    <div class="games-page">
+        
+        <div class="game-table-container">
+            <div class="game-header">GAME 3: FAMOUS FACES & FACTS</div>
+            <table>
+                <thead>
+                    <tr><th>Famous Recovery</th><th>Music & Addiction</th><th>Toxic Rel's</th><th>Clinical Facts</th><th>Pop Culture</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><div class="cell-content"><span class="pts">$100</span><span class="q">Iron Man...</span><span class="a">A: Robert Downey Jr.</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$100</span><span class="q">Amy Winehouse...</span><span class="a">A: Rehab</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$100</span><span class="q">Ike & Tina...</span><span class="a">A: Turner</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$100</span><span class="q">THC detect time...</span><span class="a">A: 30 Days</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$100</span><span class="q">Zendaya show...</span><span class="a">A: Euphoria</span></div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="cell-content"><span class="pts">$200</span><span class="q">Eminem...</span><span class="a">A: Not Afraid</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$200</span><span class="q">Nirvana...</span><span class="a">A: Kurt Cobain</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$200</span><span class="q">Depp & Heard...</span><span class="a">A: Defamation</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$200</span><span class="q">Metabolizes alc...</span><span class="a">A: Liver</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$200</span><span class="q">Ewan McGregor...</span><span class="a">A: Trainspotting</span></div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="cell-content"><span class="pts">$300</span><span class="q">Elton John...</span><span class="a">A: Rocketman</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$300</span><span class="q">Man in Black...</span><span class="a">A: Johnny Cash</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$300</span><span class="q">Chris Brown...</span><span class="a">A: Rihanna</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$300</span><span class="q">Reverse OD...</span><span class="a">A: Narcan</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$300</span><span class="q">Sandra Bullock...</span><span class="a">A: 28 Days</span></div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="cell-content"><span class="pts">$400</span><span class="q">Matthew Perry...</span><span class="a">A: Friends</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$400</span><span class="q">Britney Spears...</span><span class="a">A: 2007 Breakdown</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$400</span><span class="q">Sid Vicious...</span><span class="a">A: Nancy</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$400</span><span class="q">Severe w/drawal...</span><span class="a">A: Delirium Tremens</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$400</span><span class="q">A&E Show...</span><span class="a">A: Intervention</span></div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="cell-content"><span class="pts">$500</span><span class="q">Jamie Lee Curtis...</span><span class="a">A: Halloween</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$500</span><span class="q">Steven Tyler...</span><span class="a">A: Aerosmith</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$500</span><span class="q">Marvin Gaye...</span><span class="a">A: Father</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$500</span><span class="q">Synth opioid...</span><span class="a">A: Fentanyl</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$500</span><span class="q">Lady Gaga...</span><span class="a">A: A Star Is Born</span></div></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="game-table-container">
+            <div class="game-header">GAME 4: THE PROGRAM</div>
+            <table>
+                <thead>
+                    <tr><th>The Steps</th><th>AA History</th><th>Slogans</th><th>Definitions</th><th>Service</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><div class="cell-content"><span class="pts">$100</span><span class="q">Step 1...</span><span class="a">A: Powerless</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$100</span><span class="q">Co-founder Bill...</span><span class="a">A: Bill W.</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$100</span><span class="q">Present moment...</span><span class="a">A: One Day at a Time</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$100</span><span class="q">Insanity is...</span><span class="a">A: Diff. Results</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$100</span><span class="q">Making this...</span><span class="a">A: Coffee</span></div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="cell-content"><span class="pts">$200</span><span class="q">Step 4...</span><span class="a">A: Moral Inventory</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$200</span><span class="q">Co-founder Dr...</span><span class="a">A: Dr. Bob</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$200</span><span class="q">Relax...</span><span class="a">A: Easy Does It</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$200</span><span class="q">Guide...</span><span class="a">A: Sponsor</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$200</span><span class="q">Greeter...</span><span class="a">A: Greets</span></div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="cell-content"><span class="pts">$300</span><span class="q">Step 9...</span><span class="a">A: Amends</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$300</span><span class="q">Year founded...</span><span class="a">A: 1935</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$300</span><span class="q">Overthinking...</span><span class="a">A: Keep It Simple</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$300</span><span class="q">Freedom...</span><span class="a">A: Abstinence</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$300</span><span class="q">Leads meeting...</span><span class="a">A: Chairperson</span></div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="cell-content"><span class="pts">$400</span><span class="q">Step 11...</span><span class="a">A: Meditation</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$400</span><span class="q">Big Book Year...</span><span class="a">A: 1939</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$400</span><span class="q">Let Go...</span><span class="a">A: Let God</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$400</span><span class="q">Daily reprieve...</span><span class="a">A: Sobriety</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$400</span><span class="q">Manages money...</span><span class="a">A: Treasurer</span></div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="cell-content"><span class="pts">$500</span><span class="q">Step 12...</span><span class="a">A: Principles</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$500</span><span class="q">Previous group...</span><span class="a">A: Oxford Group</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$500</span><span class="q">Meeting makers...</span><span class="a">A: Make It</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$500</span><span class="q">Requirement...</span><span class="a">A: Membership</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$500</span><span class="q">Out of...</span><span class="a">A: Self</span></div></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div class="page-break"></div>
+
+    <div class="games-page">
+
+        <div class="game-table-container">
+            <div class="game-header">GAME 5: LIFE SKILLS & GOALS</div>
+            <table>
+                <thead>
+                    <tr><th>Goal Setting</th><th>Sober Living</th><th>Routine</th><th>Money</th><th>Employment</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><div class="cell-content"><span class="pts">$100</span><span class="q">Fail to plan...</span><span class="a">A: Plan to Fail</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$100</span><span class="q">Prove clean...</span><span class="a">A: Drug Test / UA</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$100</span><span class="q">Morning task...</span><span class="a">A: Make Bed</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$100</span><span class="q">Spending plan...</span><span class="a">A: Budget</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$100</span><span class="q">Work history...</span><span class="a">A: Resume</span></div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="cell-content"><span class="pts">$200</span><span class="q">SMART Goals...</span><span class="a">A: Time-bound</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$200</span><span class="q">Time back...</span><span class="a">A: Curfew</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$200</span><span class="q">Regulates mood...</span><span class="a">A: Eating</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$200</span><span class="q">Impulse buying...</span><span class="a">A: Impulsive</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$200</span><span class="q">Arrival time...</span><span class="a">A: 10-15m Early</span></div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="cell-content"><span class="pts">$300</span><span class="q">Prevent overwhelm...</span><span class="a">A: Small Steps</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$300</span><span class="q">Mandatory...</span><span class="a">A: House Meeting</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$300</span><span class="q">Reduces relapse...</span><span class="a">A: Boredom</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$300</span><span class="q">Financial amends...</span><span class="a">A: Debts</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$300</span><span class="q">Gap in work...</span><span class="a">A: Professional</span></div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="cell-content"><span class="pts">$400</span><span class="q">Vision board...</span><span class="a">A: Visualization</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$400</span><span class="q">Cleanliness...</span><span class="a">A: Chores</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$400</span><span class="q">Consistent time...</span><span class="a">A: Sleep</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$400</span><span class="q">Save for...</span><span class="a">A: Emergency</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$400</span><span class="q">Work w/ others...</span><span class="a">A: Teamwork</span></div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="cell-content"><span class="pts">$500</span><span class="q">Rewards...</span><span class="a">A: Positive Reinf.</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$500</span><span class="q">Financial resp...</span><span class="a">A: Rent</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$500</span><span class="q">Plan night before...</span><span class="a">A: Future Anxiety</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$500</span><span class="q">Hiding spending...</span><span class="a">A: Addictive</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$500</span><span class="q">Reliability...</span><span class="a">A: Sober</span></div></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="game-table-container">
+            <div class="game-header">GAME 6: EMOTIONS & FAMILY</div>
+            <table>
+                <thead>
+                    <tr><th>Fear</th><th>Rejection</th><th>Family</th><th>Parenting</th><th>Amends</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><div class="cell-content"><span class="pts">$100</span><span class="q">F.E.A.R...</span><span class="a">A: Real</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$100</span><span class="q">God's way...</span><span class="a">A: Not Yet</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$100</span><span class="q">Affects all...</span><span class="a">A: Family Disease</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$100</span><span class="q">Best amends...</span><span class="a">A: Sober Life</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$100</span><span class="q">Changed behavior...</span><span class="a">A: Amends</span></div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="cell-content"><span class="pts">$200</span><span class="q">Stops trying...</span><span class="a">A: Failure</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$200</span><span class="q">Taking personal...</span><span class="a">A: Low Self-Esteem</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$200</span><span class="q">Trust regained...</span><span class="a">A: Drops</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$200</span><span class="q">Child as adult...</span><span class="a">A: Parentification</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$200</span><span class="q">Living amends...</span><span class="a">A: Daily</span></div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="cell-content"><span class="pts">$300</span><span class="q">Antidote...</span><span class="a">A: Faith</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$300</span><span class="q">Saying no...</span><span class="a">A: Boundary</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$300</span><span class="q">Family support...</span><span class="a">A: Al-Anon</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$300</span><span class="q">Consistency...</span><span class="a">A: Safety</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$300</span><span class="q">Pay back...</span><span class="a">A: Money</span></div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="cell-content"><span class="pts">$400</span><span class="q">Fear of success...</span><span class="a">A: Self-Sabotage</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$400</span><span class="q">Handle 'no'...</span><span class="a">A: Maturity</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$400</span><span class="q">Rebuilding...</span><span class="a">A: Boundaries</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$400</span><span class="q">I don't...</span><span class="a">A: Know</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$400</span><span class="q">Consult...</span><span class="a">A: Sponsor</span></div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="cell-content"><span class="pts">$500</span><span class="q">Acting...</span><span class="a">A: Despite it</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$500</span><span class="q">Can't control...</span><span class="a">A: Others</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$500</span><span class="q">Love...</span><span class="a">A: Detach</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$500</span><span class="q">Modeling...</span><span class="a">A: Emotional Coping</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$500</span><span class="q">Side of...</span><span class="a">A: Street</span></div></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+</body>
+</html>
+
+==================================================
 FILE PATH: READ.ME
 ==================================================
 
@@ -1474,6 +3040,1030 @@ Detox Jeopardy. A fully web-based, interactive Jeopardy-style game built with va
     I -.-> Note1;
     I -.-> Note2;
 How to RunSince this is a single-file application, there is no build step.Download the index.html file.Open the file in any modern web browser (Chrome, Firefox, Safari, Edge).That's it! The game is ready to play.How to PlayA full gameplay manual is available in Detox_Jeopardy_Manual.md, but here are the basics:Setup: Customize your team names and colors.Start: The host clicks a team's scoreboard to make them "active."Pick: The active team picks a category and dollar amount.Answer: The question modal appears with a 37-second timer. The team must answer in the form of a question.Score: The host clicks "I Got It Right!" or "I Got It Wrong!".A wrong answer (or running out of time) automatically activates the other team for a 5-second steal attempt.Continue: The host clicks "Next" to close the modal.Switch Turns: The host clicks the other team's scoreboard to make them active.Win: The team with the most points after all questions are answered wins!
+
+==================================================
+FILE PATH: Sunrise_Jeopardy.html
+==================================================
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Sunrise Detox Jeopardy</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        html, body {
+            font-family: 'Inter', sans-serif;
+            background-color: #060a2b; /* Dark blue background */
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden; /* No scrolling */
+            touch-action: manipulation; /* Improves touch response on iOS */
+        }
+        
+        #game-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1s ease-in;
+        }
+
+        /* --- INTRO ANIMATION STYLES --- */
+        #intro-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(to bottom, #020411, #1a0b16);
+            transition: opacity 1.5s ease-in-out;
+        }
+        
+        .animate-sky { animation: sky-change 4s ease-out forwards; }
+
+        .sun-graphic {
+            width: 150px;
+            height: 150px;
+            background: linear-gradient(to bottom, #fbbf24, #f59e0b);
+            border-radius: 50%;
+            box-shadow: 0 0 60px rgba(251, 191, 36, 0.6);
+            position: relative;
+            z-index: 10;
+            animation: sunrise 4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+
+        .ocean {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 35%;
+            background: linear-gradient(to top, #06226e, #1e3a8a);
+            z-index: 20;
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.5);
+        }
+
+        .intro-content {
+            position: relative;
+            z-index: 30;
+            text-align: center;
+            margin-top: -80px;
+            opacity: 0;
+            animation: fade-in-text 2s ease-out forwards;
+            animation-delay: 3s;
+        }
+
+        @keyframes sunrise {
+            0% { transform: translateY(200%); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes sky-change {
+            0% { background: linear-gradient(to bottom, #020411, #000000); }
+            100% { background: linear-gradient(to bottom, #1e1b4b, #4c1d95); }
+        }
+        @keyframes fade-in-text {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- BOARD STYLES --- */
+        .jeopardy-board {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 4px;
+            flex-grow: 1;
+            min-height: 0;
+            padding: 2px;
+        }
+        .category-cell {
+            background-color: #06226e;
+            color: white;
+            font-weight: bold;
+            text-align: center;
+            padding: clamp(4px, 1.2vh, 8px) 4px;
+            font-size: clamp(0.65rem, 2.4vw, 0.875rem);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1.2;
+        }
+        .question-cell {
+            background-color: #06226e;
+            color: #ffcc00;
+            font-size: clamp(1rem, 5vw, 1.8rem); /* Larger font for prices */
+            font-weight: 900;
+            text-align: center;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease-in-out;
+            border: 2px solid transparent;
+        }
+        .question-cell:active { transform: scale(0.95); }
+        .question-cell.answered {
+            background-color: #373b5a;
+            color: #6b7280;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        /* --- MODAL STYLES --- */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 50;
+            left: 0; top: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(8px);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            padding: clamp(16px, 4vw, 24px);
+            border-radius: 16px;
+            width: 95%;
+            max-width: 700px;
+            min-height: 40vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+        .modal-question {
+            font-size: clamp(1.2rem, 5vw, 2rem);
+            font-weight: 600;
+            color: #1f2937;
+            padding: 20px 0;
+            line-height: 1.3;
+        }
+        .modal-answer {
+            display: none;
+            font-size: clamp(1rem, 4vw, 1.5rem);
+            font-weight: 700;
+            color: #059669;
+            margin: 16px 0;
+            padding: 10px;
+            background: #d1fae5;
+            border-radius: 8px;
+        }
+
+        /* --- SCOREBOARD --- */
+        .team-scoreboard {
+            background-color: #ffffff;
+            padding: 8px;
+            border-radius: 10px;
+            border: 4px solid transparent;
+            transition: all 0.3s ease;
+        }
+        .team-scoreboard.active {
+            border-color: var(--team-color, #3b82f6);
+            box-shadow: 0 0 20px var(--team-color, #3b82f6);
+            transform: scale(1.02);
+        }
+        .team-score {
+            font-size: clamp(2rem, 6vw, 3rem);
+            font-weight: 900;
+            color: #06226e;
+            background: none;
+            border: none;
+            text-align: center;
+            width: 100%;
+            outline: none;
+        }
+
+        /* --- TIMER --- */
+        #timer-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        #timer-display {
+            font-size: 3rem;
+            font-weight: 900;
+            color: #06226e;
+            font-variant-numeric: tabular-nums;
+        }
+        
+        /* --- UTILS --- */
+        .btn {
+            touch-action: manipulation; /* Prevents double-tap zoom delay */
+        }
+    </style>
+</head>
+<body class="p-2 select-none"> <div id="intro-overlay" class="animate-sky">
+        <div class="sun-graphic"></div>
+        <div class="ocean"></div>
+        <div class="intro-content">
+            <h1 class="text-4xl md:text-7xl font-extrabold text-white tracking-wide drop-shadow-lg mb-2">
+                <span class="text-yellow-400">SUNRISE</span> DETOX
+            </h1>
+            <p class="text-sm md:text-xl text-blue-200 tracking-[0.3em] uppercase font-semibold mb-8">Jeopardy</p>
+            <button id="start-game-btn" class="btn relative inline-flex items-center justify-center px-8 py-4 text-xl font-bold text-blue-900 bg-yellow-400 rounded-full hover:bg-yellow-300 hover:scale-105 shadow-[0_0_20px_rgba(253,224,71,0.5)] transition-all">
+                TAP TO START
+            </button>
+        </div>
+    </div>
+
+    <div id="game-container" class="container mx-auto max-w-5xl h-full flex flex-col">
+        <div class="flex justify-between items-center mb-2 px-2">
+             <h1 class="text-lg font-bold text-white opacity-80">Sunrise Detox</h1>
+             <button id="reset-game" class="bg-red-900/50 hover:bg-red-600 text-white text-xs font-bold py-2 px-4 rounded border border-red-500 transition-colors">
+                RESET
+            </button>
+        </div>
+       
+        <div class="grid grid-cols-2 gap-4 mb-4">
+            <div id="team-1-board" class="team-scoreboard active" style="--team-color: #3b82f6;">
+                <div class="flex items-center gap-2 mb-1">
+                    <input type="color" id="team-1-color" class="w-6 h-6 rounded-full border-0 p-0" value="#3b82f6">
+                    <input type="text" id="team-1-name" class="font-bold text-gray-800 text-lg w-full bg-transparent outline-none" value="Team 1">
+                </div>
+                <input type="number" id="team-1-score" class="team-score" value="0">
+            </div>
+
+            <div id="team-2-board" class="team-scoreboard" style="--team-color: #ef4444;">
+                <div class="flex items-center gap-2 mb-1">
+                    <input type="color" id="team-2-color" class="w-6 h-6 rounded-full border-0 p-0" value="#ef4444">
+                    <input type="text" id="team-2-name" class="font-bold text-gray-800 text-lg w-full bg-transparent outline-none" value="Team 2">
+                </div>
+                <input type="number" id="team-2-score" class="team-score" value="0">
+            </div>
+        </div>
+
+        <div id="jeopardy-board" class="jeopardy-board"></div>
+    </div>
+
+    <div id="question-modal" class="modal">
+        <div class="modal-content relative">
+            <div class="flex justify-between items-center border-b pb-2 mb-4">
+                <span id="modal-category" class="text-sm font-bold text-blue-600 uppercase tracking-wider">Category</span>
+                <span id="modal-points" class="text-2xl font-black text-yellow-600">$000</span>
+            </div>
+            
+            <div id="modal-notification" class="hidden p-2 bg-red-100 text-red-800 font-bold rounded mb-2"></div>
+
+            <div id="modal-question-text" class="modal-question flex-grow flex items-center justify-center"></div>
+            <div id="modal-answer-text" class="modal-answer"></div>
+
+            <div class="mt-auto">
+                <div id="timer-container">
+                    <div id="timer-display">30</div>
+                    <button id="timer-toggle-btn" class="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center hover:bg-gray-300">
+                        <svg id="timer-icon" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-800" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                    </button>
+                </div>
+
+                <div id="button-container" class="mt-6 flex flex-col gap-3">
+                    <div id="scoring-buttons" class="grid grid-cols-2 gap-4">
+                        <button id="correct-btn" class="btn bg-green-500 text-white font-bold py-4 rounded-xl shadow-lg active:scale-95 text-xl">
+                            CORRECT
+                        </button>
+                        <button id="incorrect-btn" class="btn bg-red-500 text-white font-bold py-4 rounded-xl shadow-lg active:scale-95 text-xl">
+                            WRONG
+                        </button>
+                    </div>
+                    <button id="next-btn" class="hidden btn w-full bg-blue-600 text-white font-bold py-4 rounded-xl shadow-lg active:scale-95 text-xl">
+                        CONTINUE
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="daily-double-modal" class="modal">
+        <div class="modal-content border-4 border-yellow-400 bg-blue-950">
+            <h2 class="text-4xl font-black text-yellow-400 mb-6 tracking-widest">DAILY DOUBLE</h2>
+            <div class="mb-6">
+                <label class="block text-white text-xl mb-2">Enter Wager:</label>
+                <input type="number" id="dd-wager-input" class="text-4xl font-bold text-center w-full p-4 rounded-lg" min="5">
+            </div>
+            <button id="submit-wager-btn" class="btn w-full bg-yellow-400 hover:bg-yellow-300 text-blue-900 font-bold py-4 rounded-lg text-xl">
+                BET!
+            </button>
+        </div>
+    </div>
+
+    <div id="winner-modal" class="modal">
+        <div class="modal-content bg-gradient-to-br from-yellow-300 to-yellow-500 border-8 border-blue-900">
+            <div id="confetti-container" class="absolute inset-0 pointer-events-none overflow-hidden"></div>
+            <h2 class="text-2xl font-bold text-blue-900 opacity-75">WINNER</h2>
+            <h1 id="winner-name" class="text-5xl md:text-7xl font-black text-blue-900 my-6">TEAM NAME</h1>
+            <button id="close-winner-modal-btn" class="btn bg-blue-900 text-white font-bold py-4 px-10 rounded-full text-xl shadow-2xl">
+                NEW GAME
+            </button>
+        </div>
+    </div>
+
+    <div id="change-team-modal" class="modal">
+        <div class="modal-content !bg-indigo-600 !text-white justify-center items-center">
+            <h1 class="text-3xl font-bold opacity-80">SWITCH TURNS</h1>
+            <p class="text-4xl font-black my-8" id="next-team-name">Team 2</p>
+            <button id="confirm-change-team-btn" class="btn w-full bg-white text-indigo-700 font-bold py-4 rounded-xl text-xl">
+                READY
+            </button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- DATA ---
+            const gameData = {
+                "Mental Health": {
+                    100: { q: "Persistent sadness, loss of interest, and feelings of worthlessness.", a: "What is depression?" },
+                    200: { q: "Excessive, persistent worry and fear about everyday situations.", a: "What is anxiety?" },
+                    300: { q: "Mood swings ranging from depressive lows to manic highs.", a: "What is bipolar disorder?" },
+                    400: { q: "Being fully present and engaged in the moment without judgment.", a: "What is mindfulness?" },
+                    500: { q: "Unfair belief associated with a circumstance preventing people from seeking help.", a: "What is stigma?" }
+                },
+                "Detox Info": {
+                    100: { q: "Process of safely helping the body rid itself of a substance.", a: "What is detox?" },
+                    200: { q: "Symptoms that occur after stopping or reducing intake of a substance.", a: "What is withdrawal?" },
+                    300: { q: "Body adapts to a substance, requiring more to achieve the same effect.", a: "What is tolerance?" },
+                    400: { q: "Symptoms continuing for months after stopping substance use.", a: "What is PAWS?" },
+                    500: { q: "Needing a substance to function 'normally'.", a: "What is physical dependence?" }
+                },
+                "Recovery": {
+                    100: { q: "Focusing on the present 24 hours.", a: "What is One Day at a Time?" },
+                    200: { q: "A guide through the recovery program.", a: "What is a sponsor?" },
+                    300: { q: "Hungry, Angry, Lonely, Tired.", a: "What is H.A.L.T.?" },
+                    400: { q: "A return to substance use after abstinence.", a: "What is relapse?" },
+                    500: { q: "Accepting what you cannot change.", a: "What is acceptance?" }
+                },
+                "12 Steps": {
+                    100: { q: "Admitting this over alcohol or another substance (Step 1).", a: "What is powerlessness?" },
+                    200: { q: "Coming to believe in a Power greater than ourselves.", a: "What is Step 2?" },
+                    300: { q: "Turning our will and lives over to the care of God.", a: "What is Step 3?" },
+                    400: { q: "Making a searching and fearless moral inventory.", a: "What is Step 4?" },
+                    500: { q: "Admitting the exact nature of our wrongs.", a: "What is Step 5?" }
+                },
+                "Coping": {
+                    100: { q: "Writing down thoughts and feelings.", a: "What is journaling?" },
+                    200: { q: "Limits and rules set in relationships.", a: "What are boundaries?" },
+                    300: { q: "Talking with a trusted friend or support group.", a: "What is reaching out?" },
+                    400: { q: "Physical activity to manage stress.", a: "What is exercise?" },
+                    500: { q: "Focusing on 5 senses to stabilize during stress.", a: "What is grounding?" }
+                }
+            };
+
+            // --- AUDIO SYSTEM (Native Web Audio - No External Libraries) ---
+            let audioContext;
+            let timerOscillators = []; // Array to track active oscillators for polyphony
+
+            function initAudio() {
+                if (!audioContext) {
+                    const AC = window.AudioContext || window.webkitAudioContext;
+                    audioContext = new AC();
+                }
+                if (audioContext.state === 'suspended') audioContext.resume();
+            }
+
+            // Synthesizer Helper
+            function playTone(freq, type, duration, startTime = 0, vol = 0.1) {
+                if (!audioContext) return;
+                const osc = audioContext.createOscillator();
+                const gain = audioContext.createGain();
+                osc.type = type;
+                osc.frequency.value = freq;
+                osc.connect(gain);
+                gain.connect(audioContext.destination);
+                
+                const now = audioContext.currentTime + startTime;
+                gain.gain.setValueAtTime(0, now);
+                gain.gain.linearRampToValueAtTime(vol, now + 0.05);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+                
+                osc.start(now);
+                osc.stop(now + duration + 0.1);
+                return osc;
+            }
+
+            function playIntroSong() {
+                initAudio();
+                const notes = [523.25, 659.25, 783.99, 1046.50, 698.46, 880.00, 1046.50, 1396.91, 783.99, 987.77, 1174.66, 1567.98];
+                notes.forEach((f, i) => playTone(f, 'triangle', 2.0, i * 0.15, 0.05));
+            }
+
+            function playCorrectSound() {
+                playTone(523.25, 'sine', 0.2, 0); // C5
+                playTone(659.25, 'sine', 0.2, 0.1); // E5
+                playTone(783.99, 'sine', 0.4, 0.2); // G5
+                playTone(1046.50, 'sine', 0.8, 0.3, 0.2); // C6
+            }
+
+            function playWrongSound() {
+                playTone(150, 'sawtooth', 0.4, 0, 0.2);
+                playTone(100, 'sawtooth', 0.4, 0.1, 0.2);
+            }
+
+            function playDailyDoubleSound() {
+                playTone(300, 'square', 0.1, 0);
+                playTone(600, 'square', 0.1, 0.1);
+                playTone(900, 'square', 0.4, 0.2);
+            }
+
+            // --- THINK MUSIC (Native Implementation) ---
+            // Replaces the external Tone.js library
+            let isThinkMusicPlaying = false;
+            let thinkMusicInterval;
+
+            function startThinkMusic() {
+                if(isThinkMusicPlaying) return;
+                isThinkMusicPlaying = true;
+                
+                // Classic Think Music Pattern (approximate)
+                // We schedule chunks of 4 seconds
+                let timeOffset = 0;
+                
+                const scheduleMeasure = () => {
+                    if(!isThinkMusicPlaying) return;
+                    
+                    // Main bass pattern (pizzicato strings feel)
+                    playTone(523.25, 'sine', 0.3, 0); // C5
+                    playTone(523.25, 'sine', 0.3, 1); // C5
+                    playTone(523.25, 'sine', 0.3, 2); // C5
+                    playTone(523.25, 'sine', 0.3, 3); // C5
+                    
+                    // Melody Hook
+                    playTone(1046.50, 'triangle', 0.2, 3.5, 0.05); // High C
+                }
+
+                scheduleMeasure();
+                thinkMusicInterval = setInterval(scheduleMeasure, 4000);
+            }
+
+            function stopThinkMusic() {
+                isThinkMusicPlaying = false;
+                clearInterval(thinkMusicInterval);
+            }
+
+
+            // --- GAME STATE ---
+            let team1Score = 0, team2Score = 0;
+            let activeTeam = 1;
+            let currentPoints = 0;
+            let currentDD = null;
+            let timerInterval = null;
+            let timeLeft = 30;
+            let attemptState = 'initial'; // initial, steal, dd
+            let consecutiveCorrect1 = 0, consecutiveCorrect2 = 0;
+            let answeredCount = 0;
+            const totalQuestions = 25;
+
+            // --- ELEMENTS ---
+            const ui = {
+                intro: document.getElementById('intro-overlay'),
+                game: document.getElementById('game-container'),
+                board: document.getElementById('jeopardy-board'),
+                modal: document.getElementById('question-modal'),
+                ddModal: document.getElementById('daily-double-modal'),
+                winnerModal: document.getElementById('winner-modal'),
+                changeModal: document.getElementById('change-team-modal'),
+                team1Board: document.getElementById('team-1-board'),
+                team2Board: document.getElementById('team-2-board'),
+                team1Score: document.getElementById('team-1-score'),
+                team2Score: document.getElementById('team-2-score'),
+                modalQ: document.getElementById('modal-question-text'),
+                modalA: document.getElementById('modal-answer-text'),
+                timerDisplay: document.getElementById('timer-display'),
+                timerBtn: document.getElementById('timer-toggle-btn'),
+                timerIcon: document.getElementById('timer-icon'),
+                btns: {
+                    start: document.getElementById('start-game-btn'),
+                    reset: document.getElementById('reset-game'),
+                    correct: document.getElementById('correct-btn'),
+                    wrong: document.getElementById('incorrect-btn'),
+                    next: document.getElementById('next-btn'),
+                    wager: document.getElementById('submit-wager-btn'),
+                    changeConfirm: document.getElementById('confirm-change-team-btn'),
+                    winnerClose: document.getElementById('close-winner-modal-btn')
+                }
+            };
+
+            // --- LOGIC ---
+
+            function createBoard() {
+                ui.board.innerHTML = '';
+                team1Score = 0; team2Score = 0; answeredCount = 0;
+                updateScores();
+                setActiveTeam(1);
+                
+                let allCells = [];
+                for(let cat in gameData) {
+                    // Header
+                    let h = document.createElement('div');
+                    h.className = 'category-cell';
+                    h.textContent = cat;
+                    ui.board.appendChild(h);
+                }
+                
+                const points = [100, 200, 300, 400, 500];
+                points.forEach(p => {
+                    for(let cat in gameData) {
+                        let cell = document.createElement('div');
+                        cell.className = 'question-cell';
+                        cell.textContent = `$${p}`;
+                        cell.dataset.cat = cat;
+                        cell.dataset.pts = p;
+                        cell.onclick = (e) => handleCellClick(e.target, cat, p);
+                        ui.board.appendChild(cell);
+                        allCells.push(cell);
+                    }
+                });
+
+                // Set 1 Daily Double
+                const rand = Math.floor(Math.random() * allCells.length);
+                allCells[rand].dataset.dd = 'true';
+            }
+
+            function handleCellClick(cell, cat, pts) {
+                if(cell.classList.contains('answered')) return;
+                initAudio();
+                
+                cell.classList.add('answered');
+                cell.textContent = '';
+                currentPoints = pts;
+                answeredCount++;
+
+                const data = gameData[cat][pts];
+                if(cell.dataset.dd === 'true') {
+                    currentDD = { cat, pts, q: data.q, a: data.a };
+                    openDDModal();
+                } else {
+                    openQuestionModal(cat, pts, data.q, data.a);
+                }
+            }
+
+            function openQuestionModal(cat, pts, q, a) {
+                document.getElementById('modal-category').textContent = cat;
+                document.getElementById('modal-points').textContent = `$${pts}`;
+                ui.modalQ.textContent = q;
+                ui.modalA.textContent = a;
+                ui.modalA.style.display = 'none';
+                
+                // Reset UI
+                document.getElementById('scoring-buttons').classList.remove('hidden');
+                ui.btns.next.classList.add('hidden');
+                
+                ui.modal.style.display = 'flex';
+                
+                attemptState = 'initial';
+                resetTimer(30);
+                startTimer();
+            }
+
+            function openDDModal() {
+                playDailyDoubleSound();
+                ui.ddModal.style.display = 'flex';
+                const currentScore = activeTeam === 1 ? team1Score : team2Score;
+                const max = Math.max(1000, currentScore);
+                const input = document.getElementById('dd-wager-input');
+                input.max = max;
+                input.value = "";
+                input.placeholder = `Max: $${max}`;
+                input.focus();
+            }
+
+            // --- TIMER LOGIC ---
+            function resetTimer(seconds) {
+                stopTimer();
+                timeLeft = seconds;
+                ui.timerDisplay.textContent = timeLeft;
+                ui.timerIcon.innerHTML = '<path d="M8 5v14l11-7z"/>'; // Play icon
+            }
+
+            function startTimer() {
+                if(timerInterval) return;
+                ui.timerIcon.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>'; // Pause icon
+                startThinkMusic();
+                
+                timerInterval = setInterval(() => {
+                    timeLeft--;
+                    ui.timerDisplay.textContent = timeLeft;
+                    if(timeLeft <= 0) {
+                        handleTimeout();
+                    }
+                }, 1000);
+            }
+
+            function stopTimer() {
+                clearInterval(timerInterval);
+                timerInterval = null;
+                stopThinkMusic();
+                ui.timerIcon.innerHTML = '<path d="M8 5v14l11-7z"/>';
+            }
+
+            function handleTimeout() {
+                stopTimer();
+                playWrongSound();
+                if(attemptState === 'initial') {
+                    // Time up for first team -> switch to steal
+                    const stealTeam = activeTeam === 1 ? 2 : 1;
+                    setActiveTeam(stealTeam);
+                    attemptState = 'steal';
+                    resetTimer(5);
+                    startTimer();
+                    alert(`Time's up! Team ${stealTeam} can steal!`);
+                } else {
+                    // Time up for steal or DD -> End question
+                    revealAnswer();
+                }
+            }
+
+            // --- SCORING ---
+            ui.btns.correct.onclick = () => {
+                playCorrectSound();
+                let pts = currentPoints;
+                if(attemptState === 'steal') pts = Math.round(pts / 2);
+                
+                addScore(activeTeam, pts);
+                
+                // Streak logic
+                if(activeTeam === 1) { consecutiveCorrect1++; consecutiveCorrect2 = 0; }
+                else { consecutiveCorrect2++; consecutiveCorrect1 = 0; }
+                
+                revealAnswer();
+                checkTurnSwitch(true);
+            };
+
+            ui.btns.wrong.onclick = () => {
+                playWrongSound();
+                if(attemptState === 'dd') {
+                    addScore(activeTeam, -currentPoints);
+                    revealAnswer();
+                } else if(attemptState === 'initial') {
+                    addScore(activeTeam, -Math.round(currentPoints / 2));
+                    attemptState = 'steal';
+                    const next = activeTeam === 1 ? 2 : 1;
+                    setActiveTeam(next);
+                    resetTimer(5);
+                    startTimer();
+                    // Don't reveal yet
+                } else {
+                    // Steal failed
+                    // No point loss on steal fail in this version, just end
+                    revealAnswer();
+                    checkTurnSwitch(false);
+                }
+            };
+
+            function addScore(team, pts) {
+                if(team === 1) {
+                    team1Score += pts;
+                    if(team1Score < 0) team1Score = 0;
+                } else {
+                    team2Score += pts;
+                    if(team2Score < 0) team2Score = 0;
+                }
+                updateScores();
+            }
+
+            function updateScores() {
+                ui.team1Score.value = team1Score;
+                ui.team2Score.value = team2Score;
+            }
+
+            function revealAnswer() {
+                stopTimer();
+                ui.modalA.style.display = 'block';
+                document.getElementById('scoring-buttons').classList.add('hidden');
+                ui.btns.next.classList.remove('hidden');
+            }
+
+            function checkTurnSwitch(wasCorrect) {
+                let nextTeam = activeTeam;
+                // Switch if wrong (and steal failed) OR streak > 3
+                if(!wasCorrect) {
+                    nextTeam = activeTeam === 1 ? 2 : 1;
+                } else {
+                    if((activeTeam === 1 && consecutiveCorrect1 >= 3) || (activeTeam === 2 && consecutiveCorrect2 >= 3)) {
+                        nextTeam = activeTeam === 1 ? 2 : 1;
+                        consecutiveCorrect1 = 0; consecutiveCorrect2 = 0;
+                    }
+                }
+                
+                // Store next team for the "Next" button action
+                ui.btns.next.dataset.nextTeam = nextTeam;
+            }
+
+            ui.btns.next.onclick = () => {
+                ui.modal.style.display = 'none';
+                ui.ddModal.style.display = 'none';
+                
+                // Apply turn switch
+                const next = parseInt(ui.btns.next.dataset.nextTeam) || activeTeam;
+                if(next !== activeTeam && answeredCount < totalQuestions) {
+                     document.getElementById('next-team-name').textContent = document.getElementById(`team-${next}-name`).value;
+                     ui.changeModal.style.display = 'flex';
+                     setActiveTeam(next);
+                }
+                
+                if(answeredCount >= totalQuestions) showWinner();
+            };
+
+            ui.btns.changeConfirm.onclick = () => ui.changeModal.style.display = 'none';
+            ui.btns.wager.onclick = () => {
+                const w = parseInt(document.getElementById('dd-wager-input').value);
+                const max = parseInt(document.getElementById('dd-wager-input').max);
+                if(!w || w < 5 || w > max) return; // invalid
+                
+                currentPoints = w;
+                ui.ddModal.style.display = 'none';
+                openQuestionModal(`DAILY DOUBLE: ${currentDD.cat}`, `Wager: $${w}`, currentDD.q, currentDD.a);
+                attemptState = 'dd';
+            };
+
+            function setActiveTeam(t) {
+                activeTeam = t;
+                ui.team1Board.classList.toggle('active', t === 1);
+                ui.team2Board.classList.toggle('active', t === 2);
+            }
+
+            function showWinner() {
+                ui.winnerModal.style.display = 'flex';
+                let txt = "It's a Tie!";
+                if(team1Score > team2Score) txt = document.getElementById('team-1-name').value;
+                if(team2Score > team1Score) txt = document.getElementById('team-2-name').value;
+                document.getElementById('winner-name').textContent = txt;
+                startConfetti();
+            }
+
+            // --- SETUP LISTENERS ---
+            ui.btns.start.onclick = () => {
+                playIntroSong();
+                ui.intro.style.opacity = 0;
+                ui.game.style.opacity = 1;
+                setTimeout(() => ui.intro.style.display = 'none', 1500);
+            };
+
+            ui.btns.reset.onclick = () => {
+                if(confirm("Reset Game?")) location.reload();
+            };
+            
+            ui.btns.winnerClose.onclick = () => location.reload();
+            ui.timerBtn.onclick = () => {
+                if(timerInterval) stopTimer(); else startTimer();
+            }
+
+            // Confetti Engine (Simple)
+            function startConfetti() {
+                const colors = ['#f00', '#0f0', '#00f', '#ff0', '#0ff'];
+                for(let i=0; i<100; i++) {
+                    let c = document.createElement('div');
+                    c.style.cssText = `
+                        position:absolute; width:10px; height:10px; background:${colors[Math.floor(Math.random()*5)]};
+                        top:-10px; left:${Math.random()*100}vw; opacity:0.8;
+                        transition: transform ${2+Math.random()*3}s linear, top ${2+Math.random()*3}s linear;
+                    `;
+                    ui.winnerModal.appendChild(c);
+                    setTimeout(() => {
+                        c.style.top = '110vh';
+                        c.style.transform = `rotate(${Math.random()*360}deg)`;
+                    }, 100);
+                }
+            }
+
+            createBoard();
+        });
+    </script>
+</body>
+</html>
+
+==================================================
+FILE PATH: web audio.html
+==================================================
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ta-Da Sound Effect</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #222;
+            font-family: sans-serif;
+            color: white;
+            margin: 0;
+        }
+
+        button {
+            padding: 20px 40px;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            background-color: #f39c12;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            box-shadow: 0 4px 0 #d35400;
+            transition: all 0.1s;
+        }
+
+        button:active {
+            transform: translateY(4px);
+            box-shadow: 0 0 0 #d35400;
+        }
+    </style>
+</head>
+<body>
+
+    <button id="playBtn">🎵 Play "Ta-Da!"</button>
+
+    <script>
+        // Initialize AudioContext
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        const audioCtx = new AudioContext();
+
+        function playTaDa() {
+            // Browsers often suspend audio until user interaction
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
+            const now = audioCtx.currentTime;
+
+            // --- Sound Synthesis Logic ---
+
+            // Function to create a single brass note
+            const playNote = (freq, startTime, duration, vol = 0.3) => {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                const filter = audioCtx.createBiquadFilter(); // Lowpass filter for "brass" muted effect
+
+                // Use Sawtooth for a harsh, brassy tone
+                osc.type = 'sawtooth';
+                osc.frequency.value = freq;
+
+                // Filter envelope (opens up brightly then closes slightly)
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(500, startTime);
+                filter.frequency.linearRampToValueAtTime(3000, startTime + 0.05); // "Blare"
+                filter.frequency.exponentialRampToValueAtTime(1000, startTime + duration);
+
+                // Volume Envelope (ADSR-like)
+                gain.gain.setValueAtTime(0, startTime);
+                gain.gain.linearRampToValueAtTime(vol, startTime + 0.02); // Fast attack
+                gain.gain.exponentialRampToValueAtTime(0.01, startTime + duration); // Release
+
+                // Connect nodes: Osc -> Filter -> Gain -> Output
+                osc.connect(filter);
+                filter.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                osc.start(startTime);
+                osc.stop(startTime + duration);
+            };
+
+            // 1. The "Ta" (Pickup Note) - G3
+            // Quick, short note leading in
+            playNote(392.00, now, 0.15, 0.25);
+
+            // 2. The "Da" (The Resolution Chord) - C Major
+            // Hits slightly after the pickup. We stack multiple notes for a full sound.
+            const impactTime = now + 0.12; 
+            const duration = 1.2;
+
+            // Root (C4)
+            playNote(261.63, impactTime, duration, 0.3);
+            // Third (E4)
+            playNote(329.63, impactTime, duration, 0.25);
+            // Fifth (G4)
+            playNote(392.00, impactTime, duration, 0.25);
+            // Octave (C5) - Gives it the "shine"
+            playNote(523.25, impactTime, duration, 0.2);
+            
+            // Optional: Add a slight detuned oscillator for thickness
+            playNote(262.00, impactTime, duration, 0.1); 
+        }
+
+        // Attach event listener
+        document.getElementById('playBtn').addEventListener('click', playTaDa);
+    </script>
+
+</body>
+</html>
+
+==================================================
+FILE PATH: Lamination\Daily-Schedule.html
+==================================================
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <img src="./images/evolve.png">
+    <title>EVOLVE Schedule - Uniform Bold Grid</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            padding: 40px;
+            display: flex;
+            justify-content: center;
+        }
+        .paper {
+            background: white;
+            width: 8.5in;
+            min-height: 11in;
+            padding: 0.5in;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            box-sizing: border-box;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        h1 {
+            letter-spacing: 6px;
+            margin: 0;
+            font-weight: 600;
+            color: #1a1a1a;
+            text-transform: uppercase;
+        }
+        h2 {
+            font-weight: 400;
+            color: #666;
+            margin: 5px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+            table-layout: fixed;
+        }
+        th, td {
+            border: 1px solid #000;
+            padding: 12px;
+            text-align: center; 
+            vertical-align: middle;
+        }
+        /* UNIFORM BOLD HEADERS for Days and Time Periods */
+        .section-header {
+            background-color: #f2f2f2;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 1.1em;
+            letter-spacing: 1.5px;
+        }
+        .time-col {
+            width: 35%;
+            font-weight: 600;
+        }
+        .activity-col {
+            width: 65%;
+        }
+        @media print {
+            body { background: none; padding: 0; }
+            .paper { box-shadow: none; width: 100%; margin: 0; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="paper">
+    <header>
+        <h1>EVOLVE</h1>
+        <h2>Daily Schedule</h2>
+    </header>
+
+    <table>
+        <thead>
+            <tr>
+                <th colspan="2" class="section-header">Monday through Friday</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td colspan="2" class="section-header">Morning</td></tr>
+            <tr><td class="time-col">8:00 AM</td><td class="activity-col">Resident Vitals & Medication</td></tr>
+            <tr><td class="time-col">8:30 AM</td><td class="activity-col">Breakfast</td></tr>
+            <tr><td class="time-col">9:15 AM</td><td class="activity-col">Morning Meditation</td></tr>
+            <tr><td class="time-col">10:00 AM – 12:00 PM</td><td class="activity-col">Clinical Group Therapy & Individual Sessions</td></tr>
+
+            <tr><td colspan="2" class="section-header">Afternoon</td></tr>
+            <tr><td class="time-col">12:00 PM – 1:00 PM</td><td class="activity-col">Lunch</td></tr>
+            <tr><td class="time-col">1:00 PM – 4:00 PM</td><td class="activity-col">Clinical Group Therapy</td></tr>
+            <tr><td class="time-col">4:00 PM – 5:00 PM</td><td class="activity-col">Break / Gym</td></tr>
+
+            <tr><td colspan="2" class="section-header">Evening</td></tr>
+            <tr><td class="time-col">5:00 PM – 7:00 PM</td><td class="activity-col">Dinner</td></tr>
+            <tr><td class="time-col">7:00 PM – 8:00 PM</td><td class="activity-col">AA/NA Meeting</td></tr>
+            <tr><td class="time-col">8:00 PM</td><td class="activity-col">Resident Vitals & Medication</td></tr>
+            <tr><td
 
 ==================================================
 FILE PATH: Meta\Built in audio code

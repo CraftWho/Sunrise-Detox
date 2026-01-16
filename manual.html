@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sunrise Detox Jeopardy - Compact Manual</title>
+    <style>
+        @page {
+            margin: 0.5in;
+            size: portrait;
+        }
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-size: 11px;
+            line-height: 1.3;
+            color: #222;
+            margin: 0;
+            padding: 0;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        
+        /* --- HOST GUIDE PAGE --- */
+        .guide-container {
+            border: 2px solid #06226e;
+            padding: 20px;
+            height: 95vh; /* Fill the first page */
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+        }
+        h1 {
+            text-align: center;
+            color: #06226e;
+            text-transform: uppercase;
+            font-size: 24px;
+            margin: 0 0 15px 0;
+            border-bottom: 3px solid #f59e0b;
+        }
+        h2 {
+            font-size: 16px;
+            background-color: #f3f4f6;
+            padding: 5px 10px;
+            margin: 10px 0 5px 0;
+            border-left: 5px solid #06226e;
+        }
+        .step { margin-bottom: 10px; }
+        .step strong { color: #06226e; font-size: 12px; }
+        ul { margin: 5px 0 10px 20px; padding: 0; }
+        li { margin-bottom: 3px; }
+
+        .page-break { page-break-after: always; }
+
+        /* --- ANSWER KEY PAGES --- */
+        .game-header {
+            background-color: #06226e;
+            color: #fff;
+            padding: 6px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 14px;
+            margin-top: 0;
+            border: 1px solid #000;
+        }
+        
+        /* Layout for 2 games per page */
+        .games-page {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            height: 98vh; /* Occupy full page height */
+            gap: 15px;
+        }
+
+        .game-table-container {
+            flex: 1; /* Each game takes half the page */
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+            font-size: 9px;
+        }
+        
+        th {
+            background-color: #e5e7eb;
+            color: #000;
+            border: 1px solid #444;
+            padding: 4px;
+            font-size: 10px;
+            text-transform: uppercase;
+        }
+        
+        td {
+            border: 1px solid #444;
+            padding: 3px 5px;
+            vertical-align: top;
+            height: 45px; /* Fixed height to force uniform grid */
+            overflow: hidden;
+        }
+
+        /* Styling for Q & A inside cells */
+        .cell-content { display: flex; flex-direction: column; height: 100%; }
+        .pts { font-weight: bold; color: #06226e; font-size: 10px; margin-bottom: 2px; border-bottom: 1px dotted #ccc; }
+        .q { color: #333; margin-bottom: auto; }
+        .a { color: #059669; font-weight: bold; margin-top: 2px; font-size: 9.5px; }
+
+    </style>
+</head>
+<body>
+
+    <div class="guide-container">
+        <h1>Sunrise Detox Jeopardy: Host Guide</h1>
+        
+        <h2>1. Quick Setup</h2>
+        <div class="step">
+            <strong>Start the Game:</strong> Load the page, click "ENTER EXPERIENCE" (required for audio), and select a Game Edition from the menu.
+        </div>
+        <div class="step">
+            <strong>Customize Teams:</strong> Tap "Team 1" or "Team 2" on the scoreboard to rename them. Tap the color dot to change team colors.
+        </div>
+
+        <h2>2. How to Play</h2>
+        <div class="step">
+            <strong>Step 1: Pick.</strong> Tap the active team's scoreboard (it glows). They choose a Category & Amount (e.g., "Triggers $200").
+        </div>
+        <div class="step">
+            <strong>Step 2: Read.</strong> Read the question aloud. A 37-second timer starts automatically.
+        </div>
+        <div class="step">
+            <strong>Step 3: Answer.</strong> Teams must answer in the form of a question (e.g., "What is denial?").
+        </div>
+        <div class="step">
+            <strong>Step 4: Score.</strong>
+            <ul>
+                <li>Tap <strong>"I Got It Right!"</strong> → Team gets full points.</li>
+                <li>Tap <strong>"I Got It Wrong"</strong> → Team loses half points. <strong>STEAL MODE STARTS.</strong></li>
+            </ul>
+        </div>
+
+        <h2>3. The Steal Rule</h2>
+        <div class="step">
+            If Team A misses the question (or time runs out):
+            <ul>
+                <li>Control automatically switches to Team B.</li>
+                <li>A 5-second "Steal Timer" begins immediately.</li>
+                <li>If Team B answers correctly, they steal <strong>half the points</strong>. If they miss, no penalty.</li>
+            </ul>
+        </div>
+
+        <h2>4. Special Features</h2>
+        <div class="step">
+            <strong>Daily Double:</strong> One random question per game. Only the picking team can answer. They can wager up to their total score (minimum $5).
+        </div>
+        <div class="step">
+            <strong>Manual Score Adjust:</strong> Host can tap directly on the score number to type in a fix if an error occurs.
+        </div>
+        <div class="step">
+            <strong>Winner:</strong> The game ends when all questions are answered. Confetti will announce the winner!
+        </div>
+    </div>
+
+    <div class="page-break"></div>
+
+    <div class="games-page">
+        
+        <div class="game-table-container">
+            <div class="game-header">GAME 1: RELATIONSHIPS EDITION</div>
+            <table>
+                <thead>
+                    <tr><th>Red Flags</th><th>Codependency</th><th>Boundaries</th><th>Triggers</th><th>Recovery</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><div class="cell-content"><span class="pts">$100</span><span class="q">Partner isolates you...</span><span class="a">A: Isolation</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$100</span><span class="q">Prioritizing others...</span><span class="a">A: Self-abandonment</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$100</span><span class="q">Unclear/violated limits...</span><span class="a">A: Porous boundary</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$100</span><span class="q">Hungry, Angry, Lonely...</span><span class="a">A: H.A.L.T.</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$100</span><span class="q">Regulate emotion alone...</span><span class="a">A: Self-soothing</span></div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="cell-content"><span class="pts">$200</span><span class="q">Questions reality...</span><span class="a">A: Gaslighting</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$200</span><span class="q">Protecting from conseq...</span><span class="a">A: Enabling</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$200</span><span class="q">Sharing limits...</span><span class="a">A: Emotional boundary</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$200</span><span class="q">Reaction to past...</span><span class="a">A: Emotional flashback</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$200</span><span class="q">Owning your part...</span><span class="a">A: Accountability</span></div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="cell-content"><span class="pts">$300</span><span class="q">Excessive affection...</span><span class="a">A: Love bombing</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$300</span><span class="q">Worth from saving...</span><span class="a">A: Savior Complex</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$300</span><span class="q">Wall keeping out...</span><span class="a">A: Avoidance</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$300</span><span class="q">Romanticizing use...</span><span class="a">A: Euphoric recall</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$300</span><span class="q">Observing thoughts...</span><span class="a">A: Mindfulness</span></div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="cell-content"><span class="pts">$400</span><span class="q">Tension/Incident/Calm...</span><span class="a">A: Cycle of Abuse</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$400</span><span class="q">Managing others...</span><span class="a">A: Controlling behavior</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$400</span><span class="q">'I' statements...</span><span class="a">A: Assertive comms</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$400</span><span class="q">Transferring feelings...</span><span class="a">A: Transference</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$400</span><span class="q">Interests outside rel...</span><span class="a">A: Autonomy</span></div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="cell-content"><span class="pts">$500</span><span class="q">Guilt/silence...</span><span class="a">A: Emotional coercion</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$500</span><span class="q">No distinct emotion...</span><span class="a">A: Enmeshment</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$500</span><span class="q">Detach with love...</span><span class="a">A: Detachment</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$500</span><span class="q">False danger...</span><span class="a">A: Hypervigilance</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$500</span><span class="q">Understanding persp...</span><span class="a">A: Differentiation</span></div></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="game-table-container">
+            <div class="game-header">GAME 2: THE BODY & DETOX EDITION</div>
+            <table>
+                <thead>
+                    <tr><th>The Body</th><th>Common Feelings</th><th>Fact or Fiction</th><th>Recovery Lingo</th><th>Relapse Prevention</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><div class="cell-content"><span class="pts">$100</span><span class="q">Flush toxins...</span><span class="a">A: Water/Hydration</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$100</span><span class="q">Intense desire...</span><span class="a">A: Craving</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$100</span><span class="q">Must hit rock bottom?</span><span class="a">A: False</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$100</span><span class="q">People, Places...</span><span class="a">A: Things</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$100</span><span class="q">HALT leads to...</span><span class="a">A: Trigger/Craving</span></div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="cell-content"><span class="pts">$200</span><span class="q">Primary filter...</span><span class="a">A: Liver</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$200</span><span class="q">Holding anger...</span><span class="a">A: Resentment</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$200</span><span class="q">Brain disease?</span><span class="a">A: True</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$200</span><span class="q">Sober but angry...</span><span class="a">A: Dry Drunk</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$200</span><span class="q">Call when using...</span><span class="a">A: Sponsor</span></div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="cell-content"><span class="pts">$300</span><span class="q">Sleep disorder...</span><span class="a">A: Insomnia</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$300</span><span class="q">Early euphoria...</span><span class="a">A: Pink Cloud</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$300</span><span class="q">Relapse = Failure?</span><span class="a">A: False</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$300</span><span class="q">Stop consequences...</span><span class="a">A: Enabling</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$300</span><span class="q">Visualize outcome...</span><span class="a">A: Tape Forward</span></div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="cell-content"><span class="pts">$400</span><span class="q">Withdrawal months...</span><span class="a">A: P.A.W.S.</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$400</span><span class="q">Feeling like fraud...</span><span class="a">A: Imposter Syndrome</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$400</span><span class="q">Meds dependence?</span><span class="a">A: True</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$400</span><span class="q">Big Book org...</span><span class="a">A: AA</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$400</span><span class="q">Alcohol in house...</span><span class="a">A: Envir. Trigger</span></div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="cell-content"><span class="pts">$500</span><span class="q">Feel-good chem...</span><span class="a">A: Dopamine</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$500</span><span class="q">Opposite connection...</span><span class="a">A: Isolation</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$500</span><span class="q">Pot not addictive?</span><span class="a">A: False</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$500</span><span class="q">Fake it...</span><span class="a">A: Till you make it</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$500</span><span class="q">Identifying signs...</span><span class="a">A: Relapse Plan</span></div></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="page-break"></div>
+
+    <div class="games-page">
+        
+        <div class="game-table-container">
+            <div class="game-header">GAME 3: FAMOUS FACES & FACTS</div>
+            <table>
+                <thead>
+                    <tr><th>Famous Recovery</th><th>Music & Addiction</th><th>Toxic Rel's</th><th>Clinical Facts</th><th>Pop Culture</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><div class="cell-content"><span class="pts">$100</span><span class="q">Iron Man...</span><span class="a">A: Robert Downey Jr.</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$100</span><span class="q">Amy Winehouse...</span><span class="a">A: Rehab</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$100</span><span class="q">Ike & Tina...</span><span class="a">A: Turner</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$100</span><span class="q">THC detect time...</span><span class="a">A: 30 Days</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$100</span><span class="q">Zendaya show...</span><span class="a">A: Euphoria</span></div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="cell-content"><span class="pts">$200</span><span class="q">Eminem...</span><span class="a">A: Not Afraid</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$200</span><span class="q">Nirvana...</span><span class="a">A: Kurt Cobain</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$200</span><span class="q">Depp & Heard...</span><span class="a">A: Defamation</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$200</span><span class="q">Metabolizes alc...</span><span class="a">A: Liver</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$200</span><span class="q">Ewan McGregor...</span><span class="a">A: Trainspotting</span></div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="cell-content"><span class="pts">$300</span><span class="q">Elton John...</span><span class="a">A: Rocketman</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$300</span><span class="q">Man in Black...</span><span class="a">A: Johnny Cash</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$300</span><span class="q">Chris Brown...</span><span class="a">A: Rihanna</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$300</span><span class="q">Reverse OD...</span><span class="a">A: Narcan</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$300</span><span class="q">Sandra Bullock...</span><span class="a">A: 28 Days</span></div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="cell-content"><span class="pts">$400</span><span class="q">Matthew Perry...</span><span class="a">A: Friends</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$400</span><span class="q">Britney Spears...</span><span class="a">A: 2007 Breakdown</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$400</span><span class="q">Sid Vicious...</span><span class="a">A: Nancy</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$400</span><span class="q">Severe w/drawal...</span><span class="a">A: Delirium Tremens</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$400</span><span class="q">A&E Show...</span><span class="a">A: Intervention</span></div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="cell-content"><span class="pts">$500</span><span class="q">Jamie Lee Curtis...</span><span class="a">A: Halloween</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$500</span><span class="q">Steven Tyler...</span><span class="a">A: Aerosmith</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$500</span><span class="q">Marvin Gaye...</span><span class="a">A: Father</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$500</span><span class="q">Synth opioid...</span><span class="a">A: Fentanyl</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$500</span><span class="q">Lady Gaga...</span><span class="a">A: A Star Is Born</span></div></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="game-table-container">
+            <div class="game-header">GAME 4: THE PROGRAM</div>
+            <table>
+                <thead>
+                    <tr><th>The Steps</th><th>AA History</th><th>Slogans</th><th>Definitions</th><th>Service</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><div class="cell-content"><span class="pts">$100</span><span class="q">Step 1...</span><span class="a">A: Powerless</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$100</span><span class="q">Co-founder Bill...</span><span class="a">A: Bill W.</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$100</span><span class="q">Present moment...</span><span class="a">A: One Day at a Time</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$100</span><span class="q">Insanity is...</span><span class="a">A: Diff. Results</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$100</span><span class="q">Making this...</span><span class="a">A: Coffee</span></div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="cell-content"><span class="pts">$200</span><span class="q">Step 4...</span><span class="a">A: Moral Inventory</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$200</span><span class="q">Co-founder Dr...</span><span class="a">A: Dr. Bob</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$200</span><span class="q">Relax...</span><span class="a">A: Easy Does It</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$200</span><span class="q">Guide...</span><span class="a">A: Sponsor</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$200</span><span class="q">Greeter...</span><span class="a">A: Greets</span></div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="cell-content"><span class="pts">$300</span><span class="q">Step 9...</span><span class="a">A: Amends</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$300</span><span class="q">Year founded...</span><span class="a">A: 1935</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$300</span><span class="q">Overthinking...</span><span class="a">A: Keep It Simple</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$300</span><span class="q">Freedom...</span><span class="a">A: Abstinence</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$300</span><span class="q">Leads meeting...</span><span class="a">A: Chairperson</span></div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="cell-content"><span class="pts">$400</span><span class="q">Step 11...</span><span class="a">A: Meditation</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$400</span><span class="q">Big Book Year...</span><span class="a">A: 1939</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$400</span><span class="q">Let Go...</span><span class="a">A: Let God</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$400</span><span class="q">Daily reprieve...</span><span class="a">A: Sobriety</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$400</span><span class="q">Manages money...</span><span class="a">A: Treasurer</span></div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="cell-content"><span class="pts">$500</span><span class="q">Step 12...</span><span class="a">A: Principles</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$500</span><span class="q">Previous group...</span><span class="a">A: Oxford Group</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$500</span><span class="q">Meeting makers...</span><span class="a">A: Make It</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$500</span><span class="q">Requirement...</span><span class="a">A: Membership</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$500</span><span class="q">Out of...</span><span class="a">A: Self</span></div></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div class="page-break"></div>
+
+    <div class="games-page">
+
+        <div class="game-table-container">
+            <div class="game-header">GAME 5: LIFE SKILLS & GOALS</div>
+            <table>
+                <thead>
+                    <tr><th>Goal Setting</th><th>Sober Living</th><th>Routine</th><th>Money</th><th>Employment</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><div class="cell-content"><span class="pts">$100</span><span class="q">Fail to plan...</span><span class="a">A: Plan to Fail</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$100</span><span class="q">Prove clean...</span><span class="a">A: Drug Test / UA</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$100</span><span class="q">Morning task...</span><span class="a">A: Make Bed</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$100</span><span class="q">Spending plan...</span><span class="a">A: Budget</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$100</span><span class="q">Work history...</span><span class="a">A: Resume</span></div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="cell-content"><span class="pts">$200</span><span class="q">SMART Goals...</span><span class="a">A: Time-bound</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$200</span><span class="q">Time back...</span><span class="a">A: Curfew</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$200</span><span class="q">Regulates mood...</span><span class="a">A: Eating</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$200</span><span class="q">Impulse buying...</span><span class="a">A: Impulsive</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$200</span><span class="q">Arrival time...</span><span class="a">A: 10-15m Early</span></div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="cell-content"><span class="pts">$300</span><span class="q">Prevent overwhelm...</span><span class="a">A: Small Steps</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$300</span><span class="q">Mandatory...</span><span class="a">A: House Meeting</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$300</span><span class="q">Reduces relapse...</span><span class="a">A: Boredom</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$300</span><span class="q">Financial amends...</span><span class="a">A: Debts</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$300</span><span class="q">Gap in work...</span><span class="a">A: Professional</span></div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="cell-content"><span class="pts">$400</span><span class="q">Vision board...</span><span class="a">A: Visualization</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$400</span><span class="q">Cleanliness...</span><span class="a">A: Chores</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$400</span><span class="q">Consistent time...</span><span class="a">A: Sleep</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$400</span><span class="q">Save for...</span><span class="a">A: Emergency</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$400</span><span class="q">Work w/ others...</span><span class="a">A: Teamwork</span></div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="cell-content"><span class="pts">$500</span><span class="q">Rewards...</span><span class="a">A: Positive Reinf.</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$500</span><span class="q">Financial resp...</span><span class="a">A: Rent</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$500</span><span class="q">Plan night before...</span><span class="a">A: Future Anxiety</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$500</span><span class="q">Hiding spending...</span><span class="a">A: Addictive</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$500</span><span class="q">Reliability...</span><span class="a">A: Sober</span></div></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="game-table-container">
+            <div class="game-header">GAME 6: EMOTIONS & FAMILY</div>
+            <table>
+                <thead>
+                    <tr><th>Fear</th><th>Rejection</th><th>Family</th><th>Parenting</th><th>Amends</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><div class="cell-content"><span class="pts">$100</span><span class="q">F.E.A.R...</span><span class="a">A: Real</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$100</span><span class="q">God's way...</span><span class="a">A: Not Yet</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$100</span><span class="q">Affects all...</span><span class="a">A: Family Disease</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$100</span><span class="q">Best amends...</span><span class="a">A: Sober Life</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$100</span><span class="q">Changed behavior...</span><span class="a">A: Amends</span></div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="cell-content"><span class="pts">$200</span><span class="q">Stops trying...</span><span class="a">A: Failure</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$200</span><span class="q">Taking personal...</span><span class="a">A: Low Self-Esteem</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$200</span><span class="q">Trust regained...</span><span class="a">A: Drops</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$200</span><span class="q">Child as adult...</span><span class="a">A: Parentification</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$200</span><span class="q">Living amends...</span><span class="a">A: Daily</span></div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="cell-content"><span class="pts">$300</span><span class="q">Antidote...</span><span class="a">A: Faith</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$300</span><span class="q">Saying no...</span><span class="a">A: Boundary</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$300</span><span class="q">Family support...</span><span class="a">A: Al-Anon</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$300</span><span class="q">Consistency...</span><span class="a">A: Safety</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$300</span><span class="q">Pay back...</span><span class="a">A: Money</span></div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="cell-content"><span class="pts">$400</span><span class="q">Fear of success...</span><span class="a">A: Self-Sabotage</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$400</span><span class="q">Handle 'no'...</span><span class="a">A: Maturity</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$400</span><span class="q">Rebuilding...</span><span class="a">A: Boundaries</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$400</span><span class="q">I don't...</span><span class="a">A: Know</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$400</span><span class="q">Consult...</span><span class="a">A: Sponsor</span></div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="cell-content"><span class="pts">$500</span><span class="q">Acting...</span><span class="a">A: Despite it</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$500</span><span class="q">Can't control...</span><span class="a">A: Others</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$500</span><span class="q">Love...</span><span class="a">A: Detach</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$500</span><span class="q">Modeling...</span><span class="a">A: Emotional Coping</span></div></td>
+                        <td><div class="cell-content"><span class="pts">$500</span><span class="q">Side of...</span><span class="a">A: Street</span></div></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+</body>
+</html>
