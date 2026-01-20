@@ -3966,70 +3966,102 @@ FILE PATH: Lamination\Daily-Schedule.html
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <img src="./images/evolve.png">
-    <title>EVOLVE Schedule - Uniform Bold Grid</title>
+    <title>EVOLVE Schedule - Single Page Print</title>
     <style>
+        /* Base page setup */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f0f2f5;
-            padding: 40px;
+            margin: 0;
+            padding: 20px;
             display: flex;
             justify-content: center;
         }
+
+        /* Paper container forced to fit 8.5x11 */
         .paper {
             background: white;
             width: 8.5in;
-            min-height: 11in;
-            padding: 0.5in;
+            height: 11in; /* Hard height to ensure single page */
+            padding: 0.4in; /* Reduced padding to gain space */
             box-shadow: 0 0 15px rgba(0,0,0,0.1);
             box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
         }
+
         header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 15px; /* Reduced margin */
         }
-        h1 {
-            letter-spacing: 6px;
-            margin: 0;
-            font-weight: 600;
-            color: #1a1a1a;
-            text-transform: uppercase;
+
+        header img {
+            max-width: 180px; /* Scaled down logo */
+            height: auto;
+            display: block;
+            margin: 0 auto 5px;
         }
+
         h2 {
             font-weight: 400;
             color: #666;
-            margin: 5px 0;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 1.1rem;
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 30px;
             table-layout: fixed;
+            flex-grow: 1; /* Allows table to fill space without overflow */
         }
+
         th, td {
             border: 1px solid #000;
-            padding: 12px;
+            padding: 6px 8px; /* Significantly reduced padding to fit one page */
             text-align: center; 
             vertical-align: middle;
+            font-size: 0.9rem; /* Slightly smaller font */
         }
-        /* UNIFORM BOLD HEADERS for Days and Time Periods */
+
+        /* Uniform bold headers for sections */
         .section-header {
             background-color: #f2f2f2;
             font-weight: bold;
             text-transform: uppercase;
-            font-size: 1.1em;
-            letter-spacing: 1.5px;
+            font-size: 0.95em;
+            letter-spacing: 1px;
+            padding: 8px;
         }
+
+        /* Weekend Shading */
+        .weekend-row {
+            background-color: #ececec;
+        }
+
         .time-col {
-            width: 35%;
+            width: 30%; /* Narrower column for time */
             font-weight: 600;
         }
+
         .activity-col {
-            width: 65%;
+            width: 70%;
         }
+
+        /* Printing logic */
         @media print {
             body { background: none; padding: 0; }
-            .paper { box-shadow: none; width: 100%; margin: 0; }
+            .paper { 
+                box-shadow: none; 
+                margin: 0; 
+                width: 100%; 
+                height: 100%; 
+                padding: 0.3in;
+            }
+            /* Hide URL and date headers on print */
+            @page { margin: 0; } 
         }
     </style>
 </head>
@@ -4037,7 +4069,7 @@ FILE PATH: Lamination\Daily-Schedule.html
 
 <div class="paper">
     <header>
-        <h1>EVOLVE</h1>
+        <img src="../images/evolve.png" alt="Evolve Logo">
         <h2>Daily Schedule</h2>
     </header>
 
@@ -4063,7 +4095,130 @@ FILE PATH: Lamination\Daily-Schedule.html
             <tr><td class="time-col">5:00 PM – 7:00 PM</td><td class="activity-col">Dinner</td></tr>
             <tr><td class="time-col">7:00 PM – 8:00 PM</td><td class="activity-col">AA/NA Meeting</td></tr>
             <tr><td class="time-col">8:00 PM</td><td class="activity-col">Resident Vitals & Medication</td></tr>
-            <tr><td
+            <tr><td class="time-col">9:30 PM</td><td class="activity-col">Daily Reflection</td></tr>
+            <tr><td class="time-col">11:30 PM</td><td class="activity-col">Bedtime</td></tr>
+
+            <tr><th colspan="2" class="section-header">Saturday</th></tr>
+            <tr class="weekend-row"><td class="time-col">1:00 PM – 2:00 PM</td><td class="activity-col">Community Meeting (Day Room)</td></tr>
+            <tr class="weekend-row"><td class="time-col">2:00 PM – 4:00 PM</td><td class="activity-col">Group</td></tr>
+
+            <tr><th colspan="2" class="section-header">Sunday</th></tr>
+            <tr class="weekend-row"><td colspan="2" style="padding: 10px;">4:00 PM – 7:00 PM: Community Dinner & Movie</td></tr>
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>
+
+==================================================
+FILE PATH: Lamination\Manditory-groups.html
+==================================================
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mandatory Groups Notice</title>
+    <style>
+        /* Document Setup */
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+            font-family: 'Times New Roman', Times, serif;
+        }
+
+        .page {
+            background: white;
+            width: 8.5in;
+            height: 11in;
+            margin: 20px auto;
+            padding: 1in;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* Centers vertically */
+            align-items: center;     /* Centers horizontally */
+            text-align: center;
+            /* Page break for printing front/back */
+            page-break-after: always;
+        }
+
+        .header-bold {
+            font-size: 36pt;
+            font-weight: bold;
+            text-decoration: underline;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
+
+        .sub-header {
+            font-size: 26pt;
+            margin-bottom: 50px;
+        }
+
+        .times {
+            font-size: 30pt;
+            font-weight: bold;
+            margin-bottom: 50px;
+            line-height: 1.6;
+        }
+
+        .exceptions {
+            font-size: 24pt;
+            max-width: 90%;
+            line-height: 1.4;
+        }
+
+        @media print {
+            body { background: none; margin: 0; padding: 0; }
+            .page { box-shadow: none; margin: 0; width: 8.5in; height: 11in; }
+            @page { size: portrait; margin: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="page">
+        <div class="header-bold">Groups Are</div>
+        <div class="header-bold">Mandatory</div>
+        
+        <div class="sub-header">Rooms are locked DAILY</div>
+
+        <div class="times">
+            10:00a-12:00pm<br>
+            1:00p-4:00pm
+        </div>
+
+        <div class="exceptions">
+            Patients on detox LOC or<br>
+            with a nurses excuse are only<br>
+            exceptions
+        </div>
+    </div>
+
+    <div class="page">
+        <div class="header-bold">Groups Are</div>
+        <div class="header-bold">Mandatory</div>
+        
+        <div class="sub-header">Rooms are locked DAILY</div>
+
+        <div class="times">
+            10:00a-12:00pm<br>
+            1:00p-4:00pm
+        </div>
+
+        <div class="exceptions">
+            Patients on detox LOC or<br>
+            with a nurses excuse are only<br>
+            exceptions
+        </div>
+    </div>
+
+</body>
+</html>
 
 ==================================================
 FILE PATH: Meta\Built in audio code
