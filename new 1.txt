@@ -1,0 +1,115 @@
+// ---------------------------------
+            // --- 1. GAME DATA ---
+            // ---------------------------------
+            const gameData = {
+                "Famous Faces": {
+                    100: { 
+                        q: "This 'Iron Man' actor has been sober since 2003 and is one of Hollywood's biggest recovery success stories.", 
+                        a: "Who is Robert Downey Jr.?" 
+                    },
+                    200: { 
+                        q: "This rapper, known for 'Not Afraid', celebrated over 16 years of sobriety and often raps about his journey.", 
+                        a: "Who is Eminem?" 
+                    },
+                    300: { 
+                        q: "This 'Halloween' actress and Oscar winner calls her long-term recovery the 'greatest accomplishment' of her life.", 
+                        a: "Who is Jamie Lee Curtis?" 
+                    },
+                    400: { 
+                        q: "This legendary actor, known for roles in Pulp Fiction and Marvel movies, has been sober since the early 90s.", 
+                        a: "Who is Samuel L. Jackson?" 
+                    },
+                    500: { 
+                        q: "Before becoming a famous 'tough guy' actor in movies like Machete, he worked as a drug counselor and has over 50 years sober.", 
+                        a: "Who is Danny Trejo?" 
+                    }
+                },
+                "Slogans & Wisdom": {
+                    100: { 
+                        q: "This popular three-word phrase reminds us not to worry about the far future, but to handle life in 24-hour chunks.", 
+                        a: "What is 'One Day at a Time'?" 
+                    },
+                    200: { 
+                        q: "This slogan suggests that we don't need to be perfect in our recovery, we just need to keep moving forward.", 
+                        a: "What is 'Progress not Perfection'?" 
+                    },
+                    300: { 
+                        q: "This acronym (H.A.L.T.) reminds us to check if we are Hungry, Angry, Lonely, or ______.", 
+                        a: "What is Tired?" 
+                    },
+                    400: { 
+                        q: "This gentle reminder tells us not to rush our recovery or force solutions before they are ready.", 
+                        a: "What is 'Easy Does It'?" 
+                    },
+                    500: { 
+                        q: "This phrase invites us to release our desire to control outcomes and trust in a power greater than ourselves.", 
+                        a: "What is 'Let Go and Let God'?" 
+                    }
+                },
+                "Recovery in Movies": {
+                    100: { 
+                        q: "In this 2000 film, Sandra Bullock plays a newspaper columnist who finds humor and healing during 28 days in rehab.", 
+                        a: "What is '28 Days'?" 
+                    },
+                    200: { 
+                        q: "James Woods won an Emmy for playing this historical figure and co-founder of Alcoholics Anonymous in a 1989 movie.", 
+                        a: "Who is Bill W. (or 'My Name is Bill W.')?" 
+                    },
+                    300: { 
+                        q: "This 2019 biopic tells the story of Elton John's rise to fame and his eventual journey into sobriety.", 
+                        a: "What is 'Rocketman'?" 
+                    },
+                    400: { 
+                        q: "Meg Ryan plays a mother seeking treatment for alcoholism in this sensitive drama that explores how recovery affects the whole family.", 
+                        a: "What is 'When a Man Loves a Woman'?" 
+                    },
+                    500: { 
+                        q: "This groundbreaking documentary focuses not on addiction, but on the millions of people living openly in long-term recovery.", 
+                        a: "What is 'The Anonymous People'?" 
+                    }
+                },
+                "Myth Busters": {
+                    100: { 
+                        q: "MYTH: You have to lose everything before you can get help. FACT: You don't have to hit this 'bottom' to start recovering.", 
+                        a: "What is 'Rock Bottom'?" 
+                    },
+                    200: { 
+                        q: "MYTH: Addiction is a lack of willpower. FACT: Medical organizations like the AMA define addiction as this type of chronic condition.", 
+                        a: "What is a disease (or disorder)?" 
+                    },
+                    300: { 
+                        q: "MYTH: If a doctor prescribed it, it's safe. FACT: These medications can be highly addictive even when taken as directed.", 
+                        a: "What are prescription drugs (or opioids/benzos)?" 
+                    },
+                    400: { 
+                        q: "MYTH: If you slip up once, you have failed. FACT: This event is often a part of the learning curve and an opportunity to strengthen your program.", 
+                        a: "What is a relapse (or slip)?" 
+                    },
+                    500: { 
+                        q: "MYTH: You can recover fully just by detoxing. FACT: Detox manages physical withdrawal, but *this* is needed for long-term change.", 
+                        a: "What is treatment (or aftercare/therapy/recovery program)?" 
+                    }
+                },
+                "Brain & Body": {
+                    100: { 
+                        q: "This organ is the primary filter for toxins in the body and has an amazing ability to regenerate after you stop drinking.", 
+                        a: "What is the Liver?" 
+                    },
+                    200: { 
+                        q: "This 'reward' chemical is depleted during active addiction but slowly regenerates, allowing us to feel natural joy again.", 
+                        a: "What is Dopamine?" 
+                    },
+                    300: { 
+                        q: "Often neglected, drinking plenty of this is one of the simplest ways to help your body heal and think clearly.", 
+                        a: "What is Water (or Hydration)?" 
+                    },
+                    400: { 
+                        q: "The brain has the ability to rewire itself and form new, healthy pathways. This scientific concept is called ______.", 
+                        a: "What is Neuroplasticity?" 
+                    },
+                    500: { 
+                        q: "Symptoms like fog, anxiety, or sleep issues that last for months after quitting are known as P.A.W.S., which stands for this.", 
+                        a: "What is Post-Acute Withdrawal Syndrome?" 
+                    }
+                }
+            };

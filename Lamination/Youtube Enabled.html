@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Printable Tags</title>
+    <style>
+        @page {
+            size: letter landscape;
+            margin: 0;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-content: flex-start;
+            padding: 20px;
+            background-color: white;
+        }
+        .card {
+            width: 2.5in;
+            height: 1.5in;
+            border: 2px dashed #333; /* Cutting guide */
+            margin: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        .line-one {
+            font-weight: bold;
+            font-size: 18pt;
+            color: #CC0000; /* YouTube Red */
+            margin-bottom: 5px;
+        }
+        .line-two {
+            font-weight: bold;
+            font-size: 14pt;
+            color: black;
+        }
+    </style>
+</head>
+<body>
+
+    <script>
+        const cardContent = `
+            <div class="card">
+                <div class="line-one">YOUTUBE PREMIUM ENABLED</div>
+                <div class="line-two">DO NOT LOG OUT</div>
+            </div>
+        `;
+        // Generates 12 cards (Adjust number if needed)
+        for (let i = 0; i < 12; i++) {
+            document.write(cardContent);
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admissions Checklist</title>
+    <style>
+        /* Optimized for 10.5pt - 11pt readability on a single page */
+        body { font-family: Arial, sans-serif; font-size: 11pt; color: #000; margin: 10px 40px; line-height: 1.1; }
+        
+        .main-title { text-align: center; font-size: 16pt; font-weight: bold; margin-bottom: 8px; text-transform: uppercase; }
+
+        /* Compact Info Box */
+        .info-box { border: 2px solid #000; padding: 10px; width: 550px; margin: 0 auto 15px auto; }
+        .info-line { margin-bottom: 6px; }
+        .underline { display: inline-block; border-bottom: 1px solid #000; min-width: 250px; margin-left: 5px; }
+        .loc-row { margin-top: 8px; display: flex; gap: 25px; font-weight: bold; align-items: center; }
+
+        /* Square boxes for LOC and Valuables */
+        .check-rect { 
+            display: inline-block; 
+            width: 18px; 
+            height: 18px; 
+            border: 1.5px solid #000; 
+            vertical-align: middle; 
+            margin-right: 6px;
+            background-color: #fff;
+        }
+
+        /* Main Grid */
+        .container { display: flex; gap: 20px; align-items: flex-start; }
+        .column { flex: 1; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 12px; }
+        td { border: 1px solid #000; padding: 5px 8px; vertical-align: middle; }
+        
+        /* Section Headers */
+        .header-row { background-color: #f2f2f2; font-weight: bold; text-align: center; text-transform: uppercase; font-size: 9.5pt; height: 24px; }
+        .check-box { width: 35px; text-align: center; font-weight: bold; }
+
+        /* Multi-checkbox row style */
+        .multi-check-row { display: flex; align-items: center; gap: 20px; }
+
+        @media print {
+            body { margin: 5mm 10mm; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-title">Admissions Checklist</div>
+
+    <div class="info-box">
+        <div class="info-line"><strong>Name:</strong> <span class="underline"></span></div>
+        <div class="info-line"><strong>Date:</strong> <span class="underline" style="min-width: 150px;"></span></div>
+        <div class="loc-row">
+            Correct Level of Care: 
+            <span><span class="check-rect"></span> 3.5 Evolve</span>
+            <span><span class="check-rect"></span> 3.7 Detox</span>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="column">
+            <table>
+                <tr class="header-row"><td colspan="2">Initial Admission Steps</td></tr>
+                <tr><td class="check-box"></td><td>Appropriate Band Given (Red: Med, Green: Food, White: NKA)</td></tr>
+                <tr><td class="check-box"></td><td>Admit blurb sent to TEAMS</td></tr>
+                <tr><td class="check-box"></td><td>Picture given to chef if diet restriction</td></tr>
+                <tr><td class="check-box"></td><td>Payment collected / admin aware if missing</td></tr>
+                <tr><td class="check-box"></td><td>Admission Vitals + BAL Entered</td></tr>
+                <tr><td class="check-box"></td><td>Discharge Date Added</td></tr>
+                <tr><td class="check-box"></td><td>Added to Bed Board on LS</td></tr>
+                <tr><td class="check-box"></td><td>Client Photo Taken on LS</td></tr>
+
+                <tr class="header-row"><td colspan="2">Demographics</td></tr>
+                <tr><td class="check-box"></td><td>Verified Patients Name is Correct</td></tr>
+                <tr><td class="check-box"></td><td>Input Phone Number</td></tr>
+                <tr><td class="check-box"></td><td>Input Address (or facility address if homeless)</td></tr>
+                <tr><td class="check-box"></td><td>Input Social Security Number</td></tr>
+                <tr><td class="check-box"></td><td>Input Email Address</td></tr>
+                <tr><td class="check-box"></td><td>Verified Birth Date is Correct</td></tr>
+
+                <tr class="header-row"><td colspan="2">Consent Forms</td></tr>
+                <tr><td class="check-box"></td><td>Consent For Pin</td></tr>
+                <tr><td class="check-box"></td><td>SUD Informed Consent (SDC Orlando)</td></tr>
+                <tr><td class="check-box"></td><td>Contact/ROI for Hospital</td></tr>
+                <tr><td class="check-box"></td><td>Contact/ROI for Referral Source</td></tr>
+                <tr><td class="check-box"></td><td>Contact/ROI for EC</td></tr>
+                <tr><td class="check-box"></td><td>Body and Luggage Search Form</td></tr>
+                <tr><td class="check-box"></td><td>Medication Authorization CC</td></tr>
+                <tr><td class="check-box"></td><td>Patient Handbook (SDC or ERC)</td></tr>
+            </table>
+        </div>
+
+        <div class="column">
+            <table>
+                <tr class="header-row"><td colspan="2">ObservSmart</td></tr>
+                <tr><td class="check-box"></td><td>Added Patient to ObservSmart</td></tr>
+                <tr><td class="check-box"></td><td>Include MRN in ObservSmart</td></tr>
+                <tr><td class="check-box"></td><td>Beacon Assigned to Patient</td></tr>
+
+                <tr class="header-row"><td colspan="2">UDS</td></tr>
+                <tr><td class="check-box"></td><td>Patient Provided UDS Sample</td></tr>
+                <tr><td class="check-box"></td><td>UDS inputted to LS</td></tr>
+                <tr><td class="check-box"></td><td>Sample in 2 tubes and bagged for Quest</td></tr>
+                <tr><td class="check-box"></td><td>Labeled tubes from Z-designer</td></tr>
+                <tr><td class="check-box"></td><td>Requisition printed from LS</td></tr>
+
+                <tr class="header-row"><td colspan="2">Service Animal (if applicable)</td></tr>
+                <tr><td class="check-box"></td><td>Animal Vaccination Records Scanned</td></tr>
+
+                <tr class="header-row"><td colspan="2">Scanned Documents</td></tr>
+                <tr><td class="check-box"></td><td>VOB / Demographics & Missing ID Form</td></tr>
+                <tr><td class="check-box"></td><td>Valuables/Cash Envelope Receipt</td></tr>
+
+                <tr class="header-row"><td colspan="2">Valuables</td></tr>
+                <tr>
+                    <td colspan="2">
+                        <div class="multi-check-row">
+                            <strong>Valuables:</strong>
+                            <span><span class="check-rect"></span> In Safe</span>
+                            <span><span class="check-rect"></span> Nurses Station</span>
+                        </div>
+                    </td>
+                </tr>
+                <tr><td class="check-box"></td><td>Patient Signed Envelopes</td></tr>
+                <tr><td class="check-box"></td><td>Personal Property Inventory Signed in LS</td></tr>
+                <tr><td class="check-box"></td><td>Update Cash Ledger</td></tr>
+
+                <tr class="header-row"><td colspan="2">Pending Completion</td></tr>
+                <tr><td class="check-box"></td><td>Passed this form to ________________</td></tr>
+                <tr><td class="check-box"></td><td>Place in binder (Admissions 2)</td></tr>
+            </table>
+
+            <div style="margin-top: 15px; line-height: 1.8;">
+                <strong>Date & Time of Admission:</strong> ______________________<br>
+                <strong>Tech Name:</strong> __________________________________
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

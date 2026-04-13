@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mandatory Group Flyer</title>
+    <style>
+        /* Forces the page to stay 8.5x11 and prevents a 2nd page */
+        @page {
+            size: 8.5in 11in;
+            margin: 0;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #fff;
+            font-family: Arial, sans-serif;
+            color: #000;
+        }
+        .container {
+            width: 7.5in;
+            height: 10in;
+            border: 6px solid #000;
+            padding: 30px;
+            box-sizing: border-box;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly; /* Keeps elements spaced out on one page */
+        }
+        h2 {
+            font-size: 28px;
+            margin: 0;
+            text-decoration: underline;
+        }
+        h1 {
+            font-size: 58px;
+            margin: 10px 0;
+            text-transform: uppercase;
+        }
+        .schedule-box {
+            background-color: #e8e8e8; /* Light grey for B&W printing */
+            border: 1px solid #ccc;
+            padding: 20px;
+        }
+        .schedule-box h3 {
+            font-size: 32px;
+            margin: 0 0 10px 0;
+        }
+        .schedule-box p {
+            font-size: 38px;
+            font-weight: bold;
+            margin: 5px 0;
+        }
+        .footer-info {
+            font-size: 24px;
+            line-height: 1.5;
+        }
+        .warning-text {
+            font-size: 20px;
+            font-style: italic;
+            margin-top: 20px;
+            border-top: 1px dashed #000;
+            padding-top: 15px;
+        }
+        .bold-underline {
+            font-weight: bold;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>NOTICE</h2>
+        
+        <h1>GROUPS ARE<br>MANDATORY</h1>
+
+        <div class="schedule-box">
+            <h3> ROOM DOORS WILL BE LOCKED:</h3>
+            <p>10:00 AM – 12:00 PM</p>
+            <p>1:00 PM – 4:00 PM</p>
+        </div>
+
+        <div class="footer-info">
+            <span class="bold-underline">ONLY EXCEPTIONS:</span><br>
+            Excused by Nursing or Detox LOC
+        </div>
+
+        <div class="warning-text">
+            Please plan your breaks, phone calls, and personal needs around these scheduled times.
+        </div>
+    </div>
+
+</body>
+</html>

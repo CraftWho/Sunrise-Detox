@@ -1,4 +1,10 @@
 ==================================================
+FILE PATH: .gitignore
+==================================================
+codebase_context.txt
+
+
+==================================================
 FILE PATH: game rules
 ==================================================
 The point system is divided into Standard Questions, Steals, and Daily Doubles: 
@@ -24,7 +30,6 @@ FILE PATH: index.html
         html, body {
             font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
             background-color: #000; /* Start black */
-            /* DVH fixes the "cut off" issue on mobile browsers by accounting for the URL bar */
             height: 100dvh; 
             width: 100vw;
             overflow: hidden;
@@ -129,13 +134,13 @@ FILE PATH: index.html
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(to bottom, #020411, #1a0b16);
+            background: linear-gradient(to bottom, #000000, #064e3b);
             opacity: 0;
             transition: opacity 1s ease;
-            overflow-y: auto; /* Allow scrolling if menu is tall */
+            overflow-y: auto; 
         }
 
-        /* --- GAME CONTAINER (Flexbox layout for perfect fit) --- */
+        /* --- GAME CONTAINER --- */
         #game-container {
             display: none;
             flex-direction: column;
@@ -150,7 +155,7 @@ FILE PATH: index.html
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-shrink: 0; /* Never shrink the header */
+            flex-shrink: 0;
             margin-bottom: 4px;
             height: 40px;
         }
@@ -166,37 +171,35 @@ FILE PATH: index.html
         .menu-btn {
             width: 100%;
             padding: 15px;
-            background-color: #06226e;
+            background-color: #16a34a; 
             color: white;
             font-weight: bold;
             font-size: clamp(0.8rem, 2vw, 1rem);
             border-radius: 8px;
-            border: 2px solid #3b82f6;
+            border: 2px solid #22c55e;
             box-shadow: 0 4px 6px rgba(0,0,0,0.4);
             text-align: center;
             transition: transform 0.1s;
         }
-        .menu-btn:active { transform: scale(0.96); background-color: #1e3a8a; }
+        .menu-btn:active { transform: scale(0.96); background-color: #15803d; }
 
         /* --- BOARD STYLES --- */
         .jeopardy-board {
             display: grid;
             grid-template-columns: repeat(5, minmax(0, 1fr));
-            /* KEY FIX: Use fractions so rows squash to fit screen exactly */
             grid-template-rows: repeat(6, 1fr); 
             gap: 3px;
-            flex-grow: 1; /* Take up all remaining space */
-            min-height: 0; /* Allow shrinking */
+            flex-grow: 1;
+            min-height: 0; 
             width: 100%;
         }
         
         .category-cell {
-            background-color: #06226e;
+            background-color: #16a34a; 
             color: white;
             font-weight: bold;
             text-align: center;
             padding: 2px;
-            /* Responsive font scaling */
             font-size: clamp(0.7rem, 2.5vw, 1.1rem);
             border-radius: 4px;
             display: flex;
@@ -209,9 +212,9 @@ FILE PATH: index.html
         }
         
         .question-cell {
-            background-color: #06226e;
-            color: #ffcc00;
-            font-size: clamp(1.2rem, 6dvh, 2.5rem); /* Scales with height */
+            background-color: #16a34a; 
+            color: #ffffff; 
+            font-size: clamp(1.2rem, 6dvh, 2.5rem); 
             font-weight: 900;
             text-align: center;
             border-radius: 4px;
@@ -222,8 +225,8 @@ FILE PATH: index.html
             border: 2px solid transparent;
         }
         .question-cell.answered {
-            background-color: #1e1b4b;
-            color: #1e1b4b;
+            background-color: #000000; 
+            color: #000000;
             cursor: not-allowed;
             pointer-events: none;
         }
@@ -234,8 +237,8 @@ FILE PATH: index.html
             grid-template-columns: 1fr 1fr;
             gap: 6px;
             margin-bottom: 4px;
-            flex-shrink: 0; /* Never shrink scores */
-            height: 44px; /* Fixed compact height */
+            flex-shrink: 0; 
+            height: 44px; 
         }
         .team-scoreboard {
             background-color: #ffffff;
@@ -254,7 +257,7 @@ FILE PATH: index.html
         .team-score {
             font-size: clamp(1.2rem, 4vw, 1.5rem);
             font-weight: 900;
-            color: #06226e;
+            color: #064e3b;
             background: none;
             border: none;
             text-align: right;
@@ -278,12 +281,12 @@ FILE PATH: index.html
         }
         .modal-content {
             background-color: #fefefe;
-            padding: 12px;
+            padding: 24px;
             border-radius: 12px;
-            width: 100%;
-            max-width: 600px;
-            /* Ensure modal fits on screen even with keyboard */
-            max-height: 95dvh; 
+            width: 98vw; 
+            max-width: 98vw;
+            height: 98dvh;
+            max-height: 98dvh; 
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -291,10 +294,10 @@ FILE PATH: index.html
             overflow-y: auto;
         }
         .modal-question {
-            font-size: clamp(1.1rem, 4vw, 1.8rem);
-            font-weight: 600;
-            color: #1f2937;
-            padding: 10px 0;
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 900;
+            color: #000000;
+            padding: 20px 0;
             line-height: 1.3;
             flex-grow: 1;
             display: flex;
@@ -304,11 +307,11 @@ FILE PATH: index.html
         }
         .modal-answer {
             display: none;
-            font-size: clamp(1rem, 4vw, 1.4rem);
+            font-size: clamp(2rem, 5vw, 3.5rem); 
             font-weight: 700;
             color: #059669;
             margin: 8px 0;
-            padding: 10px;
+            padding: 15px;
             background: #d1fae5;
             border-radius: 8px;
             border: 1px solid #10b981;
@@ -359,7 +362,7 @@ FILE PATH: index.html
 
     <div id="game-container">
         <div class="header-bar">
-             <button id="back-to-menu" class="bg-blue-900 text-white text-[10px] font-bold py-2 px-3 rounded border border-blue-500">
+             <button id="back-to-menu" class="bg-green-900 text-white text-[10px] font-bold py-2 px-3 rounded border border-green-500">
                 &larr; MENU
              </button>
              <div class="text-center flex-grow">
@@ -393,7 +396,7 @@ FILE PATH: index.html
     <div id="question-modal" class="modal">
         <div class="modal-content">
             <div class="flex justify-between items-center border-b pb-2 mb-2">
-                <span id="modal-category" class="text-xs font-bold text-blue-600 uppercase tracking-wider truncate mr-2">Category</span>
+                <span id="modal-category" class="text-xs font-bold text-green-600 uppercase tracking-wider truncate mr-2">Category</span>
                 <span id="modal-points" class="text-2xl font-black text-yellow-600">$000</span>
             </div>
             
@@ -402,7 +405,7 @@ FILE PATH: index.html
 
             <div class="mt-auto pt-2">
                 <div class="flex items-center justify-center gap-4 mb-4">
-                    <div id="timer-display" class="text-4xl font-black text-blue-900">30</div>
+                    <div id="timer-display" class="text-4xl font-black text-green-900">30</div>
                     <button id="timer-toggle-btn" class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center active:bg-gray-300">
                         <svg id="timer-icon" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-800" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                     </button>
@@ -420,37 +423,38 @@ FILE PATH: index.html
     </div>
 
     <div id="daily-double-modal" class="modal">
-        <div class="modal-content border-4 border-yellow-400 bg-blue-950 text-white">
+        <div class="modal-content border-4 border-yellow-400 bg-green-950 text-white">
             <h2 class="text-3xl font-black text-yellow-400 mb-6 tracking-widest">DAILY DOUBLE</h2>
             <div class="mb-6 w-full">
                 <label class="block text-white text-lg mb-2">Enter Wager:</label>
                 <input type="number" id="dd-wager-input" class="text-4xl font-bold text-center w-full p-4 rounded-lg text-black" min="5">
             </div>
-            <button id="submit-wager-btn" class="game-btn w-full bg-yellow-400 text-blue-900 hover:bg-yellow-300">BET!</button>
+            <button id="submit-wager-btn" class="game-btn w-full bg-yellow-400 text-green-900 hover:bg-yellow-300">BET!</button>
         </div>
     </div>
 
     <div id="winner-modal" class="modal">
-        <div class="modal-content bg-gradient-to-br from-yellow-300 to-yellow-500 border-8 border-blue-900 justify-center">
+        <div class="modal-content bg-gradient-to-br from-yellow-300 to-yellow-500 border-8 border-green-900 justify-center">
             <div id="confetti-container" class="absolute inset-0 pointer-events-none overflow-hidden rounded-lg"></div>
-            <h2 class="text-xl font-bold text-blue-900 opacity-75">WINNER</h2>
-            <h1 id="winner-name" class="text-5xl md:text-7xl font-black text-blue-900 my-6">TEAM NAME</h1>
-            <button id="close-winner-modal-btn" class="game-btn bg-blue-900 text-white px-8 rounded-full shadow-2xl">NEW GAME</button>
+            <h2 class="text-xl font-bold text-green-900 opacity-75">WINNER</h2>
+            <h1 id="winner-name" class="text-5xl md:text-7xl font-black text-green-900 my-6">TEAM NAME</h1>
+            <button id="close-winner-modal-btn" class="game-btn bg-green-900 text-white px-8 rounded-full shadow-2xl">NEW GAME</button>
         </div>
     </div>
 
     <div id="change-team-modal" class="modal">
-        <div class="modal-content !bg-indigo-600 !text-white justify-center items-center">
+        <div class="modal-content !bg-green-600 !text-white justify-center items-center">
             <h1 class="text-2xl font-bold opacity-80">SWITCH TURNS</h1>
             <p class="text-5xl font-black my-8" id="next-team-name">Team 2</p>
-            <button id="confirm-change-team-btn" class="game-btn w-full bg-white text-indigo-700">READY</button>
+            <button id="confirm-change-team-btn" class="game-btn w-full bg-white text-green-700">READY</button>
         </div>
     </div>
 
     <script>
         // --- 6 GAMES DATA ---
+        // (Keeping your original game data intact)
         const ALL_GAMES = {
-            "game1": { // RELATIONSHIPS (Original)
+            "game1": { 
                 "Red Flags": {
                     100: { q: "When a partner isolates you from friends, family, or support networks.", a: "What is isolation?" },
                     200: { q: "A subtle form of manipulation where someone questions your reality.", a: "What is gaslighting?" },
@@ -487,7 +491,7 @@ FILE PATH: index.html
                     500: { q: "Understanding another's perspective while maintaining your own.", a: "What is differentiation?" }
                 }
             },
-            "game2": { // DETOX & BODY (Revised Detox Friendly)
+            "game2": { 
                 "The Body": {
                     100: { q: "It is crucial to drink plenty of this to help your organs flush out toxins.", a: "What is water (or hydration)?" },
                     200: { q: "This organ is the body's primary filter and works overtime during detox to process alcohol and drugs.", a: "What is the liver?" },
@@ -505,7 +509,7 @@ FILE PATH: index.html
                 "Fact or Fiction": {
                     100: { q: "True or False: You have to hit 'rock bottom' before you can get better.", a: "What is False?" },
                     200: { q: "True or False: Addiction is defined as a chronic brain disease, not a lack of willpower.", a: "What is True?" },
-                    300: { q: "True or False: Relapse means you have failed and have to start completely over.", a: "What is False? (It is part of the learning process)" },
+                    300: { q: "True or False: Relapse means you have failed and have to start completely over.", a: "What is False?" },
                     400: { q: "True or False: You can become physically dependent on prescription medications even if you take them as prescribed.", a: "What is True?" },
                     500: { q: "True or False: Marijuana is not addictive.", a: "What is False?" }
                 },
@@ -524,7 +528,7 @@ FILE PATH: index.html
                     500: { q: "This is the process of identifying your personal warning signs before a physical relapse occurs.", a: "What is Relapse Prevention Planning?" }
                 }
             },
-            "game3": { // FAMOUS FACES & FACTS
+            "game3": {
                 "Famous Recovery": {
                     100: { q: "This 'Iron Man' actor credits his recovery to therapy and staying sober since 2003.", a: "Who is Robert Downey Jr.?" },
                     200: { q: "This rapper, known for 'Not Afraid', celebrated 16 years of sobriety in 2024.", a: "Who is Eminem?" },
@@ -561,7 +565,7 @@ FILE PATH: index.html
                     500: { q: "Bradley Cooper and Lady Gaga starred in this movie dealing with alcoholism and fame.", a: "What is A Star Is Born?" }
                 }
             },
-            "game4": { // THE PROGRAM (12 Steps, AA/NA)
+            "game4": { 
                 "The Steps": {
                     100: { q: "Step 1: We admitted we were ______ over alcohol/drugs.", a: "What is Powerless?" },
                     200: { q: "Step 4 requires us to make a searching and fearless ______ inventory of ourselves.", a: "What is Moral?" },
@@ -569,11 +573,11 @@ FILE PATH: index.html
                     400: { q: "Step 11 suggests using prayer and ______ to improve our conscious contact with God.", a: "What is Meditation?" },
                     500: { q: "Step 12: Having had a spiritual awakening, we try to carry this message to others and practice these ______.", a: "What are Principles?" }
                 },
-                "AA History": {
-                    100: { q: "He is the co-founder of AA, known simply as 'Bill'.", a: "Who is Bill W.?" },
-                    200: { q: "This doctor co-founded AA with Bill W. in Akron, Ohio.", a: "Who is Dr. Bob?" },
-                    300: { q: "The year AA was founded.", a: "What is 1935?" },
-                    400: { q: "The 'Big Book' was first published in this year.", a: "What is 1939?" },
+                "History": {
+                    100: { q: "The two founders of AA are Bill W. and Dr. ______.", a: "Who is Bob?" },
+                    200: { q: "AA was officially founded in this year.", a: "What is 1935?" },
+                    300: { q: "This city is recognized as the birthplace of AA.", a: "What is Akron, Ohio?" },
+                    400: { q: "The wife of Bill W., she co-founded Al-Anon.", a: "Who is Lois W.?" },
                     500: { q: "This was the first name of the addiction recovery group before it became AA.", a: "What is The Oxford Group?" }
                 },
                 "Slogans": {
@@ -586,22 +590,22 @@ FILE PATH: index.html
                 "Definitions": {
                     100: { q: "The AA definition of insanity: Doing the same thing over and over and expecting ______.", a: "What are 'Different Results'?" },
                     200: { q: "A person you call for guidance through the 12 steps.", a: "What is a Sponsor?" },
-                    300: { q: "The state of being free from all mind-altering substances.", a: "What is Abstinence?" },
-                    400: { q: "A daily reprieve contingent on the maintenance of our spiritual condition.", a: "What is Sobriety?" },
-                    500: { q: "A desire to stop drinking is the only requirement for this.", a: "What is Membership?" }
+                    300: { q: "The state of being physically clear of drugs and alcohol.", a: "What is Abstinence?" },
+                    400: { q: "The AA term for a spiritual or higher power of your own understanding.", a: "What is God?" },
+                    500: { q: "This is what you are doing if you try to control your drinking/using after admitting powerlessness.", a: "What is Relapsing?" }
                 },
-                "Service": {
-                    100: { q: "Making this at a meeting is a common first service commitment.", a: "What is Coffee?" },
-                    200: { q: "This person greets newcomers at the door.", a: "What is a Greeter?" },
-                    300: { q: "This trusted servant leads the meeting format.", a: "What is the Chairperson?" },
-                    400: { q: "This person manages the group's money.", a: "What is the Treasurer?" },
-                    500: { q: "Service keeps you sober by getting you out of ______.", a: "What is Self?" }
+                "Traditions": {
+                    100: { q: "The only requirement for membership is a ______ to stop drinking.", a: "What is Desire?" },
+                    200: { q: "Tradition 7 states that every group ought to be fully ______-supporting.", a: "What is Self?" },
+                    300: { q: "AA remains non-professional, but service centers may employ ______ workers.", a: "What are Special?" },
+                    400: { q: "Anonymity is the ______ foundation of all our traditions.", a: "What is Spiritual?" },
+                    500: { q: "AA has no opinion on ______ issues; hence the AA name ought never be drawn into public controversy.", a: "What are Outside?" }
                 }
             },
-            "game5": { // LIFE SKILLS & GOALS
+            "game5": { 
                 "Goal Setting": {
-                    100: { q: "A popular saying: 'If you fail to plan, you are planning to ______'.", a: "What is Fail?" },
-                    200: { q: "Goals should be SMART: Specific, Measurable, Achievable, Relevant, and ______.", a: "What is Time-bound?" },
+                    100: { q: "S.M.A.R.T. goals are Specific, Measurable, Achievable, Relevant, and ______.", a: "What is Time-bound?" },
+                    200: { q: "Short-term goals usually take this long to achieve.", a: "What is Less than 6 months (or 1 year)?" },
                     300: { q: "Breaking a big goal into smaller, manageable steps prevents this feeling.", a: "What is Overwhelm?" },
                     400: { q: "A vision board is a tool used for this.", a: "What is Visualization?" },
                     500: { q: "Rewarding yourself for small wins is called positive ______.", a: "What is Reinforcement?" }
@@ -614,18 +618,18 @@ FILE PATH: index.html
                     500: { q: "This is often the first financial responsibility you take on in sober living.", a: "What is Rent?" }
                 },
                 "Routine": {
-                    100: { q: "Making this every morning is a simple task to start the day with a win.", a: "What is your Bed?" },
-                    200: { q: "Eating at regular times helps regulate blood sugar and ______.", a: "What is Mood?" },
-                    300: { q: "A solid routine reduces this, which is a major relapse trigger.", a: "What is Boredom (or Idle Time)?" },
-                    400: { q: "Setting a consistent time for this ensures you get enough rest.", a: "What is Sleep (or Bedtime)?" },
-                    500: { q: "Planning your day the night before reduces anxiety about the ______.", a: "What is Future?" }
+                    100: { q: "Making this every morning is often suggested as a first small win of the day.", a: "What is Your Bed?" },
+                    200: { q: "Eating regular meals helps prevent this trigger from H.A.L.T.", a: "What is Hungry?" },
+                    300: { q: "Getting 7-9 hours of this is crucial for brain healing.", a: "What is Sleep?" },
+                    400: { q: "This practice involves taking time daily to list things you are thankful for.", a: "What is Gratitude (or a Gratitude List)?" },
+                    500: { q: "Physical activity releases these natural mood-lifters.", a: "What are Endorphins?" }
                 },
-                "Money": {
-                    100: { q: "A plan for how you will spend and save your money.", a: "What is a Budget?" },
-                    200: { q: "This type of spending is done on impulse rather than need.", a: "What is Impulsive Spending?" },
-                    300: { q: "Paying off these is a common part of making financial amends.", a: "What are Debts?" },
-                    400: { q: "It is important to save money for an ______ fund.", a: "What is Emergency?" },
-                    500: { q: "Financial honesty is crucial; hiding spending is often a sign of ______ behavior.", a: "What is Addictive?" }
+                "Money Management": {
+                    100: { q: "A plan for how you will spend your money each month.", a: "What is a Budget?" },
+                    200: { q: "Money set aside for unexpected expenses is called an ______ fund.", a: "What is Emergency?" },
+                    300: { q: "Using these instead of cash can build your credit score, but requires caution.", a: "What are Credit Cards?" },
+                    400: { q: "This is the process of putting money aside for long-term goals.", a: "What is Saving?" },
+                    500: { q: "Impulse buying in early recovery is often a sign of ______ behavior.", a: "What is Addictive?" }
                 },
                 "Employment": {
                     100: { q: "A document listing your work history and skills.", a: "What is a Resume?" },
@@ -635,7 +639,7 @@ FILE PATH: index.html
                     500: { q: "Reliability means showing up to work on time and ______.", a: "What is Sober?" }
                 }
             },
-            "game6": { // EMOTIONS & FAMILY
+            "game6": { 
                 "Fear": {
                     100: { q: "An acronym for F.E.A.R.: False Evidence Appearing ______.", a: "What is Real?" },
                     200: { q: "Fear of this often keeps people from trying new things in recovery.", a: "What is Failure?" },
@@ -644,15 +648,15 @@ FILE PATH: index.html
                     500: { q: "Courage is not the absence of fear, but acting ______ it.", a: "What is Despite (or In Spite of)?" }
                 },
                 "Rejection": {
-                    100: { q: "Rejection is often God's way of saying 'Not ______'.", a: "What is Yet (or 'Not This')?" },
-                    200: { q: "Taking rejection personally is a sign of low ______.", a: "What is Self-Esteem?" },
-                    300: { q: "When someone says 'no' to you, they are setting a ______.", a: "What is Boundary?" },
-                    400: { q: "Learning to handle 'no' without using is a sign of ______ maturity.", a: "What is Emotional?" },
-                    500: { q: "We must accept that we cannot ______ how others feel about us.", a: "What is Control?" }
+                    100: { q: "Rejection often triggers feelings of not being 'good ______'.", a: "What is Enough?" },
+                    200: { q: "It's important to remember that a 'no' is not a reflection of your ______.", a: "What is Worth (or Value)?" },
+                    300: { q: "This thinking error assumes you know someone is judging you negatively.", a: "What is Mind Reading?" },
+                    400: { q: "Rejection can be seen as ______; redirecting you to a better path.", a: "What is Protection (or Redirection)?" },
+                    500: { q: "Building this trait helps you bounce back from rejection faster.", a: "What is Resilience?" }
                 },
-                "Family": {
-                    100: { q: "Addiction is often called a ______ disease because it affects everyone in the home.", a: "What is Family?" },
-                    200: { q: "Trust is lost in buckets and regained in ______.", a: "What are Drops?" },
+                "Family Dynamics": {
+                    100: { q: "Addiction is often referred to as a ______ disease.", a: "What is Family?" },
+                    200: { q: "This family role involves making excuses for the addict's behavior.", a: "What is The Enabler?" },
                     300: { q: "Family members often attend this 12-step group for their own recovery.", a: "What is Al-Anon?" },
                     400: { q: "Setting healthy ______ is crucial for rebuilding relationships.", a: "What are Boundaries?" },
                     500: { q: "Sometimes the healthiest choice for a family member is to ______ with love.", a: "What is Detach?" }
@@ -677,6 +681,7 @@ FILE PATH: index.html
         let activeGameData = null;
         let team1Score = 0, team2Score = 0;
         let activeTeam = 1;
+        let originalTeam = 1; // Tracks who originally picked the question
         let currentPoints = 0;
         let currentDD = null;
         let timerInterval = null;
@@ -685,7 +690,7 @@ FILE PATH: index.html
         let consecutiveCorrect1 = 0, consecutiveCorrect2 = 0;
         let answeredCount = 0;
         let timerOscillator = null;
-        let tickTock = 0; // For high/low tick sounds
+        let tickTock = 0; 
         
         // --- UI ---
         const ui = {
@@ -695,32 +700,25 @@ FILE PATH: index.html
             menu: document.getElementById('menu-screen'),
             game: document.getElementById('game-container'),
             board: document.getElementById('jeopardy-board'),
+            titleDisplay: document.getElementById('game-title-display'),
             modal: document.getElementById('question-modal'),
             ddModal: document.getElementById('daily-double-modal'),
             winnerModal: document.getElementById('winner-modal'),
-            changeModal: document.getElementById('change-team-modal'),
-            t1Board: document.getElementById('team-1-board'),
-            t2Board: document.getElementById('team-2-board'),
-            t1Score: document.getElementById('team-1-score'),
-            t2Score: document.getElementById('team-2-score'),
-            timer: document.getElementById('timer-display'),
-            timerIcon: document.getElementById('timer-icon'),
-            titleDisplay: document.getElementById('game-title-display')
+            changeTeamModal: document.getElementById('change-team-modal')
         };
 
         // --- AUDIO ENGINE ---
-        let ac; 
-        function initAudio() { 
-            if(!ac) { 
-                ac = new (window.AudioContext||window.webkitAudioContext)(); 
-            }
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let ac = null;
+
+        function initAudio() {
+            if(!ac) { ac = new AudioContext(); }
             if(ac.state === 'suspended') ac.resume();
         }
 
-        // 1. Intro Swell
         function playSunriseSwell() {
             if(!ac) initAudio();
-            const notes = [261.63, 329.63, 392.00, 523.25, 587.33]; 
+            const notes = [261.63, 329.63, 392.00, 523.25, 587.33];
             notes.forEach((f,i) => {
                 const o=ac.createOscillator(), g=ac.createGain();
                 o.type='sine'; o.frequency.value=f;
@@ -728,22 +726,19 @@ FILE PATH: index.html
                 g.gain.setValueAtTime(0, ac.currentTime+i*0.2);
                 g.gain.linearRampToValueAtTime(0.05, ac.currentTime+i*0.2+0.05);
                 g.gain.exponentialRampToValueAtTime(0.001, ac.currentTime+i*0.2+4.0);
-                o.start(ac.currentTime+i*0.2); o.stop(ac.currentTime+i*0.2+4.1);
+                o.start(ac.currentTime+i*0.2);
+                o.stop(ac.currentTime+i*0.2+4.1);
             });
         }
 
-        // 2. Timer
         function playTimerSound() {
             if (!ac) return;
             if (timerOscillator) timerOscillator.stop();
             timerOscillator = ac.createOscillator();
             const gainNode = ac.createGain();
             timerOscillator.type = 'sine';
-            if (tickTock % 2 === 0) {
-                timerOscillator.frequency.setValueAtTime(1200, ac.currentTime); 
-            } else {
-                timerOscillator.frequency.setValueAtTime(800, ac.currentTime); 
-            }
+            if (tickTock % 2 === 0) { timerOscillator.frequency.setValueAtTime(1200, ac.currentTime); } 
+            else { timerOscillator.frequency.setValueAtTime(800, ac.currentTime); }
             tickTock++;
             gainNode.gain.setValueAtTime(0.1, ac.currentTime);
             gainNode.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.05);
@@ -752,90 +747,85 @@ FILE PATH: index.html
             timerOscillator.start();
             timerOscillator.stop(ac.currentTime + 0.05);
         }
+
         function stopTimerSound() {
             if (timerOscillator) { timerOscillator.stop(); timerOscillator = null; }
-            tickTock = 0; 
+            tickTock = 0;
         }
 
-        // 3. Daily Double
         function playDailyDoubleSound() {
             if (!ac) return;
             const osc = ac.createOscillator(), gain = ac.createGain();
             osc.type = 'sine'; osc.connect(gain); gain.connect(ac.destination);
             const now = ac.currentTime;
-            gain.gain.setValueAtTime(0.3, now); 
-            osc.frequency.setValueAtTime(300, now);
-            osc.frequency.exponentialRampToValueAtTime(900, now + 0.3);
-            osc.start(); osc.stop(now + 0.4);
-        }
-
-        // 4. Time's Up
-        function playTimesUpSound() {
-            if (!ac) return;
-            const now = ac.currentTime;
-            const osc = ac.createOscillator(), gain = ac.createGain();
-            osc.type = 'sawtooth'; osc.connect(gain); gain.connect(ac.destination);
-            osc.frequency.setValueAtTime(120, now);
             gain.gain.setValueAtTime(0.3, now);
-            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
-            osc.start(); osc.stop(now + 0.4);
+            osc.frequency.setValueAtTime(300, now);
+            osc.frequency.exponentialRampToValueAtTime(800, now + 1);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 1.5);
+            osc.start(now); osc.stop(now + 1.5);
         }
 
-        // 5. Steal
-        function playStealSound() {
-            if (!ac) return;
-            const now = ac.currentTime;
-            const osc = ac.createOscillator(), gain = ac.createGain();
-            osc.type = 'triangle'; osc.connect(gain); gain.connect(ac.destination);
-            gain.gain.setValueAtTime(0.2, now);
-            osc.frequency.setValueAtTime(900, now);
-            osc.frequency.setValueAtTime(1200, now + 0.1);
-            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
-            osc.start(); osc.stop(now + 0.2);
-        }
-
-        // 6. Correct
         function playCorrectSound() {
-            if (!ac) return;
-            const now = ac.currentTime;
-            const osc = ac.createOscillator(), gain = ac.createGain();
-            osc.type = 'triangle'; osc.connect(gain); gain.connect(ac.destination);
-            gain.gain.setValueAtTime(0.2, now); 
-            osc.frequency.setValueAtTime(523.25, now);
-            osc.frequency.setValueAtTime(659.25, now + 0.1);
-            osc.frequency.setValueAtTime(783.99, now + 0.2);
-            osc.frequency.setValueAtTime(1046.50, now + 0.3);
-            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.7);
-            osc.start(now); osc.stop(now + 0.7);
+            if(!ac) return;
+            const o=ac.createOscillator(), g=ac.createGain();
+            o.type='square'; o.frequency.value=440;
+            o.connect(g); g.connect(ac.destination);
+            g.gain.setValueAtTime(0, ac.currentTime);
+            g.gain.linearRampToValueAtTime(0.1, ac.currentTime+0.05);
+            o.frequency.exponentialRampToValueAtTime(880, ac.currentTime+0.2);
+            g.gain.exponentialRampToValueAtTime(0.001, ac.currentTime+0.5);
+            o.start(ac.currentTime); o.stop(ac.currentTime+0.5);
         }
-        
-        // 7. Win (Ta-Da)
+
+        function playTimesUpSound() {
+            if(!ac) return;
+            const o=ac.createOscillator(), g=ac.createGain();
+            o.type='sawtooth'; o.frequency.value=150;
+            o.connect(g); g.connect(ac.destination);
+            g.gain.setValueAtTime(0.1, ac.currentTime);
+            g.gain.exponentialRampToValueAtTime(0.001, ac.currentTime+0.5);
+            o.start(ac.currentTime); o.stop(ac.currentTime+0.5);
+        }
+
+        function playStealSound() {
+            if(!ac) return;
+            const o=ac.createOscillator(), g=ac.createGain();
+            o.type='sine'; o.frequency.value=600;
+            o.connect(g); g.connect(ac.destination);
+            g.gain.setValueAtTime(0, ac.currentTime);
+            g.gain.linearRampToValueAtTime(0.1, ac.currentTime+0.05);
+            o.frequency.linearRampToValueAtTime(400, ac.currentTime+0.3);
+            g.gain.exponentialRampToValueAtTime(0.001, ac.currentTime+0.5);
+            o.start(ac.currentTime); o.stop(ac.currentTime+0.5);
+        }
+
+        function playBrassNote(freq, startTime, duration, vol) {
+            const osc1 = ac.createOscillator(), osc2 = ac.createOscillator(), gainNode = ac.createGain();
+            osc1.type = 'sawtooth'; osc2.type = 'square';
+            osc1.frequency.value = freq; osc2.frequency.value = freq * 1.01;
+            osc1.connect(gainNode); osc2.connect(gainNode);
+            gainNode.connect(ac.destination);
+            gainNode.gain.setValueAtTime(0, startTime);
+            gainNode.gain.linearRampToValueAtTime(vol, startTime + 0.05);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
+            osc1.start(startTime); osc2.start(startTime);
+            osc1.stop(startTime + duration); osc2.stop(startTime + duration);
+        }
+
         function playWinSound() {
-            if (!ac) return;
+            if(!ac) return;
             const now = ac.currentTime;
-            const playBrassNote = (freq, startTime, duration, vol = 0.3) => {
-                const osc = ac.createOscillator(), gain = ac.createGain(), filter = ac.createBiquadFilter(); 
-                osc.type = 'sawtooth'; osc.frequency.value = freq;
-                filter.type = 'lowpass';
-                filter.frequency.setValueAtTime(500, startTime);
-                filter.frequency.linearRampToValueAtTime(3000, startTime + 0.05);
-                filter.frequency.exponentialRampToValueAtTime(1000, startTime + duration);
-                gain.gain.setValueAtTime(0, startTime);
-                gain.gain.linearRampToValueAtTime(vol, startTime + 0.02);
-                gain.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
-                osc.connect(filter); filter.connect(gain); gain.connect(ac.destination);
-                osc.start(startTime); osc.stop(startTime + duration);
-            };
-            playBrassNote(392.00, now, 0.15, 0.25);
-            const impactTime = now + 0.12, duration = 1.2;
+            playBrassNote(392.00, now, 0.4, 0.2);
+            playBrassNote(523.25, now + 0.4, 0.4, 0.2);
+            playBrassNote(659.25, now + 0.8, 0.4, 0.2);
+            const impactTime = now + 1.2, vol = 0.12, duration = 1.2;
             playBrassNote(261.63, impactTime, duration, 0.3);
             playBrassNote(329.63, impactTime, duration, 0.25);
             playBrassNote(392.00, impactTime, duration, 0.25);
             playBrassNote(523.25, impactTime, duration, 0.2);
         }
 
-        // Simple Select
-        function playSelectSound() { 
+        function playSelectSound() {
             if(!ac) return;
             const o=ac.createOscillator(), g=ac.createGain();
             o.type='triangle'; o.frequency.value=800;
@@ -848,11 +838,11 @@ FILE PATH: index.html
 
         // --- GAME LOGIC ---
         ui.splashBtn.onclick = () => {
-            initAudio(); 
+            initAudio();
             ui.splash.style.opacity = 0;
             setTimeout(() => {
                 ui.splash.style.display = 'none';
-                startIntroSequence(); 
+                startIntroSequence();
             }, 1000);
         };
 
@@ -877,7 +867,7 @@ FILE PATH: index.html
         window.startGame = function(gameKey, title) {
             playSelectSound();
             activeGameData = ALL_GAMES[gameKey];
-            ui.titleDisplay.textContent = title; 
+            ui.titleDisplay.textContent = title;
             ui.menu.style.opacity = '0';
             setTimeout(() => {
                 ui.menu.style.display = 'none';
@@ -893,75 +883,99 @@ FILE PATH: index.html
 
         function resetGame() {
             team1Score = 0; team2Score = 0; answeredCount = 0;
-            updateScores();
-            createBoard();
+            consecutiveCorrect1 = 0; consecutiveCorrect2 = 0;
+            updateScoreUI();
+            setActiveTeam(1);
+            generateBoard();
+        }
+        document.getElementById('reset-game').onclick = () => {
+            if(confirm("Reset current game scores and board?")) resetGame();
+        };
+
+        function setActiveTeam(num) {
+            activeTeam = num;
+            document.getElementById('team-1-board').classList.toggle('active', num===1);
+            document.getElementById('team-2-board').classList.toggle('active', num===2);
         }
 
-        function createBoard() {
+        function updateScoreUI() {
+            document.getElementById('team-1-score').value = team1Score;
+            document.getElementById('team-2-score').value = team2Score;
+        }
+
+        // Allow manual score editing
+        document.getElementById('team-1-score').addEventListener('change', (e) => { team1Score = parseInt(e.target.value)||0; });
+        document.getElementById('team-2-score').addEventListener('change', (e) => { team2Score = parseInt(e.target.value)||0; });
+
+        function addScore(team, pts) {
+            if(team===1) team1Score += pts; else team2Score += pts;
+            updateScoreUI();
+        }
+
+        function generateBoard() {
             ui.board.innerHTML = '';
-            let allCells = [];
-            for(let cat in activeGameData) {
-                let h = document.createElement('div');
-                h.className = 'category-cell';
-                h.textContent = cat;
-                ui.board.appendChild(h);
-            }
-            const points = [100, 200, 300, 400, 500];
-            points.forEach(p => {
-                for(let cat in activeGameData) {
-                    let cell = document.createElement('div');
-                    cell.className = 'question-cell';
-                    cell.textContent = `$${p}`;
-                    cell.onclick = () => handleCellClick(cell, cat, p);
-                    ui.board.appendChild(cell);
-                    allCells.push(cell);
-                }
-            });
-            if(allCells.length > 0) {
-                const rand = Math.floor(Math.random() * allCells.length);
-                allCells[rand].dataset.dd = 'true';
-            }
-        }
-
-        function handleCellClick(cell, cat, pts) {
-            if(cell.classList.contains('answered')) return;
-            cell.classList.add('answered');
-            cell.textContent = '';
-            currentPoints = pts;
-            answeredCount++;
+            const categories = Object.keys(activeGameData);
             
-            const data = activeGameData[cat][pts];
-            if(cell.dataset.dd === 'true') {
-                currentDD = { cat, q: data.q, a: data.a };
-                openDDModal();
-            } else {
-                openQuestionModal(cat, pts, data.q, data.a);
-            }
+            categories.forEach(cat => {
+                const div = document.createElement('div');
+                div.className = 'category-cell';
+                div.textContent = cat;
+                ui.board.appendChild(div);
+            });
+
+            // Randomly select one cell as Daily Double
+            const randomCat = categories[Math.floor(Math.random() * categories.length)];
+            const randomPoints = [100, 200, 300, 400, 500][Math.floor(Math.random() * 5)];
+
+            [100, 200, 300, 400, 500].forEach(points => {
+                categories.forEach(cat => {
+                    const btn = document.createElement('button');
+                    btn.className = 'question-cell';
+                    btn.textContent = `$${points}`;
+                    const qData = activeGameData[cat][points];
+                    const isDD = (cat === randomCat && points === randomPoints);
+
+                    btn.onclick = () => {
+                        if(btn.classList.contains('answered')) return;
+                        playSelectSound();
+                        btn.classList.add('answered');
+                        btn.textContent = '';
+                        answeredCount++;
+                        
+                        if(isDD) {
+                            playDailyDoubleSound();
+                            currentDD = qData;
+                            ui.ddModal.style.display = 'flex';
+                            document.getElementById('dd-wager-input').value = '';
+                            document.getElementById('dd-wager-input').max = Math.max(activeTeam===1?team1Score:team2Score, 500);
+                            document.getElementById('dd-wager-input').focus();
+                        } else {
+                            openQuestionModal(cat, `$${points}`, qData.q, qData.a);
+                        }
+                    };
+                    ui.board.appendChild(btn);
+                });
+            });
         }
 
-        function openQuestionModal(cat, pts, q, a) {
+        function openQuestionModal(cat, pointsStr, q, a) {
+            playSelectSound();
+            originalTeam = activeTeam; // Remember who picked the question
+            attemptState = 'initial';
+            currentPoints = parseInt(pointsStr.replace('$', ''));
+            
             document.getElementById('modal-category').textContent = cat;
-            document.getElementById('modal-points').textContent = `$${pts}`;
+            document.getElementById('modal-points').textContent = pointsStr;
             document.getElementById('modal-question-text').textContent = q;
             document.getElementById('modal-answer-text').textContent = a;
+            
             document.getElementById('modal-answer-text').style.display = 'none';
             document.getElementById('scoring-buttons').style.display = 'grid';
-            document.getElementById('next-btn').style.display = 'none';
+            document.getElementById('next-btn').classList.add('hidden');
             
             ui.modal.style.display = 'flex';
-            attemptState = 'initial';
             resetTimer(30);
             startTimer();
-        }
-
-        function openDDModal() {
-            playDailyDoubleSound(); 
-            ui.ddModal.style.display = 'flex';
-            const s = activeTeam === 1 ? team1Score : team2Score;
-            const max = Math.max(1000, s);
-            const inp = document.getElementById('dd-wager-input');
-            inp.max = max; inp.value = ''; inp.placeholder = `Max: $${max}`;
-            setTimeout(() => inp.focus(), 100);
         }
 
         document.getElementById('submit-wager-btn').onclick = () => {
@@ -976,117 +990,121 @@ FILE PATH: index.html
 
         // --- SCORING ---
         document.getElementById('correct-btn').onclick = () => {
-            playCorrectSound(); 
-            let pts = attemptState === 'steal' ? Math.round(currentPoints/2) : currentPoints;
-            addScore(activeTeam, pts);
-            if(activeTeam===1) { consecutiveCorrect1++; consecutiveCorrect2=0; }
-            else { consecutiveCorrect2++; consecutiveCorrect1=0; }
-            revealAnswer(true); 
+            playCorrectSound();
+            
+            // Stealing team gets exact points now, not half
+            addScore(activeTeam, currentPoints); 
+            
+            if(activeTeam===1) {
+                consecutiveCorrect1++; consecutiveCorrect2=0;
+            } else {
+                consecutiveCorrect2++; consecutiveCorrect1=0;
+            }
+            revealAnswer(true);
         };
 
         document.getElementById('incorrect-btn').onclick = () => {
             if(attemptState === 'dd') {
-                playTimesUpSound(); 
+                playTimesUpSound();
                 addScore(activeTeam, -currentPoints);
                 revealAnswer(false);
             } else if(attemptState === 'initial') {
-                playTimesUpSound(); 
-                addScore(activeTeam, -Math.round(currentPoints/2));
-                setTimeout(() => playStealSound(), 500); 
+                playTimesUpSound();
+                // Original team guessed wrong: lose exact points
+                addScore(activeTeam, -currentPoints);
+                
+                // Allow steal
                 attemptState = 'steal';
-                const next = activeTeam===1 ? 2 : 1;
+                const next = activeTeam === 1 ? 2 : 1;
                 setActiveTeam(next);
                 resetTimer(5);
                 startTimer();
-            } else {
-                playTimesUpSound(); 
+            } else { 
+                // Stealing team guessed wrong: NO points lost, turn goes back
+                playTimesUpSound();
+                setActiveTeam(originalTeam);
                 revealAnswer(false);
             }
         };
 
         document.getElementById('next-btn').onclick = () => {
             ui.modal.style.display = 'none';
-            const next = parseInt(document.getElementById('next-btn').dataset.nextTeam) || activeTeam;
-            if(next !== activeTeam && answeredCount < 25) {
-                document.getElementById('next-team-name').textContent = document.getElementById(`team-${next}-name`).value;
-                ui.changeModal.style.display = 'flex';
-                setActiveTeam(next);
+            const streakLimit = 2; // Pass turn after 2 correct answers in a row
+            if(activeTeam===1 && consecutiveCorrect1 >= streakLimit) {
+                consecutiveCorrect1=0; showTurnSwitch(2);
+            } else if(activeTeam===2 && consecutiveCorrect2 >= streakLimit) {
+                consecutiveCorrect2=0; showTurnSwitch(1);
+            } else {
+                if(answeredCount >= 25) showWinner();
             }
-            if(answeredCount >= 25) showWinner();
         };
+
+        function showTurnSwitch(nextNum) {
+            ui.changeTeamModal.style.display = 'flex';
+            document.getElementById('next-team-name').textContent = document.getElementById(`team-${nextNum}-name`).value;
+            document.getElementById('confirm-change-team-btn').onclick = () => {
+                setActiveTeam(nextNum);
+                ui.changeTeamModal.style.display = 'none';
+                if(answeredCount >= 25) showWinner();
+            };
+        }
 
         function revealAnswer(correct) {
             stopTimer();
             document.getElementById('scoring-buttons').style.display = 'none';
-            document.getElementById('next-btn').style.display = 'block';
-            document.getElementById('modal-answer-text').style.display = 'block';
-            let nextTeam = activeTeam;
-            if(!correct) nextTeam = activeTeam===1 ? 2 : 1;
-            else if((activeTeam===1 && consecutiveCorrect1>=3) || (activeTeam===2 && consecutiveCorrect2>=3)) {
-                nextTeam = activeTeam===1 ? 2 : 1;
-                consecutiveCorrect1=0; consecutiveCorrect2=0;
-            }
-            document.getElementById('next-btn').dataset.nextTeam = nextTeam;
+            document.getElementById('next-btn').classList.remove('hidden');
+            const ans = document.getElementById('modal-answer-text');
+            ans.style.display = 'block';
+            ans.style.color = correct ? '#059669' : '#dc2626';
+            ans.style.backgroundColor = correct ? '#d1fae5' : '#fee2e2';
+            ans.style.borderColor = correct ? '#10b981' : '#ef4444';
         }
 
-        function addScore(team, pts) {
-            if(team===1) team1Score = Math.max(0, team1Score+pts);
-            else team2Score = Math.max(0, team2Score+pts);
-            updateScores();
-        }
-        function updateScores() { ui.t1Score.value = team1Score; ui.t2Score.value = team2Score; }
-        
-        document.getElementById('team-1-score').addEventListener('input', (e) => { team1Score = parseInt(e.target.value) || 0; });
-        document.getElementById('team-2-score').addEventListener('input', (e) => { team2Score = parseInt(e.target.value) || 0; });
-
-        function setActiveTeam(t) {
-            activeTeam = t;
-            ui.t1Board.classList.toggle('active', t===1);
-            ui.t2Board.classList.toggle('active', t===2);
-        }
-        ui.t1Board.onclick = () => setActiveTeam(1);
-        ui.t2Board.onclick = () => setActiveTeam(2);
-        
-        document.getElementById('reset-game').onclick = () => { if(confirm("Restart Board?")) resetGame(); };
-        document.getElementById('confirm-change-team-btn').onclick = () => ui.changeModal.style.display='none';
-        document.getElementById('close-winner-modal-btn').onclick = () => location.reload();
-
-        // --- TIMER ---
-        function resetTimer(s) { stopTimer(); timeLeft=s; ui.timer.textContent=s; ui.timerIcon.innerHTML='<path d="M8 5v14l11-7z"/>'; }
-        
+        // --- TIMER TIMER ---
         function startTimer() {
-            if(timerInterval) return;
-            ui.timerIcon.innerHTML='<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
-            if(attemptState === 'steal') playStealSound();
-            else playTimerSound();
-            timerInterval = setInterval(() => {
-                timeLeft--; 
-                ui.timer.textContent=timeLeft;
-                if(timeLeft > 0) {
-                    if(attemptState === 'steal') playStealSound(); 
-                    else playTimerSound(); 
-                }
-                if(timeLeft<=0) { stopTimer(); handleTimeout(); }
-            }, 1000);
+            if(timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(timerTick, 1000);
+            document.getElementById('timer-icon').innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>'; 
         }
-        
-        function stopTimer() { 
-            clearInterval(timerInterval); 
-            timerInterval=null; 
-            ui.timerIcon.innerHTML='<path d="M8 5v14l11-7z"/>';
+
+        function stopTimer() {
+            if(timerInterval) clearInterval(timerInterval);
+            timerInterval = null;
             stopTimerSound();
+            document.getElementById('timer-icon').innerHTML = '<path d="M8 5v14l11-7z"/>'; 
         }
-        
-        function handleTimeout() {
-            playTimesUpSound(); 
-            if(attemptState === 'initial') {
-                attemptState = 'steal';
-                const next = activeTeam===1 ? 2 : 1;
-                setActiveTeam(next);
-                resetTimer(5);
-                startTimer();
+
+        function resetTimer(seconds) {
+            stopTimer();
+            timeLeft = seconds;
+            document.getElementById('timer-display').textContent = timeLeft;
+        }
+
+        function timerTick() {
+            timeLeft--;
+            document.getElementById('timer-display').textContent = timeLeft;
+            if (timeLeft <= 0) {
+                stopTimer();
+                playTimesUpSound();
+                
+                if(attemptState === 'dd') {
+                    addScore(activeTeam, -currentPoints);
+                    revealAnswer(false);
+                } else if(attemptState === 'initial') {
+                    // Original team ran out of time: lose exact points
+                    addScore(activeTeam, -currentPoints);
+                    attemptState = 'steal';
+                    const next = activeTeam === 1 ? 2 : 1;
+                    setActiveTeam(next);
+                    resetTimer(5); // 5 seconds for steal
+                    startTimer();
+                } else {
+                    // Stealing team ran out of time: NO points lost, turn goes back
+                    setActiveTeam(originalTeam);
+                    revealAnswer(false);
+                }
             } else {
-                revealAnswer(false);
+                playTimerSound();
             }
         }
         document.getElementById('timer-toggle-btn').onclick = () => { if(timerInterval) stopTimer(); else startTimer(); };
@@ -1105,9 +1123,18 @@ FILE PATH: index.html
                 let c = document.createElement('div');
                 c.style.cssText = `position:absolute; width:8px; height:8px; background:${colors[Math.floor(Math.random()*5)]}; top:-10px; left:${Math.random()*100}%; opacity:0.8; transition: top ${2+Math.random()*2}s ease-in, transform 3s linear;`;
                 cont.appendChild(c);
-                setTimeout(() => { c.style.top = '110%'; c.style.transform = `rotate(${Math.random()*720}deg)`; }, 50);
+                setTimeout(() => { c.style.top = '120%'; c.style.transform = `rotate(${Math.random()*360}deg)`; }, 50);
             }
         }
+        document.getElementById('close-winner-modal-btn').onclick = () => location.reload();
+
+        // Start coloring team scores dynamically based on the color picker
+        document.getElementById('team-1-color').addEventListener('input', (e) => {
+            document.getElementById('team-1-board').style.setProperty('--team-color', e.target.value);
+        });
+        document.getElementById('team-2-color').addEventListener('input', (e) => {
+            document.getElementById('team-2-board').style.setProperty('--team-color', e.target.value);
+        });
     </script>
 </body>
 </html>
@@ -3009,6 +3036,359 @@ FILE PATH: manual.html
 </html>
 
 ==================================================
+FILE PATH: onboarding.html
+==================================================
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>90 Days Onboarding Plan</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 10pt;
+            line-height: 1.4;
+            margin: 20px;
+            color: #333;
+        }
+
+        /* --- UPDATED HEADER CSS START --- */
+        .header {
+            border-bottom: 2px solid #444;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;     /* Vertically centers logo and text */
+            justify-content: flex-start; /* Aligns everything to the left */
+            gap: 20px;               /* Space between logo and title */
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 20pt;         /* Adjusted size */
+            color: #2c3e50;
+            white-space: nowrap;     /* Prevents title from breaking lines awkwardly */
+        }
+
+        .top-logo {
+            height: 35px;            /* Smaller logo height */
+            width: auto;
+            object-fit: contain;
+        }
+        /* --- UPDATED HEADER CSS END --- */
+
+        /* Sub-Banner Row with Left Arrows */
+        .banner-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin-bottom: 30px;
+            gap: 40px;
+        }
+
+        .sub-banner {
+            background-color: #5d6d7e;
+            color: white;
+            padding: 8px 15px;
+            position: relative;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11pt;
+            min-height: 30px;
+        }
+
+        .sub-banner::before {
+            content: "";
+            position: absolute;
+            left: -15px;
+            top: 0;
+            width: 0;
+            height: 0;
+            border-top: 23px solid transparent;
+            border-bottom: 23px solid transparent;
+            border-right: 15px solid #5d6d7e;
+        }
+
+        .logo-placeholder {
+            width: 25px;
+            height: 25px;
+            background: rgba(255,255,255,0.3);
+            margin-right: 10px;
+            border-radius: 4px;
+            /* Added to center the emoji inside the box */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14pt; 
+        }
+
+        /* Main Container and Columns */
+        .container {
+            display: flex;
+            gap: 30px; 
+            justify-content: space-between;
+            padding-right: 20px;
+        }
+
+        .column {
+            flex: 1;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 10px;
+            background-color: #f9f9f9;
+        }
+
+        .column-header {
+            background-color: #5d6d7e;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center; /* Centered Bold Title */
+            padding: 15px 10px;
+            margin: -10px -10px 10px -10px;
+            border-radius: 8px 0 0 0;
+            font-weight: bold;
+            font-size: 14pt;
+            position: relative;
+        }
+
+        .column-header::after {
+            content: "";
+            position: absolute;
+            right: -20px;
+            top: 0;
+            width: 0;
+            height: 0;
+            border-top: 27px solid transparent;
+            border-bottom: 27px solid transparent;
+            border-left: 20px solid #5d6d7e;
+            z-index: 10;
+        }
+
+        .column:last-child .column-header::after {
+            display: none;
+        }
+
+        h2 {
+            font-size: 11pt;
+            border-bottom: 1px solid #7f8c8d;
+            margin-top: 15px;
+            padding-bottom: 3px;
+            text-align: center; /* Centered Subtitles */
+        }
+
+        ul { padding-left: 18px; }
+        li {margin-bottom: 8px;
+            font-size: 12pt}
+
+        .next-steps {
+            font-style: italic;
+            color: #2c3e50;
+            font-weight: bold;
+            text-align: center; /* Centered Next Steps */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="header-content">
+            <img src="./images/Praesum-gray.png" class="top-logo" alt="Praesum Healthcare Logo">
+            <h1>90 Days Onboarding Plan</h1>
+        </div>
+    </div>
+
+    <div class="banner-container">
+        <div class="sub-banner"><div class="logo-placeholder">🛜</div>Connection</div>
+        <div class="sub-banner"><div class="logo-placeholder">🫱🏻‍🫲🏾</div>Commitment</div>
+        <div class="sub-banner"><div class="logo-placeholder">🧩</div>Contribution</div>
+        <div class="sub-banner"><div class="logo-placeholder">📈</div>Progress</div>
+    </div>
+
+    <div class="container">
+        <div class="column">
+            <div class="column-header">30 Day</div>
+            <h2>Get to know your role and team</h2>
+            <ul>
+                <li>Introductions to co-workers and a tour of the facilities. Partner with your assigned Mentor to coordinate onboarding activities.</li>
+                <li>Ensure access to equipment, individuals, and processes for long-term success.</li>
+                <li>An overview of the department's mission, values, and key policies.</li>
+            </ul>
+
+            <h2>First Assignment</h2>
+            <ul>
+                <li>Take the initiative to learn and partner with your mentor, review employee handbook and tour the facility with your mentor to locate all evacuation routes.</li>
+                <li>Complete MedTrainer courses.</li>
+                <li>Learn products, complete skills checklist, systems, and policies ensure access to all system accounts have been activated and operating successfully.</li>
+            </ul>
+
+            <h2>Goals</h2>
+            <ul>
+                <li>Become familiar with your role, workplace equipment, and facility services provided.</li>
+                <li>Learn safety policies, fire, emergency evacuation, and all safety codes.</li>
+                <li>Review Praesum Healthcare expectations of dress code policies, customer service, phone and email etiquette.</li>
+            </ul>
+
+            <h2 class="next-steps">Next Steps</h2>
+            <ul>
+                <li>Schedule Meetings with your manager and cross-functional teams.</li>
+                <li>Establish a 60-day check-in.</li>
+                <li>Prepare three questions for each scheduled followup with your mentor.</li>
+            </ul>
+        </div>
+
+        <div class="column">
+            <div class="column-header">60 Day</div>
+            <h2>Autonomous in your role</h2>
+            <ul>
+                <li>Apply your new skills and technical knowledge gained over the past 30 days to deliver value in a way that aligns with company goals.</li>
+                <li>Begin to understand the relationship between the job role and other business partners.</li>
+                <li>Understand and utilize electronic health record system to gain a clear understanding of meeting daily goals.</li>
+            </ul>
+
+            <h2>Assignment</h2>
+            <ul>
+                <li>Participate in staff meetings.</li>
+                <li>Complete outstanding MedTrainer Courses.</li>
+                <li>Review time management expectations with mentor.</li>
+            </ul>
+
+            <h2>Goals</h2>
+            <ul>
+                <li>Submit daily tasks and review with your mentor.</li>
+                <li>Become familiar with governing bodies and state agencies policies and regulations.</li>
+                <li>Provide prompt, high-quality service to members, staff, patients, and internal/external customers.</li>
+                <li>Create effective working relationships by exercising effective communication.</li>
+            </ul>
+
+            <h2 class="next-steps">Next Steps</h2>
+            <ul>
+                <li>Schedule Meetings with mentors and supervisors on a biweekly basis.</li>
+                <li>Establish a 90-day check-in.</li>
+                <li>Prepare three questions for each scheduled followup with your mentor.</li>
+            </ul>
+        </div>
+
+        <div class="column">
+            <div class="column-header">90 Day</div>
+            <h2>Demonstrating Progress</h2>
+            <ul>
+                <li>Demonstrate independent decision making while creating a positive environment.</li>
+                <li>Identify a new strategy and discuss with your manager.</li>
+                <li>Engage on brainstorming new ideas, demonstrate creative thinking and embrace new concepts.</li>
+            </ul>
+
+            <h2>Assignment</h2>
+            <ul>
+                <li>Complete 90-day evaluation with supervisor.</li>
+                <li>Review the Skills Checklist from the New Hire Packet.</li>
+                <li>Mentor an existing or a newly hired team member.</li>
+            </ul>
+
+            <h2>Goals</h2>
+            <ul>
+                <li>Demonstrate the ability to complete daily tasks independently.</li>
+                <li>Effectively report information to supervisors relating to client care, equipment malfunction and supply needs.</li>
+                <li>Participate in decision making in a timely and professional manner specifically when faced with adversity.</li>
+                <li>Effectively access the Protected Health Information (PHI) and other patient information to the fullest of its capacity.</li>
+                <li>Demonstrate willingness to accept positive and negative feedback delivered by supervisors and peers.</li>
+                <li>Recognize opportunities and take initiative on identifying potential issues that can improve productivity, and provide feedback to resolve the identified opportunities.</li>
+                <li>Meet productivity standards that have been established and exhibit conscientious effort to ensure expectations relating to our patients are achieved.</li>
+                <li>Demonstrate the skills necessary to successfully execute your job responsibilities.</li>
+            </ul>
+
+            <h2 class="next-steps">Next Steps</h2>
+            <ul>
+                <li>Meet with supervisor and execute the 90-day evaluation.</li>
+                <li>Review opportunities with your supervisor and develop an action plan of improvement.</li>
+                <li>Prepare three questions for each scheduled check-up with your mentor.</li>
+            </ul>
+        </div>
+    </div>
+
+</body>
+</html>
+
+==================================================
+FILE PATH: page2.html
+==================================================
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aftercare and Relapse Prevention Planning - Page 2</title>
+    <style>
+        body { font-family: sans-serif; line-height: 1.6; max-width: 800px; margin: 20px auto; padding: 20px; }
+        .section { margin-bottom: 20px; }
+        .input-line { border-bottom: 1px solid #000; display: inline-block; min-width: 200px; margin-left: 5px; }
+        .grid-container { display: flex; justify-content: space-between; gap: 20px; }
+        .grid-column { flex: 1; }
+        h3 { font-size: 1em; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+
+    <div class="section">
+        <p>I will continue to use healthy coping mechanisms including: <span class="input-line" style="width: 50%;"></span>, <span class="input-line" style="width: 40%;"></span>, <span class="input-line" style="width: 40%;"></span>, <span class="input-line" style="width: 40%;"></span>, <span class="input-line" style="width: 40%;"></span>.</p>
+    </div>
+
+    <div class="section">
+        <p>These are a list of supportive people in my life: <span class="input-line" style="width: 90%;"></span></p>
+    </div>
+
+    <div class="section">
+        <p>These are some of the activities we will do together: <span class="input-line" style="width: 90%;"></span></p>
+    </div>
+
+    <div class="grid-container">
+        <div class="grid-column">
+            <h3>Triggers:</h3>
+            <ol>
+                <li><span class="input-line" style="width: 80%;"></span></li>
+                <li><span class="input-line" style="width: 80%;"></span></li>
+                <li><span class="input-line" style="width: 80%;"></span></li>
+                <li><span class="input-line" style="width: 80%;"></span></li>
+                <li><span class="input-line" style="width: 80%;"></span></li>
+            </ol>
+        </div>
+        <div class="grid-column">
+            <h3>Coping Skills for Each Trigger:</h3>
+            <ol>
+                <li><span class="input-line" style="width: 80%;"></span></li>
+                <li><span class="input-line" style="width: 80%;"></span></li>
+                <li><span class="input-line" style="width: 80%;"></span></li>
+                <li><span class="input-line" style="width: 80%;"></span></li>
+                <li><span class="input-line" style="width: 80%;"></span></li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="section">
+        <p>Places to avoid: <span class="input-line" style="width: 80%;"></span></p>
+        <p>People to avoid: <span class="input-line" style="width: 80%;"></span></p>
+        <p>Things to avoid: <span class="input-line" style="width: 80%;"></span></p>
+    </div>
+
+    <div class="section">
+        <p>If all else fails and I feel like I'm moving towards relapse I will take the following steps:</p>
+        <ol>
+            <li><span class="input-line" style="width: 90%;"></span></li>
+            <li><span class="input-line" style="width: 90%;"></span></li>
+            <li><span class="input-line" style="width: 90%;"></span></li>
+        </ol>
+    </div>
+
+</body>
+</html>
+
+==================================================
 FILE PATH: READ.ME
 ==================================================
 
@@ -4112,6 +4492,234 @@ FILE PATH: Lamination\Daily-Schedule.html
 </html>
 
 ==================================================
+FILE PATH: Lamination\Game Room.html
+==================================================
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Room Sign - Single Page</title>
+    <style>
+        /* Forces the print to be exactly one page */
+        @page {
+            size: letter portrait;
+            margin: 0.5in; /* Standard safe margin for printers */
+        }
+
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Prevents scrolling/extra pages */
+            background-color: white;
+            font-family: 'Arial Black', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .sign-container {
+            width: 100%;
+            height: 100%;
+            max-height: 9.5in; /* Fits within 11in page including margins */
+            border: 8px solid black;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .icons {
+            font-size: 60px;
+            margin: 0;
+        }
+
+        h1 {
+            font-size: 65px;
+            text-decoration: underline;
+            margin: 0;
+            line-height: 1;
+            text-transform: uppercase;
+        }
+
+        .hours-list {
+            margin: 10px 0;
+        }
+
+        .hour-row {
+            font-size: 55px;
+            font-weight: 900;
+            display: block;
+            text-decoration: underline;
+            margin-bottom: 10px;
+        }
+
+        .rules-divider {
+            border-top: 4px dashed black;
+            width: 80%;
+            margin: 10px auto;
+        }
+
+        .rules-text {
+            font-size: 28px;
+            text-transform: uppercase;
+            line-height: 1.2;
+            margin: 5px 0;
+        }
+
+        .footer-bold {
+            font-size: 32px;
+            font-weight: 900;
+            text-decoration: underline;
+            text-transform: uppercase;
+            margin-top: 10px;
+        }
+
+        @media print {
+            body { -webkit-print-color-adjust: exact; }
+            .sign-container { border: 8px solid black !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sign-container">
+        <div class="icons">🎮 🎲 🕹️</div>
+
+        <h1>GAME ROOM<br>HOURS</h1>
+
+        <div class="hours-list">
+            <span class="hour-row">5am - 9am</span>
+            <span class="hour-row">12pm - 1pm</span>
+            <span class="hour-row">4pm - 7pm</span>
+            <span class="hour-row">8pm - 11pm</span>
+        </div>
+
+        <div class="rules-divider"></div>
+
+        <div class="rules-content">
+            <p class="rules-text">
+                Please be courteous and<br>
+                clean up after yourself 🧹
+            </p>
+            
+            <p class="footer-bold">
+                PLACE PIECES AND GAMES BACK
+                <div><p class="footer-bold">WHERE YOU FOUND THEM! 📦</p></div>
+            </p>
+        </div>
+    </div>
+
+</body>
+</html>
+
+==================================================
+FILE PATH: Lamination\Mandatory groups.html
+==================================================
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mandatory Group Flyer</title>
+    <style>
+        /* Forces the page to stay 8.5x11 and prevents a 2nd page */
+        @page {
+            size: 8.5in 11in;
+            margin: 0;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #fff;
+            font-family: Arial, sans-serif;
+            color: #000;
+        }
+        .container {
+            width: 7.5in;
+            height: 10in;
+            border: 6px solid #000;
+            padding: 30px;
+            box-sizing: border-box;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly; /* Keeps elements spaced out on one page */
+        }
+        h2 {
+            font-size: 28px;
+            margin: 0;
+            text-decoration: underline;
+        }
+        h1 {
+            font-size: 58px;
+            margin: 10px 0;
+            text-transform: uppercase;
+        }
+        .schedule-box {
+            background-color: #e8e8e8; /* Light grey for B&W printing */
+            border: 1px solid #ccc;
+            padding: 20px;
+        }
+        .schedule-box h3 {
+            font-size: 32px;
+            margin: 0 0 10px 0;
+        }
+        .schedule-box p {
+            font-size: 38px;
+            font-weight: bold;
+            margin: 5px 0;
+        }
+        .footer-info {
+            font-size: 24px;
+            line-height: 1.5;
+        }
+        .warning-text {
+            font-size: 20px;
+            font-style: italic;
+            margin-top: 20px;
+            border-top: 1px dashed #000;
+            padding-top: 15px;
+        }
+        .bold-underline {
+            font-weight: bold;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>NOTICE</h2>
+        
+        <h1>GROUPS ARE<br>MANDATORY</h1>
+
+        <div class="schedule-box">
+            <h3> ROOM DOORS WILL BE LOCKED:</h3>
+            <p>10:00 AM – 12:00 PM</p>
+            <p>1:00 PM – 4:00 PM</p>
+        </div>
+
+        <div class="footer-info">
+            <span class="bold-underline">ONLY EXCEPTIONS:</span><br>
+            Excused by Nursing or Detox LOC
+        </div>
+
+        <div class="warning-text">
+            Please plan your breaks, phone calls, and personal needs around these scheduled times.
+        </div>
+    </div>
+
+</body>
+</html>
+
+==================================================
 FILE PATH: Lamination\Manditory-groups.html
 ==================================================
 <!DOCTYPE html>
@@ -4185,7 +4793,7 @@ FILE PATH: Lamination\Manditory-groups.html
         <div class="header-bold">Groups Are</div>
         <div class="header-bold">Mandatory</div>
         
-        <div class="sub-header">Rooms are locked DAILY</div>
+        <div class="sub-header">Smoking Area are locked DAILY</div>
 
         <div class="times">
             10:00a-12:00pm<br>
@@ -4203,7 +4811,7 @@ FILE PATH: Lamination\Manditory-groups.html
         <div class="header-bold">Groups Are</div>
         <div class="header-bold">Mandatory</div>
         
-        <div class="sub-header">Rooms are locked DAILY</div>
+        <div class="sub-header">Smoking Area are locked DAILY</div>
 
         <div class="times">
             10:00a-12:00pm<br>
@@ -4216,6 +4824,1220 @@ FILE PATH: Lamination\Manditory-groups.html
             exceptions
         </div>
     </div>
+
+</body>
+</html>
+
+==================================================
+FILE PATH: Lamination\Valuables.html
+==================================================
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Valuable Inventory</title>
+    <style>
+        @page {
+            size: 8.5in 11in;
+            margin: 0.4in;
+        }
+
+        body {
+            font-family: "Times New Roman", serif;
+            font-size: 11.5px;
+            line-height: 1.25;
+            margin: 0;
+            padding: 0;
+            -webkit-print-color-adjust: exact; 
+        }
+
+        .container {
+            width: 100%;
+            max-width: 8.5in;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main-title {
+            text-align: center;
+            font-size: 13px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 2px;
+        }
+
+        .sub-title {
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+        }
+
+        .row {
+            display: flex;
+            align-items: flex-end;
+            margin-bottom: 5px;
+            width: 100%;
+        }
+
+        .field {
+            display: flex;
+            align-items: flex-end;
+            white-space: nowrap;
+        }
+
+        .label {
+            font-weight: bold;
+            margin-right: 5px;
+        }
+
+        .line {
+            border-bottom: 1px solid black;
+            flex-grow: 1;
+            height: 15px;
+        }
+
+        .spacer { width: 20px; }
+
+        .inventory-header {
+            text-align: center;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-top: 10px;
+            margin-bottom: 3px;
+            font-size: 12px;
+        }
+
+        .inventory-box {
+            border: 1px solid black;
+            padding: 6px;
+            margin-bottom: 10px; 
+        }
+
+        .box-header {
+            text-align: center;
+            font-weight: bold;
+            border-bottom: 1px solid black;
+            background-color: #e0e0e0;
+            margin: -6px -6px 6px -6px;
+            padding: 4px 0;
+        }
+
+        /* Adjusted Column widths for better fit */
+        .inventory-grid {
+            display: grid;
+            grid-template-columns: 31% 43% 26%; 
+            gap: 8px;
+        }
+
+        .col-2 { padding-left: 5px; }
+        .col-3 { padding-left: 10px; }
+
+        .cb-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 3px;
+            white-space: nowrap;
+        }
+        .cb-item input { margin: 0 5px 0 0; transform: scale(1.0); }
+        
+        .card-space { margin-left: auto; margin-right: 15px; }
+
+        .complex-row {
+            display: flex;
+            align-items: flex-end;
+            margin-bottom: 3px;
+            flex-wrap: nowrap;
+        }
+        .complex-row input { margin: 0 4px 0 0; transform: scale(1.0); }
+        .complex-row strong { font-size: 11.5px; margin-right: 4px; white-space: nowrap;}
+        
+        .sub-label { font-size: 10.5px; margin-right: 2px; white-space: nowrap; }
+        
+        .indent-row {
+            display: flex;
+            align-items: flex-end;
+            margin-left: 18px;
+            margin-bottom: 3px;
+        }
+
+        .checkout-title {
+            text-align: center;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-top: 15px;
+            margin-bottom: 3px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 10.5px;
+        }
+
+        th, td {
+            border: 1px solid black;
+            padding: 4px;
+            height: 20px;
+        }
+
+        th {
+            background-color: #e0e0e0;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .disclaimer {
+            font-size: 11px;
+            font-style: italic;
+            margin: 10px 0;
+        }
+
+        .footer-note {
+            font-size: 10.5px;
+            margin-top: 10px;
+            line-height: 1.25;
+            border-top: 1px solid #ccc;
+            padding-top: 5px;
+        }
+        
+        .footer-note strong {
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .section-divider {
+            border-top: 1px solid #ccc;
+            margin: 8px 0;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="main-title">Sunrise Detoxification Center Patient Valuable Inventory</div>
+    <div class="sub-title">NO CASH IS TO BE STORED IN THIS ENVELOPE</div>
+
+    <div class="row">
+        <div class="field" style="width: 65%;">
+            <span class="label">Patient Name</span>
+            <div class="line"></div>
+        </div>
+        <div class="spacer"></div>
+        <div class="field" style="flex-grow: 1;">
+            <span class="label" style="margin-left: auto;">Room & Bed</span>
+            <div class="line" style="width: 60px; flex-grow: 0;"></div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="field" style="width: 35%;">
+            <span class="label">Admit Date</span>
+            <div class="line"></div>
+        </div>
+        <div class="spacer"></div>
+        <div class="field" style="width: 30%;">
+            <span class="label">D/C Date</span>
+            <div class="line"></div>
+        </div>
+        <div class="field" style="flex-grow: 1; justify-content: flex-end;">
+            <span class="label">MR</span>
+            <div class="line" style="width: 80px; flex-grow: 0;"></div>
+        </div>
+    </div>
+
+    <div class="inventory-header">Check In Inventory</div>
+
+    <div class="inventory-box">
+        <div class="box-header">Item Description</div>
+
+        <div class="inventory-grid">
+            <div class="col-1">
+                <div class="cb-item"><input type="checkbox"> Wallet *</div>
+                <div class="cb-item"><input type="checkbox"> Visa Card * <span class="card-space">( )</span></div>
+                <div class="cb-item"><input type="checkbox"> Master Card * <span class="card-space">( )</span></div>
+                <div class="cb-item"><input type="checkbox"> AM EX Card * <span class="card-space">( )</span></div>
+                <div class="cb-item"><input type="checkbox"> Discover * <span class="card-space">( )</span></div>
+                <div class="cb-item"><input type="checkbox"> Ins Card *</div>
+                <div class="cb-item"><input type="checkbox"> Ck Book *</div>
+                <div class="cb-item"><input type="checkbox"> SS Card *</div>
+
+                <div class="section-divider"></div>
+
+                <div class="cb-item"><input type="checkbox"> Laptop **</div>
+                <div class="line" style="margin-bottom: 6px;"></div>
+                
+                <div class="cb-item"><input type="checkbox"> <div class="line"></div></div>
+                <div class="cb-item"><input type="checkbox"> <div class="line"></div></div>
+            </div>
+
+            <div class="col-2">
+                <div class="complex-row">
+                    <input type="checkbox"> <strong>Driver License *</strong>
+                    <span class="sub-label">State</span> <div class="line"></div>
+                </div>
+                <div class="complex-row">
+                    <input type="checkbox"> <strong>Cell Phone *</strong>
+                    <span class="sub-label" style="margin-left: 15px;">Model</span> <div class="line"></div>
+                </div>
+                <div class="complex-row" style="margin-bottom: 5px;">
+                     <input type="checkbox" style="visibility: hidden;"> <div class="line" style="margin-left: 20px;"></div>
+                </div>
+
+                <div class="complex-row">
+                    <input type="checkbox"> <strong>Watch *</strong>
+                    <span class="sub-label">Band Color</span> <div class="line"></div>
+                    <span class="sub-label" style="margin-left:5px;">Body Color</span> <div class="line"></div>
+                </div>
+                <div class="indent-row">
+                    <span class="sub-label">Band Type</span> <div class="line"></div>
+                    <span class="sub-label" style="margin-left:5px;">Face Color</span> <div class="line"></div>
+                </div>
+
+                <div class="complex-row">
+                    <input type="checkbox"> <strong>Necklace *</strong>
+                    <span class="sub-label">Gold Tone</span> <div class="line" style="width:30px; flex-grow:0;"></div>
+                    <span class="sub-label" style="margin-left:5px;">Silver Tone</span> <div class="line"></div>
+                </div>
+                <div class="indent-row">
+                    <span class="sub-label">Rope Type</span> <div class="line"></div>
+                    <span class="sub-label" style="margin-left:5px;">Chain Type</span> <div class="line"></div>
+                    <span class="sub-label" style="margin-left:5px;">Other Type</span> <div class="line"></div>
+                </div>
+                <div class="indent-row">
+                    <span class="sub-label">Pendent</span> <div class="line"></div>
+                </div>
+
+                <div class="complex-row">
+                    <input type="checkbox"> <strong>Bracelet *</strong>
+                    <span class="sub-label">Gold Tone</span> <div class="line" style="width:30px; flex-grow:0;"></div>
+                    <span class="sub-label" style="margin-left:5px;">Silver Tone</span> <div class="line"></div>
+                    <span class="sub-label" style="margin-left:5px;">Charms(s)</span> <div class="line" style="width:30px; flex-grow:0;"></div>
+                </div>
+                <div class="indent-row">
+                    <span class="sub-label">Rope Type</span> <div class="line"></div>
+                    <span class="sub-label" style="margin-left:5px;">Chain Type</span> <div class="line"></div>
+                    <span class="sub-label" style="margin-left:5px;">Other Type</span> <div class="line"></div>
+                </div>
+
+                <div class="complex-row">
+                    <input type="checkbox"> <strong>Ring *</strong>
+                    <span class="sub-label">Gold Tone</span> <div class="line"></div>
+                    <span class="sub-label" style="margin-left:5px;">Silver Tone</span> <div class="line"></div>
+                </div>
+                <div class="indent-row">
+                    <span class="sub-label">Stone Color</span> <div class="line"></div>
+                </div>
+            </div>
+
+            <div class="col-3">
+                <div class="complex-row" style="margin-bottom: 2px;">
+                    <input type="checkbox"> <strong>Money Envelope *</strong>
+                </div>
+                <div class="indent-row" style="margin-left: 15px;">
+                    <span class="sub-label">Amt $</span> <div class="line" style="width:40px; flex-grow:0;"></div>
+                </div>
+                <div class="indent-row" style="margin-left: 15px; margin-bottom: 8px;">
+                    <span class="sub-label">Handed to:</span> <div class="line"></div>
+                </div>
+
+                <div class="section-divider"></div>
+
+                <div class="cb-item"><strong>Storage:</strong></div>
+                
+                <div class="complex-row">
+                    <input type="checkbox"> Suitcase
+                    <span class="sub-label" style="margin-left: 5px;">Qty</span>
+                    <div class="line" style="width: 25px; flex-grow: 0;"></div>
+                    <span class="sub-label" style="margin-left: 5px;">Descr</span>
+                    <div class="line"></div>
+                </div>
+
+                <div class="complex-row">
+                    <input type="checkbox"> Bags
+                    <span class="sub-label" style="margin-left: 23px;">Qty</span>
+                    <div class="line" style="width: 25px; flex-grow: 0;"></div>
+                    <span class="sub-label" style="margin-left: 5px;">Descr</span>
+                    <div class="line"></div>
+                </div>
+
+                <div class="complex-row">
+                    <input type="checkbox"> Other
+                    <span class="sub-label" style="margin-left: 17px;">Qty</span>
+                    <div class="line" style="width: 25px; flex-grow: 0;"></div>
+                    <span class="sub-label" style="margin-left: 5px;">Descr</span>
+                    <div class="line"></div>
+                </div>
+            </div>
+        </div> <div style="border: 1px solid black; padding: 10px 12px; margin-top: 15px;">
+            <div style="text-align: center; font-weight: bold; font-size: 12px; border-bottom: 1px solid black; margin: -10px -12px 15px -12px; background-color: #e0e0e0; padding: 5px 0;">Drop Off Items</div>
+            
+            <div style="display: flex; align-items: flex-end; margin-bottom: 18px; width: 100%;">
+                <span style="font-size: 11px; margin-right: 5px;">Date</span>
+                <div class="line" style="width: 80px; flex-grow: 0; margin-right: 15px;"></div>
+                
+                <span style="font-size: 11px; margin-right: 5px;">Item Description</span>
+                <div class="line" style="flex-grow: 1; margin-right: 15px;"></div>
+                
+                <span style="font-size: 11px; margin-right: 5px;">Recipient Sig</span>
+                <div class="line" style="width: 150px; flex-grow: 0;"></div>
+            </div>
+
+            <div style="display: flex; align-items: flex-end; margin-bottom: 18px; width: 100%;">
+                <span style="font-size: 11px; margin-right: 5px;">Date</span>
+                <div class="line" style="width: 80px; flex-grow: 0; margin-right: 15px;"></div>
+                
+                <span style="font-size: 11px; margin-right: 5px;">Item Description</span>
+                <div class="line" style="flex-grow: 1; margin-right: 15px;"></div>
+                
+                <span style="font-size: 11px; margin-right: 5px;">Recipient Sig</span>
+                <div class="line" style="width: 150px; flex-grow: 0;"></div>
+            </div>
+
+            <div style="display: flex; align-items: flex-end; margin-bottom: 5px; width: 100%;">
+                <span style="font-size: 11px; margin-right: 5px;">Date</span>
+                <div class="line" style="width: 80px; flex-grow: 0; margin-right: 15px;"></div>
+                
+                <span style="font-size: 11px; margin-right: 5px;">Item Description</span>
+                <div class="line" style="flex-grow: 1; margin-right: 15px;"></div>
+                
+                <span style="font-size: 11px; margin-right: 5px;">Recipient Sig</span>
+                <div class="line" style="width: 150px; flex-grow: 0;"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="sig-section">
+        <div class="row">
+            <div class="field" style="width: 65%;">
+                <span class="label">Patient Signature - Admission</span>
+                <div class="line"></div>
+            </div>
+            <div class="spacer"></div>
+            <div class="field" style="width: 30%;">
+                <span class="label">Date</span>
+                <div class="line"></div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="field" style="width: 65%;">
+                <span class="label">SDC Recipient Signature</span>
+                <div class="line"></div>
+            </div>
+            <div class="spacer"></div>
+            <div class="field" style="width: 30%;">
+                <span class="label">Date</span>
+                <div class="line"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="checkout-title">Check Out Record</div>
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 15%;">Date</th>
+                <th style="width: 15%;">Checked Out By</th>
+                <th style="width: 40%;">Item Description</th>
+                <th style="width: 15%;">Date Returned</th>
+                <th style="width: 15%;">Patient Initial</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td></td><td></td><td></td><td></td></tr>
+        </tbody>
+    </table>
+
+    <div class="disclaimer">
+        The above items collected at time of admissions by Sunrise Detoxification Center have been returned to me satisfactory condition upon my discharge.
+    </div>
+
+    <div class="row">
+        <div class="field" style="width: 60%;">
+            <span class="label">Patient Signature - Discharge</span>
+            <div class="line"></div>
+        </div>
+        <div class="spacer"></div>
+        <div class="field" style="width: 30%;">
+            <span class="label">Date</span>
+            <div class="line"></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="field" style="width: 60%;">
+            <span class="label">SDC Staff Discharge Signature</span>
+            <div class="line"></div>
+        </div>
+        <div class="spacer"></div>
+        <div class="field" style="width: 30%;">
+            <span class="label">Date</span>
+            <div class="line"></div>
+        </div>
+    </div>
+
+    <div class="footer-note">
+        <strong>Valuable items like cellphones, chains, electronics, jewelry and cash will be placed in a locked safe which counselors will only have access to.</strong>
+        Items indicated by an asterisk (*) will be placed in a valuables envelope. For Day Shift, this is given to the Admissions Counselor, Receptionist, or Service Director. For Night Shift, this is given to Nursing.
+        <br>
+        Items indicated by two asterisks (**) will be given to Nursing for overflow storage.
+    </div>
+
+</div>
+
+</body>
+</html>
+
+==================================================
+FILE PATH: Lamination\Youtube Enabled.html
+==================================================
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Printable Tags</title>
+    <style>
+        @page {
+            size: letter landscape;
+            margin: 0;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-content: flex-start;
+            padding: 20px;
+            background-color: white;
+        }
+        .card {
+            width: 2.5in;
+            height: 1.5in;
+            border: 2px dashed #333; /* Cutting guide */
+            margin: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        .line-one {
+            font-weight: bold;
+            font-size: 18pt;
+            color: #CC0000; /* YouTube Red */
+            margin-bottom: 5px;
+        }
+        .line-two {
+            font-weight: bold;
+            font-size: 14pt;
+            color: black;
+        }
+    </style>
+</head>
+<body>
+
+    <script>
+        const cardContent = `
+            <div class="card">
+                <div class="line-one">YOUTUBE PREMIUM ENABLED</div>
+                <div class="line-two">DO NOT LOG OUT</div>
+            </div>
+        `;
+        // Generates 12 cards (Adjust number if needed)
+        for (let i = 0; i < 12; i++) {
+            document.write(cardContent);
+        }
+    </script>
+
+</body>
+</html>
+
+==================================================
+FILE PATH: Lamination\VOB\Admissions Checklist.html
+==================================================
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admissions Checklist</title>
+    <style>
+        /* Optimized for 10.5pt - 11pt readability on a single page */
+        body { font-family: Arial, sans-serif; font-size: 11pt; color: #000; margin: 10px 40px; line-height: 1.1; }
+        
+        .main-title { text-align: center; font-size: 16pt; font-weight: bold; margin-bottom: 8px; text-transform: uppercase; }
+
+        /* Compact Info Box */
+        .info-box { border: 2px solid #000; padding: 10px; width: 550px; margin: 0 auto 15px auto; }
+        .info-line { margin-bottom: 6px; }
+        .underline { display: inline-block; border-bottom: 1px solid #000; min-width: 250px; margin-left: 5px; }
+        .loc-row { margin-top: 8px; display: flex; gap: 25px; font-weight: bold; align-items: center; }
+
+        /* Square boxes for LOC and Valuables */
+        .check-rect { 
+            display: inline-block; 
+            width: 18px; 
+            height: 18px; 
+            border: 1.5px solid #000; 
+            vertical-align: middle; 
+            margin-right: 6px;
+            background-color: #fff;
+        }
+
+        /* Main Grid */
+        .container { display: flex; gap: 20px; align-items: flex-start; }
+        .column { flex: 1; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 12px; }
+        td { border: 1px solid #000; padding: 5px 8px; vertical-align: middle; }
+        
+        /* Section Headers */
+        .header-row { background-color: #f2f2f2; font-weight: bold; text-align: center; text-transform: uppercase; font-size: 9.5pt; height: 24px; }
+        .check-box { width: 35px; text-align: center; font-weight: bold; }
+
+        /* Multi-checkbox row style */
+        .multi-check-row { display: flex; align-items: center; gap: 20px; }
+
+        @media print {
+            body { margin: 5mm 10mm; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-title">Admissions Checklist</div>
+
+    <div class="info-box">
+        <div class="info-line"><strong>Name:</strong> <span class="underline"></span></div>
+        <div class="info-line"><strong>Date:</strong> <span class="underline" style="min-width: 150px;"></span></div>
+        <div class="loc-row">
+            Correct Level of Care: 
+            <span><span class="check-rect"></span> 3.5 Evolve</span>
+            <span><span class="check-rect"></span> 3.7 Detox</span>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="column">
+            <table>
+                <tr class="header-row"><td colspan="2">Initial Admission Steps</td></tr>
+                <tr><td class="check-box"></td><td>Appropriate Band Given (Red: Med, Green: Food, White: NKA)</td></tr>
+                <tr><td class="check-box"></td><td>Admit blurb sent to TEAMS</td></tr>
+                <tr><td class="check-box"></td><td>Picture given to chef if diet restriction</td></tr>
+                <tr><td class="check-box"></td><td>Payment collected / admin aware if missing</td></tr>
+                <tr><td class="check-box"></td><td>Admission Vitals + BAL Entered</td></tr>
+                <tr><td class="check-box"></td><td>Discharge Date Added</td></tr>
+                <tr><td class="check-box"></td><td>Added to Bed Board on LS</td></tr>
+                <tr><td class="check-box"></td><td>Client Photo Taken on LS</td></tr>
+
+                <tr class="header-row"><td colspan="2">Demographics</td></tr>
+                <tr><td class="check-box"></td><td>Verified Patients Name is Correct</td></tr>
+                <tr><td class="check-box"></td><td>Input Phone Number</td></tr>
+                <tr><td class="check-box"></td><td>Input Address (or facility address if homeless)</td></tr>
+                <tr><td class="check-box"></td><td>Input Social Security Number</td></tr>
+                <tr><td class="check-box"></td><td>Input Email Address</td></tr>
+                <tr><td class="check-box"></td><td>Verified Birth Date is Correct</td></tr>
+
+                <tr class="header-row"><td colspan="2">Consent Forms</td></tr>
+                <tr><td class="check-box"></td><td>Consent For Pin</td></tr>
+                <tr><td class="check-box"></td><td>SUD Informed Consent (SDC Orlando)</td></tr>
+                <tr><td class="check-box"></td><td>Contact/ROI for Hospital</td></tr>
+                <tr><td class="check-box"></td><td>Contact/ROI for Referral Source</td></tr>
+                <tr><td class="check-box"></td><td>Contact/ROI for EC</td></tr>
+                <tr><td class="check-box"></td><td>Body and Luggage Search Form</td></tr>
+                <tr><td class="check-box"></td><td>Medication Authorization CC</td></tr>
+                <tr><td class="check-box"></td><td>Patient Handbook (SDC or ERC)</td></tr>
+            </table>
+        </div>
+
+        <div class="column">
+            <table>
+                <tr class="header-row"><td colspan="2">ObservSmart</td></tr>
+                <tr><td class="check-box"></td><td>Added Patient to ObservSmart</td></tr>
+                <tr><td class="check-box"></td><td>Include MRN in ObservSmart</td></tr>
+                <tr><td class="check-box"></td><td>Beacon Assigned to Patient</td></tr>
+
+                <tr class="header-row"><td colspan="2">UDS</td></tr>
+                <tr><td class="check-box"></td><td>Patient Provided UDS Sample</td></tr>
+                <tr><td class="check-box"></td><td>UDS inputted to LS</td></tr>
+                <tr><td class="check-box"></td><td>Sample in 2 tubes and bagged for Quest</td></tr>
+                <tr><td class="check-box"></td><td>Labeled tubes from Z-designer</td></tr>
+                <tr><td class="check-box"></td><td>Requisition printed from LS</td></tr>
+
+                <tr class="header-row"><td colspan="2">Service Animal (if applicable)</td></tr>
+                <tr><td class="check-box"></td><td>Animal Vaccination Records Scanned</td></tr>
+
+                <tr class="header-row"><td colspan="2">Scanned Documents</td></tr>
+                <tr><td class="check-box"></td><td>VOB / Demographics & Missing ID Form</td></tr>
+                <tr><td class="check-box"></td><td>Valuables/Cash Envelope Receipt</td></tr>
+
+                <tr class="header-row"><td colspan="2">Valuables</td></tr>
+                <tr>
+                    <td colspan="2">
+                        <div class="multi-check-row">
+                            <strong>Valuables:</strong>
+                            <span><span class="check-rect"></span> In Safe</span>
+                            <span><span class="check-rect"></span> Nurses Station</span>
+                        </div>
+                    </td>
+                </tr>
+                <tr><td class="check-box"></td><td>Patient Signed Envelopes</td></tr>
+                <tr><td class="check-box"></td><td>Personal Property Inventory Signed in LS</td></tr>
+                <tr><td class="check-box"></td><td>Update Cash Ledger</td></tr>
+
+                <tr class="header-row"><td colspan="2">Pending Completion</td></tr>
+                <tr><td class="check-box"></td><td>Passed this form to ________________</td></tr>
+                <tr><td class="check-box"></td><td>Place in binder (Admissions 2)</td></tr>
+            </table>
+
+            <div style="margin-top: 15px; line-height: 1.8;">
+                <strong>Date & Time of Admission:</strong> ______________________<br>
+                <strong>Tech Name:</strong> __________________________________
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
+
+==================================================
+FILE PATH: Lamination\VOB\Demographic Information Updated.html
+==================================================
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>VOB/Demographic Information Form</title>
+    <style>
+        body {
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            font-size: 11pt;
+            line-height: 1.4;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #000;
+        }
+
+        .page {
+            width: 8.5in;
+            height: 11in;
+            padding: 0.5in 0.75in;
+            margin: 0.5in auto;
+            background: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            box-sizing: border-box;
+        }
+
+        h2 { 
+            text-align: center; 
+            margin-bottom: 25px; 
+            font-size: 16pt; 
+            text-transform: uppercase;
+            font-weight: 900; 
+            letter-spacing: 1.5px;
+        }
+
+        /* Scaled down headers, explicitly bold */
+        h3 { 
+            text-align: center; 
+            margin-top: 22px; 
+            margin-bottom: 12px;
+            font-size: 12pt; 
+            font-weight: 900; 
+            text-transform: uppercase; 
+            letter-spacing: 2px;
+        }
+
+        .row { display: flex; margin-bottom: 10px; gap: 15px; }
+        .field { flex: 1; display: flex; align-items: flex-end; }
+        .label { white-space: nowrap; margin-right: 5px; font-weight: bold; font-size: 10pt; }
+        .line { border-bottom: 1.5px solid #000; flex-grow: 1; height: 1.1em; }
+        
+        .checkbox-group { display: flex; align-items: center; margin-left: 5px; }
+        .checkbox-item { display: flex; align-items: center; font-size: 10pt; margin-left: 8px; }
+        .box { width: 13px; height: 13px; border: 1.5px solid #000; margin-right: 4px; flex-shrink: 0; }
+
+        small { font-style: italic; font-size: 9pt; color: #333; }
+
+        @media print {
+            body { background: none; }
+            .page { margin: 0; box-shadow: none; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page">
+    <h2>VOB / Demographic Information</h2>
+
+    <h3>Patient Information</h3>
+    <div class="row">
+        <div class="field" style="flex: 2;"><span class="label">Name:</span><div class="line"></div></div>
+        <div class="field"><span class="label">Confirm DOB:</span><div class="line"></div></div>
+    </div>
+    <div class="row">
+        <div class="field"><span class="label">Preferred Language:</span><div class="line"></div></div>
+        <div class="field"><span class="label">SSN:</span><div class="line"></div></div>
+    </div>
+    <div class="row">
+        <div class="field"><span class="label">Phone #:</span><div class="line"></div></div>
+        <div class="field" style="flex: 1.5;"><span class="label">Email Address:</span><div class="line"></div></div>
+    </div>
+    <div class="row">
+        <div class="field"><span class="label">Address:</span><div class="line"></div></div>
+    </div>
+    <div class="row">
+        <div class="field"><span class="label">Food/Med Allergies:</span><div class="line"></div></div>
+        <div class="field"><span class="label">Dietary Restrictions:</span><div class="line"></div></div>
+    </div>
+    <p style="margin: -5px 0 12px 0;"><small>(Check for red/green allergy bands)</small></p>
+
+    <div class="row">
+        <div class="field"><span class="label">EC Name:</span><div class="line"></div></div>
+        <div class="field"><span class="label">EC Relationship:</span><div class="line"></div></div>
+    </div>
+    <div class="row">
+        <div class="field"><span class="label">EC Phone #:</span><div class="line"></div></div>
+        <div class="field"><span class="label">MRN:</span><div class="line"></div></div>
+    </div>
+    <div class="checkbox-item" style="margin-top: 5px; margin-left: 0;">
+        <div class="box"></div> <span class="label">Patient Refused to Provide Emergency Contact</span>
+    </div>
+
+    <h3>Arrival Information</h3>
+    <div class="row">
+        <div class="field"><span class="label">Time of Arrival:</span><div class="line"></div></div>
+        <div class="field" style="flex: 1.5;"><span class="label">Arrived Via:</span><div class="line"></div></div>
+    </div>
+    <div class="row">
+        <div class="field"><span class="label">Self-Drive Vehicle (Color, Make, Model):</span><div class="line"></div></div>
+    </div>
+
+    <h3>Financial</h3>
+    <div class="row">
+        <div class="field" style="flex: 2.5;"><span class="label">Insurance Company:</span><div class="line"></div></div>
+        <div class="field"><span class="label">Amt Due:</span><div class="line"></div></div>
+        <div class="field">
+            <span class="label">Collected?</span>
+            <div class="checkbox-group">
+                <div class="checkbox-item"><div class="box"></div> Y</div>
+                <div class="checkbox-item"><div class="box"></div> N</div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="field"><span class="label">Attached Copy of ID & Insurance?</span>
+            <div class="checkbox-group">
+                <div class="checkbox-item"><div class="box"></div> Y</div>
+                <div class="checkbox-item"><div class="box"></div> N</div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="field">
+            <span class="label">Private Room?</span>
+            <div class="checkbox-group">
+                <div class="checkbox-item"><div class="box"></div> Y</div>
+                <div class="checkbox-item"><div class="box"></div> N</div>
+            </div>
+        </div>
+        <div class="field">
+            <span class="label">Cellphone in room?</span>
+            <div class="checkbox-group">
+                <div class="checkbox-item"><div class="box"></div> Y</div>
+                <div class="checkbox-item"><div class="box"></div> N</div>
+            </div>
+        </div>
+    </div>
+
+    <h3>Inquiry</h3>
+    <div class="row">
+        <div class="field" style="flex: 2;"><span class="label">Referral Source:</span><div class="line"></div></div>
+        <div class="field"><span class="label">Referral Phone #:</span><div class="line"></div></div>
+    </div>
+
+    <h3>Preadmission Assessment</h3>
+    <div class="row">
+        <div class="field"><span class="label">Length of Stay:</span><div class="line"></div></div>
+        <div class="field"><span class="label">Unit & Rm #:</span><div class="line"></div></div>
+        <div class="field"><span class="label">Proj. DC Date:</span><div class="line"></div></div>
+    </div>
+    <div class="row">
+        <div class="field"><span class="label">Recommended Level of Care:</span><div class="line"></div></div>
+    </div>
+</div>
+
+</body>
+</html>
+
+==================================================
+FILE PATH: Lamination\VOB\Peer to Peer Admit Checklist.html
+==================================================
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sunrise Detox - Peer to Peer Admit Checklist</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 20px;
+            font-size: 12px;
+            color: #333;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        /* Style the logo image */
+        .header img {
+            max-width: 300px; /* Adjust this number to change the logo size */
+            height: auto;
+            margin-bottom: 10px;
+        }
+        .header h2 {
+            margin: 0;
+            text-transform: uppercase;
+            font-size: 18px;
+            letter-spacing: 1px;
+            font-weight: bold;
+        }
+        .meta-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 6px;
+            text-align: left;
+        }
+        .section-header {
+            background-color: #e0e0e0;
+            text-align: center;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .admit-header {
+            text-align: center;
+            background-color: #f9f9f9;
+        }
+        .sub-label {
+            font-size: 10px;
+            font-style: italic;
+        }
+        .footer-note {
+            margin-top: 20px;
+            border: 1px solid black;
+            padding: 10px;
+        }
+        @media print {
+            .no-print { display: none; }
+            body { margin: 10mm; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <img src="Sunrise Detox\images\sunrise.png" alt="Sunrise Detox Logo">
+        <h2>PEER TO PEER ADMIT CHECKLIST</h2>
+    </div>
+
+    <div class="meta-info">
+        <span>Date: ________________________</span>
+        <span>Circle: Day Shift / Night Shift</span>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 25%;">To be completed at end of shift</th>
+                <th class="admit-header">Admit #1</th>
+                <th class="admit-header">Admit #2</th>
+                <th class="admit-header">Admit #3</th>
+                <th class="admit-header">Admit #4</th>
+                <th class="admit-header">Admit #5</th>
+                <th class="admit-header">Admit #6</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td>Patient Name</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>Medical Record #</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>Name spelled correctly in chart</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>Admitted at Correct Level of Care<br><span class="sub-label">(Detox or Evolve Residential)</span></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>Discharge Date Matches Length of Stay</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr>
+                <td>Amount Due / Collected: y/n</td>
+                <td>Amt:<br>Coll:</td>
+                <td>Amt:<br>Coll:</td>
+                <td>Amt:<br>Coll:</td>
+                <td>Amt:<br>Coll:</td>
+                <td>Amt:<br>Coll:</td>
+                <td>Amt:<br>Coll:</td>
+            </tr>
+            <tr><td>Message sent to Teams</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>Kitchen Aware of Allergies (if applicable)</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+
+            <tr><td colspan="7" class="section-header">Consent Forms</td></tr>
+            <tr><td>SUD Comprehensive Informed Consent</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>Body and Luggage Form Signed</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>SDC Orlando Handbook Consent</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>Personal Property on LS Signed</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>Pictures of Valuables Inputted</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+
+            <tr><td colspan="7" class="section-header">Patient Chart Information</td></tr>
+            <tr><td>Update ALL demographics</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>Added to LS Bed Board</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>Vital Signs</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>BAL</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>Pregnancy Test</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>UDS Inputted in LS (pos/neg)</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>Lab Order</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+
+            <tr><td colspan="7" class="section-header">ROIs Completed (Emergency Contact, Orlando Health, Referral)</td></tr>
+            <tr><td>Emergency Contact</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>Orlando Health</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>Referral Source (if applicable)</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+
+            <tr><td colspan="7" class="section-header">Scanned Documents</td></tr>
+            <tr><td>ID Scanned</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>Insurance Card Scanned</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>Missing ID/Ins Form Scanned</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>VOB</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>Triage Form</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>Valuables Envelope (Signed)</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>Cash Envelope (Ledger updated)</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td>Receipt</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td><strong>Tech Initials</strong></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        </tbody>
+    </table>
+
+    <div class="footer-note">
+        <strong>Peer reviews must be completed on the same shift to ensure all admission steps are accurate, complete, and compliant.</strong><br><br>
+        Catching missing vitals, drug screens, missing lab orders, or unsigned consents in real time allows immediate correction, protects patient safety, and prevents future liability or delays in care. A second set of eyes now avoids problems later — for the patient, the team, and the facility.
+    </div>
+
+</body>
+</html>
+
+==================================================
+FILE PATH: Lamination\VOB\updated VOB and Missing ID.html
+==================================================
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>VOB / Demographics & Missing ID</title>
+    <style>
+        body {
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            font-size: 10.5pt;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #000;
+        }
+
+        .page {
+            width: 8.5in;
+            height: 11in;
+            padding: 0.5in 0.75in;
+            margin: 0.5in auto;
+            background: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .content-wrapper {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        h2 { 
+            text-align: center; 
+            margin: 0 0 10px 0;
+            font-size: 16pt; 
+            text-transform: uppercase;
+            font-weight: 900; 
+            letter-spacing: 2px;
+        }
+
+        h3 { 
+            text-align: center; 
+            margin: 12px 0 8px 0;
+            font-size: 11pt; 
+            font-weight: 900; 
+            text-transform: uppercase; 
+            letter-spacing: 1.5px;
+        }
+
+        .row { 
+            display: flex; 
+            margin-bottom: 12px; 
+            gap: 20px; 
+        }
+
+        .field { flex: 1; display: flex; align-items: flex-end; }
+        .label { white-space: nowrap; margin-right: 5px; font-weight: bold; font-size: 9.5pt; }
+        .line { border-bottom: 1.5px solid #000; flex-grow: 1; height: 1.1em; }
+        
+        .checkbox-item { display: flex; align-items: center; font-size: 9.5pt; }
+        .box { width: 13px; height: 13px; border: 1.5px solid #000; margin-right: 6px; flex-shrink: 0; }
+
+        .note-row { 
+            margin: -5px 0 15px 0; 
+            text-align: center;
+        }
+        small { font-style: italic; font-size: 9pt; color: #222; font-weight: bold; }
+
+        .missing-section {
+            border: 2.5px solid #000;
+            padding: 15px;
+            margin: 8px 0;
+        }
+
+        @media print {
+            body { background: none; }
+            .page { margin: 0; box-shadow: none; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page">
+    <div class="content-wrapper">
+        <header>
+            <h2>VOB / Demographics & Missing ID</h2>
+        </header>
+
+        <section>
+            <h3>Patient Information</h3>
+            <div class="row">
+                <div class="field" style="flex: 2;"><span class="label">Name:</span><div class="line"></div></div>
+                <div class="field"><span class="label">Confirm DOB:</span><div class="line"></div></div>
+            </div>
+            <div class="row">
+                <div class="field"><span class="label">Preferred Language:</span><div class="line"></div></div>
+                <div class="field"><span class="label">SSN:</span><div class="line"></div></div>
+            </div>
+            <div class="row">
+                <div class="field"><span class="label">Phone #:</span><div class="line"></div></div>
+                <div class="field" style="flex: 1.5;"><span class="label">Email Address:</span><div class="line"></div></div>
+            </div>
+            <div class="row">
+                <div class="field"><span class="label">Address:</span><div class="line"></div></div>
+            </div>
+            <div class="row">
+                <div class="field"><span class="label">Food/Med Allergies:</span><div class="line"></div></div>
+                <div class="field"><span class="label">Dietary Restrictions:</span><div class="line"></div></div>
+            </div>
+            <div class="note-row"><small>(Give red/green bands based on allergies or dietary restrictions)</small></div>
+            
+            <div class="row">
+                <div class="field"><span class="label">EC Name:</span><div class="line"></div></div>
+                <div class="field"><span class="label">EC Relationship:</span><div class="line"></div></div>
+            </div>
+            <div class="row">
+                <div class="field"><span class="label">EC Phone #:</span><div class="line"></div></div>
+                <div class="field"><span class="label">MRN:</span><div class="line"></div></div>
+            </div>
+            <div class="checkbox-item" style="margin-top: 5px;">
+                <div class="box"></div> <span class="label">Patient Refused to Provide Emergency Contact</span>
+            </div>
+        </section>
+
+        <!-- UPDATED MISSING SECTION -->
+        <section class="missing-section">
+            <h3>Missing Documentation Checklist</h3>
+            <div class="row">
+                <div class="field">
+                    <div class="checkbox-item"><div class="box"></div> <span class="label">Missing ID:</span></div>
+                    <div class="line"></div>
+                </div>
+                <div class="field">
+                    <div class="checkbox-item"><div class="box"></div> <span class="label">Missing Insurance:</span></div>
+                    <div class="line"></div>
+                </div>
+            </div>
+            <div class="row" style="margin-bottom: 0; justify-content: center;">
+                <div class="checkbox-item" style="margin-right: 0;">
+                    <div class="box"></div> <span class="label">Self-Pay</span>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h3>Arrival & Financial</h3>
+            <div class="row">
+                <div class="field"><span class="label">Time of Arrival:</span><div class="line"></div></div>
+                <div class="field" style="flex: 1.5;"><span class="label">Arrived Via (Uber, Family, Self):</span><div class="line"></div></div>
+            </div>
+            <div class="row">
+                <div class="field"><span class="label">Self-Drive (If applicable): Vehicle Color, Make, and Model:</span><div class="line"></div></div>
+            </div>
+            <div class="row">
+                <div class="field" style="flex: 2;"><span class="label">Insurance Company:</span><div class="line"></div></div>
+                <div class="field"><span class="label">Amt Due:</span><div class="line"></div></div>
+                <div class="field">
+                    <span class="label" style="margin-left: 10px;">Collected?</span>
+                    <div class="checkbox-item" style="margin-left: 10px;"><div class="box"></div> Y</div>
+                    <div class="checkbox-item" style="margin-right: 0;"><div class="box"></div> N</div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="field">
+                    <span class="label">Private Room?</span>
+                    <div class="checkbox-item" style="margin-left: 10px;"><div class="box"></div> Y</div>
+                    <div class="checkbox-item" style="margin-right: 0;"><div class="box"></div> N</div>
+                </div>
+                <div class="field">
+                    <span class="label">Cellphone in room?</span>
+                    <div class="checkbox-item" style="margin-left: 10px;"><div class="box"></div> Y</div>
+                    <div class="checkbox-item" style="margin-right: 0;"><div class="box"></div> N</div>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h3>Preadmission Assessment</h3>
+            <div class="row">
+                <div class="field" style="flex: 1.5;"><span class="label">Referral Source:</span><div class="line"></div></div>
+                <div class="field"><span class="label">Referral Phone #:</span><div class="line"></div></div>
+            </div>
+            <div class="row">
+                <div class="field"><span class="label">Length of Stay:</span><div class="line"></div></div>
+                <div class="field"><span class="label">Unit & Rm #:</span><div class="line"></div></div>
+                <div class="field"><span class="label">Proj. DC Date:</span><div class="line"></div></div>
+            </div>
+            <div class="row" style="margin-bottom: 0;">
+                <div class="field"><span class="label">Recommended Level of Care (Lightning Step):</span><div class="line"></div></div>
+            </div>
+        </section>
+    </div>
+</div>
 
 </body>
 </html>

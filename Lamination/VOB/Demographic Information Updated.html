@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>VOB/Demographic Information Form</title>
+    <style>
+        body {
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            font-size: 11pt;
+            line-height: 1.4;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #000;
+        }
+
+        .page {
+            width: 8.5in;
+            height: 11in;
+            padding: 0.5in 0.75in;
+            margin: 0.5in auto;
+            background: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            box-sizing: border-box;
+        }
+
+        h2 { 
+            text-align: center; 
+            margin-bottom: 25px; 
+            font-size: 16pt; 
+            text-transform: uppercase;
+            font-weight: 900; 
+            letter-spacing: 1.5px;
+        }
+
+        /* Scaled down headers, explicitly bold */
+        h3 { 
+            text-align: center; 
+            margin-top: 22px; 
+            margin-bottom: 12px;
+            font-size: 12pt; 
+            font-weight: 900; 
+            text-transform: uppercase; 
+            letter-spacing: 2px;
+        }
+
+        .row { display: flex; margin-bottom: 10px; gap: 15px; }
+        .field { flex: 1; display: flex; align-items: flex-end; }
+        .label { white-space: nowrap; margin-right: 5px; font-weight: bold; font-size: 10pt; }
+        .line { border-bottom: 1.5px solid #000; flex-grow: 1; height: 1.1em; }
+        
+        .checkbox-group { display: flex; align-items: center; margin-left: 5px; }
+        .checkbox-item { display: flex; align-items: center; font-size: 10pt; margin-left: 8px; }
+        .box { width: 13px; height: 13px; border: 1.5px solid #000; margin-right: 4px; flex-shrink: 0; }
+
+        small { font-style: italic; font-size: 9pt; color: #333; }
+
+        @media print {
+            body { background: none; }
+            .page { margin: 0; box-shadow: none; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page">
+    <h2>VOB / Demographic Information</h2>
+
+    <h3>Patient Information</h3>
+    <div class="row">
+        <div class="field" style="flex: 2;"><span class="label">Name:</span><div class="line"></div></div>
+        <div class="field"><span class="label">Confirm DOB:</span><div class="line"></div></div>
+    </div>
+    <div class="row">
+        <div class="field"><span class="label">Preferred Language:</span><div class="line"></div></div>
+        <div class="field"><span class="label">SSN:</span><div class="line"></div></div>
+    </div>
+    <div class="row">
+        <div class="field"><span class="label">Phone #:</span><div class="line"></div></div>
+        <div class="field" style="flex: 1.5;"><span class="label">Email Address:</span><div class="line"></div></div>
+    </div>
+    <div class="row">
+        <div class="field"><span class="label">Address:</span><div class="line"></div></div>
+    </div>
+    <div class="row">
+        <div class="field"><span class="label">Food/Med Allergies:</span><div class="line"></div></div>
+        <div class="field"><span class="label">Dietary Restrictions:</span><div class="line"></div></div>
+    </div>
+    <p style="margin: -5px 0 12px 0;"><small>(Check for red/green allergy bands)</small></p>
+
+    <div class="row">
+        <div class="field"><span class="label">EC Name:</span><div class="line"></div></div>
+        <div class="field"><span class="label">EC Relationship:</span><div class="line"></div></div>
+    </div>
+    <div class="row">
+        <div class="field"><span class="label">EC Phone #:</span><div class="line"></div></div>
+        <div class="field"><span class="label">MRN:</span><div class="line"></div></div>
+    </div>
+    <div class="checkbox-item" style="margin-top: 5px; margin-left: 0;">
+        <div class="box"></div> <span class="label">Patient Refused to Provide Emergency Contact</span>
+    </div>
+
+    <h3>Arrival Information</h3>
+    <div class="row">
+        <div class="field"><span class="label">Time of Arrival:</span><div class="line"></div></div>
+        <div class="field" style="flex: 1.5;"><span class="label">Arrived Via:</span><div class="line"></div></div>
+    </div>
+    <div class="row">
+        <div class="field"><span class="label">Self-Drive Vehicle (Color, Make, Model):</span><div class="line"></div></div>
+    </div>
+
+    <h3>Financial</h3>
+    <div class="row">
+        <div class="field" style="flex: 2.5;"><span class="label">Insurance Company:</span><div class="line"></div></div>
+        <div class="field"><span class="label">Amt Due:</span><div class="line"></div></div>
+        <div class="field">
+            <span class="label">Collected?</span>
+            <div class="checkbox-group">
+                <div class="checkbox-item"><div class="box"></div> Y</div>
+                <div class="checkbox-item"><div class="box"></div> N</div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="field"><span class="label">Attached Copy of ID & Insurance?</span>
+            <div class="checkbox-group">
+                <div class="checkbox-item"><div class="box"></div> Y</div>
+                <div class="checkbox-item"><div class="box"></div> N</div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="field">
+            <span class="label">Private Room?</span>
+            <div class="checkbox-group">
+                <div class="checkbox-item"><div class="box"></div> Y</div>
+                <div class="checkbox-item"><div class="box"></div> N</div>
+            </div>
+        </div>
+        <div class="field">
+            <span class="label">Cellphone in room?</span>
+            <div class="checkbox-group">
+                <div class="checkbox-item"><div class="box"></div> Y</div>
+                <div class="checkbox-item"><div class="box"></div> N</div>
+            </div>
+        </div>
+    </div>
+
+    <h3>Inquiry</h3>
+    <div class="row">
+        <div class="field" style="flex: 2;"><span class="label">Referral Source:</span><div class="line"></div></div>
+        <div class="field"><span class="label">Referral Phone #:</span><div class="line"></div></div>
+    </div>
+
+    <h3>Preadmission Assessment</h3>
+    <div class="row">
+        <div class="field"><span class="label">Length of Stay:</span><div class="line"></div></div>
+        <div class="field"><span class="label">Unit & Rm #:</span><div class="line"></div></div>
+        <div class="field"><span class="label">Proj. DC Date:</span><div class="line"></div></div>
+    </div>
+    <div class="row">
+        <div class="field"><span class="label">Recommended Level of Care:</span><div class="line"></div></div>
+    </div>
+</div>
+
+</body>
+</html>

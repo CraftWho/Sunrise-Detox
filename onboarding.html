@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>90 Days Onboarding Plan</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 10pt;
+            line-height: 1.4;
+            margin: 20px;
+            color: #333;
+        }
+
+        /* --- UPDATED HEADER CSS START --- */
+        .header {
+            border-bottom: 2px solid #444;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;     /* Vertically centers logo and text */
+            justify-content: flex-start; /* Aligns everything to the left */
+            gap: 20px;               /* Space between logo and title */
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 20pt;         /* Adjusted size */
+            color: #2c3e50;
+            white-space: nowrap;     /* Prevents title from breaking lines awkwardly */
+        }
+
+        .top-logo {
+            height: 35px;            /* Smaller logo height */
+            width: auto;
+            object-fit: contain;
+        }
+        /* --- UPDATED HEADER CSS END --- */
+
+        /* Sub-Banner Row with Left Arrows */
+        .banner-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin-bottom: 30px;
+            gap: 40px;
+        }
+
+        .sub-banner {
+            background-color: #5d6d7e;
+            color: white;
+            padding: 8px 15px;
+            position: relative;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11pt;
+            min-height: 30px;
+        }
+
+        .sub-banner::before {
+            content: "";
+            position: absolute;
+            left: -15px;
+            top: 0;
+            width: 0;
+            height: 0;
+            border-top: 23px solid transparent;
+            border-bottom: 23px solid transparent;
+            border-right: 15px solid #5d6d7e;
+        }
+
+        .logo-placeholder {
+            width: 25px;
+            height: 25px;
+            background: rgba(255,255,255,0.3);
+            margin-right: 10px;
+            border-radius: 4px;
+            /* Added to center the emoji inside the box */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14pt; 
+        }
+
+        /* Main Container and Columns */
+        .container {
+            display: flex;
+            gap: 30px; 
+            justify-content: space-between;
+            padding-right: 20px;
+        }
+
+        .column {
+            flex: 1;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 10px;
+            background-color: #f9f9f9;
+        }
+
+        .column-header {
+            background-color: #5d6d7e;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center; /* Centered Bold Title */
+            padding: 15px 10px;
+            margin: -10px -10px 10px -10px;
+            border-radius: 8px 0 0 0;
+            font-weight: bold;
+            font-size: 14pt;
+            position: relative;
+        }
+
+        .column-header::after {
+            content: "";
+            position: absolute;
+            right: -20px;
+            top: 0;
+            width: 0;
+            height: 0;
+            border-top: 27px solid transparent;
+            border-bottom: 27px solid transparent;
+            border-left: 20px solid #5d6d7e;
+            z-index: 10;
+        }
+
+        .column:last-child .column-header::after {
+            display: none;
+        }
+
+        h2 {
+            font-size: 11pt;
+            border-bottom: 1px solid #7f8c8d;
+            margin-top: 15px;
+            padding-bottom: 3px;
+            text-align: center; /* Centered Subtitles */
+        }
+
+        ul { padding-left: 18px; }
+        li {margin-bottom: 8px;
+            font-size: 12pt}
+
+        .next-steps {
+            font-style: italic;
+            color: #2c3e50;
+            font-weight: bold;
+            text-align: center; /* Centered Next Steps */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="header-content">
+            <img src="./images/Praesum-gray.png" class="top-logo" alt="Praesum Healthcare Logo">
+            <h1>90 Days Onboarding Plan</h1>
+        </div>
+    </div>
+
+    <div class="banner-container">
+        <div class="sub-banner"><div class="logo-placeholder">🛜</div>Connection</div>
+        <div class="sub-banner"><div class="logo-placeholder">🫱🏻‍🫲🏾</div>Commitment</div>
+        <div class="sub-banner"><div class="logo-placeholder">🧩</div>Contribution</div>
+        <div class="sub-banner"><div class="logo-placeholder">📈</div>Progress</div>
+    </div>
+
+    <div class="container">
+        <div class="column">
+            <div class="column-header">30 Day</div>
+            <h2>Get to know your role and team</h2>
+            <ul>
+                <li>Introductions to co-workers and a tour of the facilities. Partner with your assigned Mentor to coordinate onboarding activities.</li>
+                <li>Ensure access to equipment, individuals, and processes for long-term success.</li>
+                <li>An overview of the department's mission, values, and key policies.</li>
+            </ul>
+
+            <h2>First Assignment</h2>
+            <ul>
+                <li>Take the initiative to learn and partner with your mentor, review employee handbook and tour the facility with your mentor to locate all evacuation routes.</li>
+                <li>Complete MedTrainer courses.</li>
+                <li>Learn products, complete skills checklist, systems, and policies ensure access to all system accounts have been activated and operating successfully.</li>
+            </ul>
+
+            <h2>Goals</h2>
+            <ul>
+                <li>Become familiar with your role, workplace equipment, and facility services provided.</li>
+                <li>Learn safety policies, fire, emergency evacuation, and all safety codes.</li>
+                <li>Review Praesum Healthcare expectations of dress code policies, customer service, phone and email etiquette.</li>
+            </ul>
+
+            <h2 class="next-steps">Next Steps</h2>
+            <ul>
+                <li>Schedule Meetings with your manager and cross-functional teams.</li>
+                <li>Establish a 60-day check-in.</li>
+                <li>Prepare three questions for each scheduled followup with your mentor.</li>
+            </ul>
+        </div>
+
+        <div class="column">
+            <div class="column-header">60 Day</div>
+            <h2>Autonomous in your role</h2>
+            <ul>
+                <li>Apply your new skills and technical knowledge gained over the past 30 days to deliver value in a way that aligns with company goals.</li>
+                <li>Begin to understand the relationship between the job role and other business partners.</li>
+                <li>Understand and utilize electronic health record system to gain a clear understanding of meeting daily goals.</li>
+            </ul>
+
+            <h2>Assignment</h2>
+            <ul>
+                <li>Participate in staff meetings.</li>
+                <li>Complete outstanding MedTrainer Courses.</li>
+                <li>Review time management expectations with mentor.</li>
+            </ul>
+
+            <h2>Goals</h2>
+            <ul>
+                <li>Submit daily tasks and review with your mentor.</li>
+                <li>Become familiar with governing bodies and state agencies policies and regulations.</li>
+                <li>Provide prompt, high-quality service to members, staff, patients, and internal/external customers.</li>
+                <li>Create effective working relationships by exercising effective communication.</li>
+            </ul>
+
+            <h2 class="next-steps">Next Steps</h2>
+            <ul>
+                <li>Schedule Meetings with mentors and supervisors on a biweekly basis.</li>
+                <li>Establish a 90-day check-in.</li>
+                <li>Prepare three questions for each scheduled followup with your mentor.</li>
+            </ul>
+        </div>
+
+        <div class="column">
+            <div class="column-header">90 Day</div>
+            <h2>Demonstrating Progress</h2>
+            <ul>
+                <li>Demonstrate independent decision making while creating a positive environment.</li>
+                <li>Identify a new strategy and discuss with your manager.</li>
+                <li>Engage on brainstorming new ideas, demonstrate creative thinking and embrace new concepts.</li>
+            </ul>
+
+            <h2>Assignment</h2>
+            <ul>
+                <li>Complete 90-day evaluation with supervisor.</li>
+                <li>Review the Skills Checklist from the New Hire Packet.</li>
+                <li>Mentor an existing or a newly hired team member.</li>
+            </ul>
+
+            <h2>Goals</h2>
+            <ul>
+                <li>Demonstrate the ability to complete daily tasks independently.</li>
+                <li>Effectively report information to supervisors relating to client care, equipment malfunction and supply needs.</li>
+                <li>Participate in decision making in a timely and professional manner specifically when faced with adversity.</li>
+                <li>Effectively access the Protected Health Information (PHI) and other patient information to the fullest of its capacity.</li>
+                <li>Demonstrate willingness to accept positive and negative feedback delivered by supervisors and peers.</li>
+                <li>Recognize opportunities and take initiative on identifying potential issues that can improve productivity, and provide feedback to resolve the identified opportunities.</li>
+                <li>Meet productivity standards that have been established and exhibit conscientious effort to ensure expectations relating to our patients are achieved.</li>
+                <li>Demonstrate the skills necessary to successfully execute your job responsibilities.</li>
+            </ul>
+
+            <h2 class="next-steps">Next Steps</h2>
+            <ul>
+                <li>Meet with supervisor and execute the 90-day evaluation.</li>
+                <li>Review opportunities with your supervisor and develop an action plan of improvement.</li>
+                <li>Prepare three questions for each scheduled check-up with your mentor.</li>
+            </ul>
+        </div>
+    </div>
+
+</body>
+</html>

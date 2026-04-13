@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sunrise Detox - Peer to Peer Admit Checklist</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 20px;
+            font-size: 11px; /* Slightly smaller for better fit */
+            color: #000;
+            background-color: #fff;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .header img {
+            max-width: 250px;
+            height: auto;
+            margin-bottom: 5px;
+            filter: grayscale(100%); /* Ensures logo fits B&W theme */
+        }
+        .header h2 {
+            margin: 0;
+            text-transform: uppercase;
+            font-size: 16px;
+            font-weight: bold;
+            border-bottom: 2px solid #000;
+            display: inline-block;
+            padding-bottom: 5px;
+        }
+        .meta-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-weight: bold;
+            font-size: 12px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+        th, td {
+            border: 1px solid #000;
+            padding: 4px 6px;
+            text-align: left;
+            word-wrap: break-word;
+        }
+        /* Bolding and shrinking the subject column */
+        .subject-col {
+            width: 20%; /* Shrunk the subject rectangle */
+            font-weight: bold; 
+            background-color: #f0f0f0; /* Light grey highlight to stand out */
+        }
+        .section-header {
+            background-color: #000;
+            color: #fff;
+            text-align: center;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 12px;
+        }
+        .admit-header {
+            text-align: center;
+            background-color: #e0e0e0;
+            font-weight: bold;
+        }
+        .date-row {
+            background-color: #fafafa;
+            font-size: 9px;
+            height: 30px;
+        }
+        .sub-label {
+            font-size: 9px;
+            font-style: italic;
+            font-weight: normal;
+        }
+        .footer-note {
+            margin-top: 15px;
+            border: 2px solid #000;
+            padding: 8px;
+            font-size: 10px;
+        }
+        @media print {
+            body { margin: 5mm; }
+            .section-header { -webkit-print-color-adjust: exact; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <img src="../../images/sunrise.png" alt="Sunrise Detox Logo">
+        <br>
+        <h2>PEER TO PEER ADMIT CHECKLIST</h2>
+    </div>
+
+    <div class="meta-info">
+        <span>Peer Name: ________________________</span>
+        <span>Circle: Day Shift / Night Shift</span>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th class="subject-col">To be completed at end of shift</th>
+                <th class="admit-header">Admit #1</th>
+                <th class="admit-header">Admit #2</th>
+                <th class="admit-header">Admit #3</th>
+                <th class="admit-header">Admit #4</th>
+                <th class="admit-header">Admit #5</th>
+                <th class="admit-header">Admit #6</th>
+            </tr>
+            <tr class="date-row">
+                <td class="subject-col">Date of Admit</td>
+                <td>/ &nbsp;&nbsp; /</td>
+                <td>/ &nbsp;&nbsp; /</td>
+                <td>/ &nbsp;&nbsp; /</td>
+                <td>/ &nbsp;&nbsp; /</td>
+                <td>/ &nbsp;&nbsp; /</td>
+                <td>/ &nbsp;&nbsp; /</td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td class="subject-col">Patient Name</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td class="subject-col">Medical Record #</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td class="subject-col">Name spelled correctly</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td class="subject-col">Admitted at Correct Level<br><span class="sub-label">(Detox or Evolve)</span></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td class="subject-col">DC Date matches LOS</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr>
+                <td class="subject-col">Amount Due/Coll:</td>
+                <td>Amt:<br>Coll: y/n</td>
+                <td>Amt:<br>Coll: y/n</td>
+                <td>Amt:<br>Coll: y/n</td>
+                <td>Amt:<br>Coll: y/n</td>
+                <td>Amt:<br>Coll: y/n</td>
+                <td>Amt:<br>Coll: y/n</td>
+            </tr>
+            <tr><td class="subject-col">Message sent to Teams</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td class="subject-col">Kitchen aware of Allergies</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+
+            <tr><td colspan="7" class="section-header">Consent Forms</td></tr>
+            <tr><td class="subject-col">Informed Consent</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td class="subject-col">Body/Luggage Form</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td class="subject-col">Handbook Consent</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td class="subject-col">Personal Property Form</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td class="subject-col">Valuables Photos</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+
+            <tr><td colspan="7" class="section-header">Patient Chart Information</td></tr>
+            <tr><td class="subject-col">Update Demographics</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td class="subject-col">Added to LS Bed Board</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td class="subject-col">Vital Signs</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td class="subject-col">BAL</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td class="subject-col">Pregnancy Test</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td class="subject-col">UDS Inputted (pos/neg)</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td class="subject-col">Lab Order</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+
+            <tr><td colspan="7" class="section-header">ROIs (Emergency, OH, Referral)</td></tr>
+            <tr><td class="subject-col">Emergency Contact</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td class="subject-col">Orlando Health</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td class="subject-col">Referral Source</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+
+            <tr><td colspan="7" class="section-header">Scanned Documents</td></tr>
+            <tr><td class="subject-col">ID Scanned</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td class="subject-col">Insurance Card</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td class="subject-col">VOB / Triage Form</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td class="subject-col">Valuables Env. (Signed)</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td class="subject-col">Cash Env. / Receipt</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td class="subject-col">Tech Initials</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        </tbody>
+    </table>
+
+    <div class="footer-note">
+        <strong>Peer reviews must be completed on the same shift to ensure accuracy and compliance.</strong><br>
+        Catching missing data in real time protects patient safety and prevents liability. A second set of eyes avoids future problems for the team and facility.
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Room Sign - Single Page</title>
+    <style>
+        /* Forces the print to be exactly one page */
+        @page {
+            size: letter portrait;
+            margin: 0.5in; /* Standard safe margin for printers */
+        }
+
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Prevents scrolling/extra pages */
+            background-color: white;
+            font-family: 'Arial Black', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .sign-container {
+            width: 100%;
+            height: 100%;
+            max-height: 9.5in; /* Fits within 11in page including margins */
+            border: 8px solid black;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .icons {
+            font-size: 60px;
+            margin: 0;
+        }
+
+        h1 {
+            font-size: 65px;
+            text-decoration: underline;
+            margin: 0;
+            line-height: 1;
+            text-transform: uppercase;
+        }
+
+        .hours-list {
+            margin: 10px 0;
+        }
+
+        .hour-row {
+            font-size: 55px;
+            font-weight: 900;
+            display: block;
+            text-decoration: underline;
+            margin-bottom: 10px;
+        }
+
+        .rules-divider {
+            border-top: 4px dashed black;
+            width: 80%;
+            margin: 10px auto;
+        }
+
+        .rules-text {
+            font-size: 28px;
+            text-transform: uppercase;
+            line-height: 1.2;
+            margin: 5px 0;
+        }
+
+        .footer-bold {
+            font-size: 32px;
+            font-weight: 900;
+            text-decoration: underline;
+            text-transform: uppercase;
+            margin-top: 10px;
+        }
+
+        @media print {
+            body { -webkit-print-color-adjust: exact; }
+            .sign-container { border: 8px solid black !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sign-container">
+        <div class="icons">🎮 🎲 🕹️</div>
+
+        <h1>GAME ROOM<br>HOURS</h1>
+
+        <div class="hours-list">
+            <span class="hour-row">5am - 9am</span>
+            <span class="hour-row">12pm - 1pm</span>
+            <span class="hour-row">4pm - 7pm</span>
+            <span class="hour-row">8pm - 11pm</span>
+        </div>
+
+        <div class="rules-divider"></div>
+
+        <div class="rules-content">
+            <p class="rules-text">
+                Please be courteous and<br>
+                clean up after yourself 🧹
+            </p>
+            
+            <p class="footer-bold">
+                PLACE PIECES AND GAMES BACK
+                <div><p class="footer-bold">WHERE YOU FOUND THEM! 📦</p></div>
+            </p>
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>VOB / Demographics & Missing ID</title>
+    <style>
+        body {
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            font-size: 10.5pt;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #000;
+        }
+
+        .page {
+            width: 8.5in;
+            height: 11in;
+            padding: 0.5in 0.75in;
+            margin: 0.5in auto;
+            background: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .content-wrapper {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        h2 { 
+            text-align: center; 
+            margin: 0 0 10px 0;
+            font-size: 16pt; 
+            text-transform: uppercase;
+            font-weight: 900; 
+            letter-spacing: 2px;
+        }
+
+        h3 { 
+            text-align: center; 
+            margin: 12px 0 8px 0;
+            font-size: 11pt; 
+            font-weight: 900; 
+            text-transform: uppercase; 
+            letter-spacing: 1.5px;
+        }
+
+        .row { 
+            display: flex; 
+            margin-bottom: 12px; 
+            gap: 20px; 
+        }
+
+        .field { flex: 1; display: flex; align-items: flex-end; }
+        .label { white-space: nowrap; margin-right: 5px; font-weight: bold; font-size: 9.5pt; }
+        .line { border-bottom: 1.5px solid #000; flex-grow: 1; height: 1.1em; }
+        
+        .checkbox-item { display: flex; align-items: center; font-size: 9.5pt; }
+        .box { width: 13px; height: 13px; border: 1.5px solid #000; margin-right: 6px; flex-shrink: 0; }
+
+        .note-row { 
+            margin: -5px 0 15px 0; 
+            text-align: center;
+        }
+        small { font-style: italic; font-size: 9pt; color: #222; font-weight: bold; }
+
+        .missing-section {
+            border: 2.5px solid #000;
+            padding: 15px;
+            margin: 8px 0;
+        }
+
+        @media print {
+            body { background: none; }
+            .page { margin: 0; box-shadow: none; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page">
+    <div class="content-wrapper">
+        <header>
+            <h2>VOB / Demographics & Missing ID</h2>
+        </header>
+
+        <section>
+            <h3>Patient Information</h3>
+            <div class="row">
+                <div class="field" style="flex: 2;"><span class="label">Name:</span><div class="line"></div></div>
+                <div class="field"><span class="label">Confirm DOB:</span><div class="line"></div></div>
+            </div>
+            <div class="row">
+                <div class="field"><span class="label">Preferred Language:</span><div class="line"></div></div>
+                <div class="field"><span class="label">SSN:</span><div class="line"></div></div>
+            </div>
+            <div class="row">
+                <div class="field"><span class="label">Phone #:</span><div class="line"></div></div>
+                <div class="field" style="flex: 1.5;"><span class="label">Email Address:</span><div class="line"></div></div>
+            </div>
+            <div class="row">
+                <div class="field"><span class="label">Address:</span><div class="line"></div></div>
+            </div>
+            <div class="row">
+                <div class="field"><span class="label">Food/Med Allergies:</span><div class="line"></div></div>
+                <div class="field"><span class="label">Dietary Restrictions:</span><div class="line"></div></div>
+            </div>
+            <div class="note-row"><small>(Give red/green bands based on allergies or dietary restrictions)</small></div>
+            
+            <div class="row">
+                <div class="field"><span class="label">EC Name:</span><div class="line"></div></div>
+                <div class="field"><span class="label">EC Relationship:</span><div class="line"></div></div>
+            </div>
+            <div class="row">
+                <div class="field"><span class="label">EC Phone #:</span><div class="line"></div></div>
+                <div class="field"><span class="label">MRN:</span><div class="line"></div></div>
+            </div>
+            <div class="checkbox-item" style="margin-top: 5px;">
+                <div class="box"></div> <span class="label">Patient Refused to Provide Emergency Contact</span>
+            </div>
+        </section>
+
+        <!-- UPDATED MISSING SECTION -->
+        <section class="missing-section">
+            <h3>Missing Documentation Checklist</h3>
+            <div class="row">
+                <div class="field">
+                    <div class="checkbox-item"><div class="box"></div> <span class="label">Missing ID:</span></div>
+                    <div class="line"></div>
+                </div>
+                <div class="field">
+                    <div class="checkbox-item"><div class="box"></div> <span class="label">Missing Insurance:</span></div>
+                    <div class="line"></div>
+                </div>
+            </div>
+            <div class="row" style="margin-bottom: 0; justify-content: center;">
+                <div class="checkbox-item" style="margin-right: 0;">
+                    <div class="box"></div> <span class="label">Self-Pay</span>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h3>Arrival & Financial</h3>
+            <div class="row">
+                <div class="field"><span class="label">Time of Arrival:</span><div class="line"></div></div>
+                <div class="field" style="flex: 1.5;"><span class="label">Arrived Via (Uber, Family, Self):</span><div class="line"></div></div>
+            </div>
+            <div class="row">
+                <div class="field"><span class="label">Self-Drive (If applicable): Vehicle Color, Make, and Model:</span><div class="line"></div></div>
+            </div>
+            <div class="row">
+                <div class="field" style="flex: 2;"><span class="label">Insurance Company:</span><div class="line"></div></div>
+                <div class="field"><span class="label">Amt Due:</span><div class="line"></div></div>
+                <div class="field">
+                    <span class="label" style="margin-left: 10px;">Collected?</span>
+                    <div class="checkbox-item" style="margin-left: 10px;"><div class="box"></div> Y</div>
+                    <div class="checkbox-item" style="margin-right: 0;"><div class="box"></div> N</div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="field">
+                    <span class="label">Private Room?</span>
+                    <div class="checkbox-item" style="margin-left: 10px;"><div class="box"></div> Y</div>
+                    <div class="checkbox-item" style="margin-right: 0;"><div class="box"></div> N</div>
+                </div>
+                <div class="field">
+                    <span class="label">Cellphone in room?</span>
+                    <div class="checkbox-item" style="margin-left: 10px;"><div class="box"></div> Y</div>
+                    <div class="checkbox-item" style="margin-right: 0;"><div class="box"></div> N</div>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h3>Preadmission Assessment</h3>
+            <div class="row">
+                <div class="field" style="flex: 1.5;"><span class="label">Referral Source:</span><div class="line"></div></div>
+                <div class="field"><span class="label">Referral Phone #:</span><div class="line"></div></div>
+            </div>
+            <div class="row">
+                <div class="field"><span class="label">Length of Stay:</span><div class="line"></div></div>
+                <div class="field"><span class="label">Unit & Rm #:</span><div class="line"></div></div>
+                <div class="field"><span class="label">Proj. DC Date:</span><div class="line"></div></div>
+            </div>
+            <div class="row" style="margin-bottom: 0;">
+                <div class="field"><span class="label">Recommended Level of Care (Lightning Step):</span><div class="line"></div></div>
+            </div>
+        </section>
+    </div>
+</div>
+
+</body>
+</html>
