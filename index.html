@@ -96,12 +96,12 @@
         }
 
         /* --- SCOREBOARD --- */
-        .scoreboard-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 4px; margin-bottom: 4px; height: 50px; }
+        .scoreboard-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 4px; margin-bottom: 4px; }
         .team-scoreboard { 
-            background-color: #fff; padding: 2px 6px; border-radius: 6px; 
+            background-color: #fff; padding: 4px 4px; border-radius: 6px; 
             border: 4px solid transparent; 
             display: flex; flex-direction: column; justify-content: center; 
-            transition: all 0.2s; cursor: pointer; 
+            transition: all 0.2s;
         }
         
         /* SOLID GREEN BACKGROUND FOR ACTIVE TEAM */
@@ -402,11 +402,12 @@
                 div.id = `team-box-${i}`;
                 div.className = `team-scoreboard ${i === gameState.currentTeam ? 'active' : ''}`;
                 
-                div.onclick = () => setCurrentTeam(i);
-
                 div.innerHTML = `
-                    <input type="text" id="name-input-${i}" class="team-name-input" value="${gameState.teamNames[i]}" onchange="updateTeamName(${i}, this.value)" onclick="event.stopPropagation()">
-                    <input type="number" id="score-input-${i}" class="team-score-input" value="${gameState.scores[i]}" onchange="updateScore(${i}, this.value)" onclick="event.stopPropagation()">
+                    <div class="flex justify-center w-full mb-1">
+                        <button id="turn-btn-${i}" onclick="setCurrentTeam(${i})" class="w-full transition-colors"></button>
+                    </div>
+                    <input type="text" id="name-input-${i}" class="team-name-input" value="${gameState.teamNames[i]}" onchange="updateTeamName(${i}, this.value)">
+                    <input type="number" id="score-input-${i}" class="team-score-input" value="${gameState.scores[i]}" onchange="updateScore(${i}, this.value)">
                 `;
                 container.appendChild(div);
             }
@@ -414,15 +415,16 @@
 
         function updateTeamName(index, val) { gameState.teamNames[index] = val; }
         
-        // Prevents manual entry from going below 0
         function updateScore(index, val) { 
             gameState.scores[index] = Math.max(0, parseInt(val) || 0); 
             updateUI();
         }
 
+        // Host manually setting the team turn from the scoreboard button
         function setCurrentTeam(index) {
             document.getElementById(`team-box-${gameState.currentTeam}`).classList.remove('active');
             gameState.currentTeam = index;
+            originalAnsweringTeam = index; // Reset the logical base for turn order 
             gameState.correctCount = 0;
             document.getElementById(`team-box-${gameState.currentTeam}`).classList.add('active');
             updateUI();
@@ -552,18 +554,20 @@
         function processCorrectForTeam(teamIndex) {
             gameState.scores[teamIndex] += gameState.currentValue;
             
-            if (gameState.currentTeam === teamIndex) {
+            if (originalAnsweringTeam === teamIndex) {
                 gameState.correctCount++;
             } else {
-                gameState.currentTeam = teamIndex;
-                gameState.correctCount = 1;
+                // Awarded to someone else, force passing turn next
+                gameState.correctCount = 2; 
             }
 
             markCellAnswered();
 
             if (gameState.correctCount >= 2) {
-                nextTurn(true); 
+                // Time to pass the turn sequentially relative to original answering team
+                nextTurn(); 
             } else {
+                // Continue streak
                 document.querySelectorAll('.team-scoreboard').forEach(el => el.classList.remove('active'));
                 document.getElementById(`team-box-${gameState.currentTeam}`).classList.add('active');
                 updateUI();
@@ -576,7 +580,7 @@
         // --- STEAL LOGIC ---
         function processIncorrect() {
             stopTimer();
-            // Math.max ensures the score never goes below 0
+            // Deduct from the original guessing team, safely bottoming out at 0
             gameState.scores[gameState.currentTeam] = Math.max(0, gameState.scores[gameState.currentTeam] - gameState.currentValue);
             updateUI();
             
@@ -625,19 +629,16 @@
 
         function resolveSteal(teamIndex, isCorrect) {
             if (isCorrect) {
+                // Steal Successful! Give points to stealer.
                 gameState.scores[teamIndex] += gameState.currentValue;
-                gameState.currentTeam = teamIndex; 
-                gameState.correctCount = 1; 
                 
-                document.querySelectorAll('.team-scoreboard').forEach(el => el.classList.remove('active'));
-                document.getElementById(`team-box-${gameState.currentTeam}`).classList.add('active');
-                
+                // Turn logic sequentially passes to team AFTER the original answering team
                 markCellAnswered();
-                updateUI();
+                nextTurn(); 
                 closeModal();
                 checkGameOver();
             } else {
-                // Deduct but do not go below 0
+                // Steal Failed! Deduct points from stealer safely.
                 gameState.scores[teamIndex] = Math.max(0, gameState.scores[teamIndex] - gameState.currentValue);
                 updateUI();
                 
@@ -647,21 +648,18 @@
         }
 
         function skipSteal() {
-            document.getElementById(`team-box-${gameState.currentTeam}`).classList.remove('active');
-            gameState.currentTeam = (originalAnsweringTeam + 1) % gameState.numTeams;
-            gameState.correctCount = 0;
-            document.getElementById(`team-box-${gameState.currentTeam}`).classList.add('active');
-            
+            // No one steals. Question is done. Pass sequentially.
             markCellAnswered();
-            updateUI();
+            nextTurn();
             closeModal();
             checkGameOver();
         }
 
         function skipQuestion() {
             stopTimer();
+            // Host skips directly.
             markCellAnswered();
-            nextTurn(true); 
+            nextTurn(); 
             closeModal();
             checkGameOver();
         }
@@ -672,14 +670,13 @@
             gameState.answeredTotal++;
         }
 
-        function nextTurn(advanceFromCurrent = false) {
+        function nextTurn() {
+            // ALWAYS pass the turn sequentially starting from the original answering team
             document.getElementById(`team-box-${gameState.currentTeam}`).classList.remove('active');
             
-            if(advanceFromCurrent) {
-                gameState.currentTeam = (gameState.currentTeam + 1) % gameState.numTeams;
-            }
-            
+            gameState.currentTeam = (originalAnsweringTeam + 1) % gameState.numTeams;
             gameState.correctCount = 0; 
+            
             document.getElementById(`team-box-${gameState.currentTeam}`).classList.add('active');
             updateUI();
         }
@@ -688,6 +685,18 @@
             for(let i=0; i<gameState.numTeams; i++) {
                 document.getElementById(`score-input-${i}`).value = gameState.scores[i];
                 document.getElementById(`name-input-${i}`).value = gameState.teamNames[i];
+                
+                // Update the tiny turn indicator button
+                const btn = document.getElementById(`turn-btn-${i}`);
+                if(btn) {
+                    if (i === gameState.currentTeam) {
+                        btn.innerHTML = '⭐ ACTIVE TURN';
+                        btn.className = 'text-[9px] font-black py-1 px-1 rounded w-full bg-black bg-opacity-20 text-white cursor-pointer';
+                    } else {
+                        btn.innerHTML = 'TAP TO SET TURN';
+                        btn.className = 'text-[8px] font-bold py-1 px-1 rounded w-full bg-gray-200 text-gray-500 hover:bg-gray-300 cursor-pointer';
+                    }
+                }
             }
             document.getElementById('streak-info').innerText = `Streak: ${gameState.correctCount}/2`;
         }
