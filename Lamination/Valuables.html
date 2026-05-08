@@ -94,7 +94,6 @@
             padding: 4px 0;
         }
 
-        /* Adjusted Column widths for better fit */
         .inventory-grid {
             display: grid;
             grid-template-columns: 31% 43% 26%; 
@@ -215,7 +214,7 @@
         </div>
         <div class="field" style="flex-grow: 1; justify-content: flex-end;">
             <span class="label">MR</span>
-            <div class="line" style="width: 80px; flex-grow: 0;"></div>
+            <div class="line" style="width: 120px; flex-grow: 0;"></div>
         </div>
     </div>
 
@@ -227,10 +226,10 @@
         <div class="inventory-grid">
             <div class="col-1">
                 <div class="cb-item"><input type="checkbox"> Wallet *</div>
-                <div class="cb-item"><input type="checkbox"> Visa Card * <span class="card-space">( )</span></div>
-                <div class="cb-item"><input type="checkbox"> Master Card * <span class="card-space">( )</span></div>
-                <div class="cb-item"><input type="checkbox"> AM EX Card * <span class="card-space">( )</span></div>
-                <div class="cb-item"><input type="checkbox"> Discover * <span class="card-space">( )</span></div>
+                <div class="cb-item"><input type="checkbox"> Visa Card * <span class="card-space">[ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ]</span></div>
+                <div class="cb-item"><input type="checkbox"> Master Card * <span class="card-space">[ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ]</span></div>
+                <div class="cb-item"><input type="checkbox"> AM EX Card * <span class="card-space">[ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ]</span></div>
+                <div class="cb-item"><input type="checkbox"> Discover * <span class="card-space">[ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ]</span></div>
                 <div class="cb-item"><input type="checkbox"> Ins Card *</div>
                 <div class="cb-item"><input type="checkbox"> Ck Book *</div>
                 <div class="cb-item"><input type="checkbox"> SS Card *</div>
@@ -259,48 +258,28 @@
 
                 <div class="complex-row">
                     <input type="checkbox"> <strong>Watch *</strong>
-                    <span class="sub-label">Band Color</span> <div class="line"></div>
-                    <span class="sub-label" style="margin-left:5px;">Body Color</span> <div class="line"></div>
+                    <span class="sub-label" style="margin-left:5px;">Desc</span> <div class="line"></div>
                 </div>
-                <div class="indent-row">
-                    <span class="sub-label">Band Type</span> <div class="line"></div>
-                    <span class="sub-label" style="margin-left:5px;">Face Color</span> <div class="line"></div>
-                </div>
-
+                
                 <div class="complex-row">
                     <input type="checkbox"> <strong>Necklace *</strong>
-                    <span class="sub-label">Gold Tone</span> <div class="line" style="width:30px; flex-grow:0;"></div>
-                    <span class="sub-label" style="margin-left:5px;">Silver Tone</span> <div class="line"></div>
-                </div>
-                <div class="indent-row">
-                    <span class="sub-label">Rope Type</span> <div class="line"></div>
-                    <span class="sub-label" style="margin-left:5px;">Chain Type</span> <div class="line"></div>
-                    <span class="sub-label" style="margin-left:5px;">Other Type</span> <div class="line"></div>
-                </div>
-                <div class="indent-row">
-                    <span class="sub-label">Pendent</span> <div class="line"></div>
+                    <span class="sub-label" style="margin-left:5px;">Desc</span> <div class="line"></div>
                 </div>
 
                 <div class="complex-row">
                     <input type="checkbox"> <strong>Bracelet *</strong>
-                    <span class="sub-label">Gold Tone</span> <div class="line" style="width:30px; flex-grow:0;"></div>
-                    <span class="sub-label" style="margin-left:5px;">Silver Tone</span> <div class="line"></div>
-                    <span class="sub-label" style="margin-left:5px;">Charms(s)</span> <div class="line" style="width:30px; flex-grow:0;"></div>
+                    <span class="sub-label" style="margin-left:5px;">Desc</span> <div class="line"></div>
                 </div>
-                <div class="indent-row">
-                    <span class="sub-label">Rope Type</span> <div class="line"></div>
-                    <span class="sub-label" style="margin-left:5px;">Chain Type</span> <div class="line"></div>
-                    <span class="sub-label" style="margin-left:5px;">Other Type</span> <div class="line"></div>
-                </div>
-
+                
                 <div class="complex-row">
                     <input type="checkbox"> <strong>Ring *</strong>
-                    <span class="sub-label">Gold Tone</span> <div class="line"></div>
-                    <span class="sub-label" style="margin-left:5px;">Silver Tone</span> <div class="line"></div>
+                    <span class="sub-label" style="margin-left:5px;">Desc</span> <div class="line"></div>
                 </div>
-                <div class="indent-row">
-                    <span class="sub-label">Stone Color</span> <div class="line"></div>
-                </div>
+
+                <div class="cb-item" style="margin-top: 10px;"><input type="checkbox"> <div class="line"></div></div>
+                <div class="cb-item"><input type="checkbox"> <div class="line"></div></div>
+                <div class="cb-item"><input type="checkbox"> <div class="line"></div></div>
+                <div class="cb-item"><input type="checkbox"> <div class="line"></div></div>
             </div>
 
             <div class="col-3">
@@ -342,7 +321,9 @@
                     <div class="line"></div>
                 </div>
             </div>
-        </div> <div style="border: 1px solid black; padding: 10px 12px; margin-top: 15px;">
+        </div> 
+        
+        <div style="border: 1px solid black; padding: 10px 12px; margin-top: 15px;">
             <div style="text-align: center; font-weight: bold; font-size: 12px; border-bottom: 1px solid black; margin: -10px -12px 15px -12px; background-color: #e0e0e0; padding: 5px 0;">Drop Off Items</div>
             
             <div style="display: flex; align-items: flex-end; margin-bottom: 18px; width: 100%;">
